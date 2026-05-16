@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { LayoutDashboard, Users, GraduationCap, BookOpen, Layers, CalendarDays, ClipboardList, UserCheck, Clock, LogOut, X, ArrowRight } from 'lucide-react'
+import { LayoutDashboard, Users, GraduationCap, BookOpen, Layers, CalendarDays, ClipboardList, UserCheck, Clock, LogOut, X, ArrowRight, Activity, Shield, FileText, UserCog, Database } from 'lucide-react'
 import logo from '../../assets/logo.png'
 
 const Sidebar = ({ onClose }) => {
@@ -22,7 +22,12 @@ const Sidebar = ({ onClose }) => {
 
     if (currentProfile?.role === 'admin') {
       const superAdminLinks = [
-        { path: '/admin', label: 'System Dashboard', icon: LayoutDashboard },
+        { path: '/admin', label: 'System Monitor', icon: LayoutDashboard },
+        { path: '/admin/system-health', label: 'System Health', icon: Activity },
+        { path: '/admin/security', label: 'Security Logs', icon: Shield },
+        { path: '/admin/audit', label: 'Audit Trail', icon: FileText },
+        { path: '/admin/admins', label: 'Manage Admins', icon: UserCog },
+        { path: '/admin/backup', label: 'Data Backup', icon: Database },
       ]
 
       const deptAdminLinks = [

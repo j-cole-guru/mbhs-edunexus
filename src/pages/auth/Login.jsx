@@ -45,12 +45,42 @@ const Login = () => {
       console.log('Student login result:', data)
 
       if (!data || data.length === 0) {
+        // Log failed student login attempt
+        await fetch('https://tvitevnovhiimpdukebm.supabase.co/rest/v1/security_logs', {
+          method: 'POST',
+          headers: {
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            event_type: 'FAILED_STUDENT_LOGIN',
+            email: fullName,
+            details: `Failed student login attempt for ${fullName}`,
+            severity: 'medium'
+          })
+        })
         setError('Invalid name or PIN. Please try again.')
         setLoading(false)
         return
       }
 
       localStorage.setItem('mbhs_student', JSON.stringify(data[0]))
+      // Log successful student login
+      await fetch('https://tvitevnovhiimpdukebm.supabase.co/rest/v1/security_logs', {
+        method: 'POST',
+        headers: {
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          event_type: 'SUCCESSFUL_STUDENT_LOGIN',
+          email: fullName,
+          details: `Successful student login for ${fullName}`,
+          severity: 'low'
+        })
+      })
       window.location.href = '/student'
     } catch (err) {
       console.error('Student login error:', err)
@@ -103,6 +133,21 @@ const Login = () => {
     console.log('Response data:', data)
 
     if (!response.ok) {
+      // Log failed staff login attempt
+      await fetch('https://tvitevnovhiimpdukebm.supabase.co/rest/v1/security_logs', {
+        method: 'POST',
+        headers: {
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          event_type: 'FAILED_LOGIN',
+          email: staffEmail,
+          details: `Failed login attempt for ${staffEmail}`,
+          severity: 'medium'
+        })
+      })
       setError(data.error_description || 'Login failed')
       setLoading(false)
       return
@@ -138,6 +183,22 @@ const Login = () => {
       full_name: profile.full_name,
       department: profile.department || 'both'
     }))
+
+    // Log successful staff login
+    await fetch('https://tvitevnovhiimpdukebm.supabase.co/rest/v1/security_logs', {
+      method: 'POST',
+      headers: {
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        event_type: 'SUCCESSFUL_LOGIN',
+        email: staffEmail,
+        details: `Successful login for ${staffEmail}`,
+        severity: 'low'
+      })
+    })
 
     if (profile.role === 'admin') {
       window.location.href = '/admin'

@@ -16,6 +16,11 @@ import Results from './pages/admin/Results'
 import Attendance from './pages/admin/Attendance'
 import Timetable from './pages/admin/Timetable'
 import PromoteStudents from './pages/admin/PromoteStudents'
+import SystemHealth from './pages/admin/SystemHealth'
+import SecurityLogs from './pages/admin/SecurityLogs'
+import AuditTrail from './pages/admin/AuditTrail'
+import ManageAdmins from './pages/admin/ManageAdmins'
+import DataBackup from './pages/admin/DataBackup'
 
 // Teacher Pages
 import TeacherDashboard from './pages/teacher/Dashboard'
@@ -135,6 +140,56 @@ function App() {
               <ProtectedRoute role="admin">
                 <Layout role="admin">
                   <PromoteStudents />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/system-health"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <SystemHealth />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/security"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <SecurityLogs />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/audit"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <AuditTrail />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/admins"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <ManageAdmins />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/backup"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <DataBackup />
                 </Layout>
               </ProtectedRoute>
             }
