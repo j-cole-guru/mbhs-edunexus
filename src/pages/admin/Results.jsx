@@ -152,12 +152,14 @@ const AdminResults = () => {
     let skipped = 0
     
     try {
+      console.log('All rows from Excel:', parsedData)
       for (const row of parsedData) {
         const stuRes = await fetch(
-          `${BASE_URL}/students?student_number=eq.${encodeURIComponent(row['Student Number'])}&select=id`,
+          `${BASE_URL}/students?student_number=ilike.*${row['Student Number'].trim()}*&select=id`,
           { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } }
         )
         const stuData = await stuRes.json()
+        console.log('Looking for:', row['Student Number'], 'Found:', stuData)
         const studentId = stuData[0]?.id
         if (!studentId) {
           skipped++
