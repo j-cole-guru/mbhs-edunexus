@@ -91,43 +91,16 @@ const AdminResults = () => {
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0]
-    if (!file) return
-    
-    if (!selectedTerm) {
-      setError('Please select a term before uploading results.')
-      e.target.value = ''
-      return
-    }
-
-    if (!selectedAssessmentType) {
-      setError('Please select an assessment type before uploading results.')
-      e.target.value = ''
-      return
-    }
-
-    setError('')
-    setSuccess('')
     const reader = new FileReader()
     reader.onload = (evt) => {
-      try {
-        const wb = XLSX.read(evt.target.result, { type: 'binary' })
-        const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]])
-        if (!rows.length) {
-          setError('Excel file is empty.')
-          return
-        }
-        const enriched = rows.map(row => ({
-          ...row,
-          _grade: getGrade(parseFloat(row['Score']) || 0)
-        }))
-        setParsedData(enriched)
-      } catch (err) {
-        console.error(err)
-        setError('Failed to parse Excel file.')
-      }
+      const workbook = XLSX.read(evt.target.result, { type: 'binary' })
+      const sheet = workbook.Sheets[workbook.SheetNames[0]]
+      const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' })
+      console.log('Raw rows:', rows)
+      console.log('First row keys:', rows[0] ? Object.keys(rows[0]) : 'no rows')
+      setParsedData(rows)
     }
     reader.readAsBinaryString(file)
-    e.target.value = ''
   }
 
   const handleSave = async () => {
@@ -154,21 +127,51 @@ const AdminResults = () => {
     try {
       console.log('All rows from Excel:', parsedData)
       for (const row of parsedData) {
-        const stuRes = await fetch(
-          `${BASE_URL}/students?student_number=ilike.*${row['Student Number'].trim()}*&select=id`,
-          { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } }
+        // Safely get student number from any possible column name
+        const studentNum = (
+          row['Student Number'] ||
+          row['Student number'] ||
+          row['student_number'] ||
+          row['StudentNumber'] ||
+          Object.values(row)[0]
+        )?.toString().trim()
+
+        const studentName = (
+          row['Student Name'] ||
+          row['Student name'] ||
+          row['student_name'] ||
+          Object.values(row)[1]
+        )?.toString().trim()
+
+        const subject = (
+          row['Subject'] ||
+          row['subject'] ||
+          Object.values(row)[2]
+        )?.toString().trim()
+
+        const score = parseFloat(
+          row['Score'] ||
+          row['score'] ||
+          Object.values(row)[3]
         )
-        const stuData = await stuRes.json()
-        console.log('Looking for:', row['Student Number'], 'Found:', stuData)
-        const studentId = stuData[0]?.id
-        if (!studentId) {
-          skipped++
+
+        console.log('Processing:', studentNum, studentName, subject, score)
+
+        if (!studentNum || isNaN(score)) {
+          console.log('Skipping invalid row:', row)
           continue
         }
 
-        const score = parseFloat(row['Score'])
-        const grade = getGrade(score)
+        const stuRes = await fetch(
+          `${BASE_URL}/students?student_number=eq.${studentNum}&select=id`,
+          { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } }
+        )
+        const stuData = await stuRes.json()
+        console.log('Looking for:', studentNum, 'Found:', stuData)
+        const studentId = stuData[0]?.id
+        if (!studentId) { console.log('Student not found:', studentNum); skipped++; continue }
 
+        const grade = getGrade(score)
         await fetch(`${BASE_URL}/results`, {
           method: 'POST',
           headers: {
@@ -179,9 +182,9 @@ const AdminResults = () => {
           },
           body: JSON.stringify({
             student_id: studentId,
-            student_number: row['Student Number'],
-            student_name: row['Student Name'],
-            subject: row['Subject'],
+            student_number: studentNum,
+            student_name: studentName,
+            subject: subject,
             term_id: selectedTerm,
             assessment_type: selectedAssessmentType,
             score: score,
