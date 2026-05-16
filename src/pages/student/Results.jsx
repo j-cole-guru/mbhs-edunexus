@@ -1,0 +1,174 @@
+import { useState, useEffect } from 'react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
+
+const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y'
+const BASE_URL = 'https://tvitevnovhiimpdukebm.supabase.co/rest/v1'
+const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
+
+const getGrade = (score) => {
+  if (score >= 75) return 'A1'
+  if (score >= 70) return 'B2'
+  if (score >= 65) return 'B3'
+  if (score >= 60) return 'C4'
+  if (score >= 55) return 'C5'
+  if (score >= 50) return 'C6'
+  if (score >= 45) return 'D7'
+  if (score >= 40) return 'E8'
+  return 'F9'
+}
+
+const calcGPA = (records) => {
+  if (!records || !records.length) return '0.0'
+  const avg = records.reduce((sum, r) => sum + parseFloat(r.score || 0), 0) / records.length
+  return avg.toFixed(1)
+}
+
+const groupResults = (results, terms) => {
+  const grouped = {}
+  results.forEach(r => {
+    const term = terms.find(t => t.id === r.term_id)
+    const termName = term ? `${term.name} ${term.year}` : 'Unknown Term'
+    if (!grouped[termName]) grouped[termName] = {}
+    if (!grouped[termName][r.assessment_type]) grouped[termName][r.assessment_type] = []
+    grouped[termName][r.assessment_type].push(r)
+  })
+  return grouped
+}
+
+export default function StudentResults() {
+  const [student, setStudent] = useState(null)
+  const [results, setResults] = useState([])
+  const [terms, setTerms] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [expandedTerms, setExpandedTerms] = useState({})
+  const [expandedAssessments, setExpandedAssessments] = useState({})
+
+  useEffect(() => {
+    const raw = localStorage.getItem('mbhs_student')
+    if (!raw) { window.location.href = '/login'; return }
+    const s = JSON.parse(raw)
+    setStudent(s)
+    loadData(s)
+  }, [])
+
+  const loadData = async (s) => {
+    try {
+      const [resultsRes, termsRes] = await Promise.all([
+        fetch(`${BASE_URL}/results?student_id=eq.${s.id}&select=*&order=created_at.asc`, { headers }),
+        fetch(`${BASE_URL}/terms?select=*&order=created_at.asc`, { headers })
+      ])
+      const resultsData = await resultsRes.json()
+      const termsData = await termsRes.json()
+      console.log('Results:', resultsData)
+      console.log('Terms:', termsData)
+      setResults(Array.isArray(resultsData) ? resultsData : [])
+      setTerms(Array.isArray(termsData) ? termsData : [])
+    } catch (err) {
+      console.error('Error loading results:', err)
+      setResults([])
+      setTerms([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const toggleTerm = (termName) => {
+    setExpandedTerms(prev => ({ ...prev, [termName]: !prev[termName] }))
+  }
+
+  const toggleAssessment = (key) => {
+    setExpandedAssessments(prev => ({ ...prev, [key]: !prev[key] }))
+  }
+
+  if (loading) return (
+    <div className="flex items-center justify-center p-8">
+      <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  )
+
+  const grouped = groupResults(results, terms)
+
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Academic Results</h1>
+
+      {Object.keys(grouped).length === 0 ? (
+        <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
+          No results available.
+        </div>
+      ) : (
+        Object.entries(grouped).map(([termName, assessments]) => (
+          <div key={termName} className="bg-white rounded-lg shadow mb-4 overflow-hidden">
+            <button
+              onClick={() => toggleTerm(termName)}
+              className="w-full flex items-center justify-between px-6 py-4 bg-blue-900 text-white font-semibold text-left"
+            >
+              <span>{termName}</span>
+              {expandedTerms[termName] ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+            </button>
+
+            {expandedTerms[termName] && (
+              <div className="p-4 space-y-4">
+                {Object.entries(assessments).map(([assessmentType, records]) => {
+                  const key = `${termName}-${assessmentType}`
+                  const gpa = calcGPA(records)
+                  return (
+                    <div key={key} className="border border-gray-200 rounded-lg overflow-hidden">
+                      <button
+                        onClick={() => toggleAssessment(key)}
+                        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 text-gray-800 font-medium text-left"
+                      >
+                        <span>{assessmentType}</span>
+                        {expandedAssessments[key] ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+                      </button>
+
+                      {expandedAssessments[key] && (
+                        <div className="p-4">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="text-left text-gray-500 uppercase text-xs tracking-wide border-b">
+                                <th className="pb-2">Subject</th>
+                                <th className="pb-2">Score</th>
+                                <th className="pb-2">Grade</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {records.map((r, i) => (
+                                <tr key={i} className="border-b last:border-0">
+                                  <td className="py-2 text-gray-800">{r.subject}</td>
+                                  <td className="py-2 text-gray-800">{r.score}</td>
+                                  <td className="py-2">
+                                    <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                                      r.grade === 'A1' ? 'bg-green-100 text-green-700' :
+                                      r.grade === 'B2' || r.grade === 'B3' ? 'bg-blue-100 text-blue-700' :
+                                      r.grade === 'C4' || r.grade === 'C5' || r.grade === 'C6' ? 'bg-yellow-100 text-yellow-700' :
+                                      'bg-red-100 text-red-700'
+                                    }`}>
+                                      {r.grade}
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                          <div className="mt-3 pt-3 border-t flex items-center justify-between">
+                            <span className="text-sm text-gray-500">Assessment Average</span>
+                            <span className="font-bold text-blue-900">{gpa} — {getGrade(parseFloat(gpa))}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        ))
+      )}
+
+      <div className="mt-8 text-center text-sm text-gray-400">
+        © 2026 All Rights Reserved | Developed by Alie Amadu Sesay
+      </div>
+    </div>
+  )
+}

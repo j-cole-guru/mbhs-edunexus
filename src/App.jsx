@@ -1,0 +1,232 @@
+import React from 'react'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext'
+import ProtectedRoute from './routes/ProtectedRoute'
+import Login from './pages/auth/Login'
+import Layout from './components/layout/Layout'
+
+// Admin Pages
+import AdminDashboard from './pages/admin/Dashboard'
+import ManageLevels from './pages/admin/ManageLevels'
+import ManageClasses from './pages/admin/ManageClasses'
+import ManageSubjects from './pages/admin/ManageSubjects'
+import ManageTerms from './pages/admin/ManageTerms'
+import ManageTeachers from './pages/admin/ManageTeachers'
+import ManageStudents from './pages/admin/ManageStudents'
+import Results from './pages/admin/Results'
+import Attendance from './pages/admin/Attendance'
+import Timetable from './pages/admin/Timetable'
+
+// Teacher Pages
+import TeacherDashboard from './pages/teacher/Dashboard'
+import TeacherResults from './pages/teacher/EnterResults'
+import TeacherAttendance from './pages/teacher/Attendance'
+import TeacherTimetable from './pages/teacher/Timetable'
+
+// Student Pages
+import StudentDashboard from './pages/student/Dashboard'
+import StudentResults from './pages/student/Results'
+import StudentAttendance from './pages/student/Attendance'
+import StudentTimetable from './pages/student/Timetable'
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<Login />} />
+
+          {/* Admin Routes */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <AdminDashboard />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/levels"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <ManageLevels />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/classes"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <ManageClasses />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/subjects"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <ManageSubjects />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/terms"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <ManageTerms />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/teachers"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <ManageTeachers />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/students"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <ManageStudents />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/results"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <Results />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/attendance"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <Attendance />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/timetable"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <Timetable />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Teacher Routes */}
+          <Route
+            path="/teacher"
+            element={
+              <ProtectedRoute role="teacher">
+                <Layout role="teacher">
+                  <TeacherDashboard />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/results"
+            element={
+              <ProtectedRoute role="teacher">
+                <Layout role="teacher">
+                  <TeacherResults />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/attendance"
+            element={
+              <ProtectedRoute role="teacher">
+                <Layout role="teacher">
+                  <TeacherAttendance />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/timetable"
+            element={
+              <ProtectedRoute role="teacher">
+                <Layout role="teacher">
+                  <TeacherTimetable />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Student Routes */}
+          <Route
+            path="/student"
+            element={
+              <ProtectedRoute role="student">
+                <Layout role="student">
+                  <StudentDashboard />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/results"
+            element={
+              <ProtectedRoute role="student">
+                <Layout role="student">
+                  <StudentResults />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/attendance"
+            element={
+              <ProtectedRoute role="student">
+                <Layout role="student">
+                  <StudentAttendance />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/timetable"
+            element={
+              <ProtectedRoute role="student">
+                <Layout role="student">
+                  <StudentTimetable />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  )
+}
+
+export default App

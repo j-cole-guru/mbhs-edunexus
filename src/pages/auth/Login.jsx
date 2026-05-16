@@ -1,0 +1,348 @@
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { supabase } from '../../lib/supabaseClient'
+import { Users, GraduationCap, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react'
+import logo from '../../assets/logo.png'
+
+const Login = () => {
+  const [activeTab, setActiveTab] = useState('student')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
+
+  // Student login state
+  const [studentNumber, setStudentNumber] = useState('')
+  const [pin, setPin] = useState('')
+  const [fullName, setFullName] = useState('')
+  const [showPin, setShowPin] = useState(false)
+
+  // Staff login state
+  const [staffEmail, setStaffEmail] = useState('')
+  const [staffPassword, setStaffPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+
+  const handleStudentLogin = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+
+    try {
+      console.log('Attempting student login with:', fullName)
+      
+      const res = await fetch('https://tvitevnovhiimpdukebm.supabase.co/rest/v1/rpc/student_login_by_name', {
+        method: 'POST',
+        headers: {
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          p_full_name: fullName,
+          p_pin: pin
+        })
+      })
+      const data = await res.json()
+      console.log('Student login result:', data)
+
+      if (!data || data.length === 0) {
+        setError('Invalid name or PIN. Please try again.')
+        setLoading(false)
+        return
+      }
+
+      localStorage.setItem('mbhs_student', JSON.stringify(data[0]))
+      window.location.href = '/student'
+    } catch (err) {
+      console.error('Student login error:', err)
+      setError('Login failed. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleStaffLogin = async (e) => {
+  e.preventDefault()
+  setLoading(true)
+  setError('')
+
+  console.log('handleStaffLogin fired')
+  console.log('Email:', staffEmail)
+  console.log('Password:', staffPassword)
+
+  const controller = new AbortController()
+  const timeout = setTimeout(() => {
+    controller.abort()
+    console.log('Request timed out!')
+    setError('Request timed out. Please check your connection.')
+    setLoading(false)
+  }, 10000)
+
+  try {
+    console.log('About to call Supabase...')
+
+    const response = await fetch(
+      `https://tvitevnovhiimpdukebm.supabase.co/auth/v1/token?grant_type=password`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y'}` 
+        },
+        body: JSON.stringify({
+          email: staffEmail,
+          password: staffPassword
+        }),
+        signal: controller.signal
+      }
+    )
+
+    clearTimeout(timeout)
+    console.log('Response status:', response.status)
+    const data = await response.json()
+    console.log('Response data:', data)
+
+    if (!response.ok) {
+      setError(data.error_description || 'Login failed')
+      setLoading(false)
+      return
+    }
+
+    // Fetch profile
+    const profileResponse = await fetch(
+      `https://tvitevnovhiimpdukebm.supabase.co/rest/v1/profiles?id=eq.${data.user.id}&select=*`,
+      {
+        headers: {
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
+          'Authorization': `Bearer ${data.access_token}` 
+        }
+      }
+    )
+
+    const profiles = await profileResponse.json()
+    console.log('Profile:', profiles)
+    const profile = profiles[0]
+
+    if (!profile) {
+      setError('Profile not found. Contact administrator.')
+      setLoading(false)
+      return
+    }
+
+    // Save staff data to localStorage before redirect
+    localStorage.setItem('mbhs_staff', JSON.stringify({
+      id: data.user.id,
+      email: data.user.email,
+      access_token: data.access_token,
+      role: profile.role,
+      full_name: profile.full_name
+    }))
+
+    if (profile.role === 'admin') {
+      window.location.href = '/admin'
+    } else if (profile.role === 'teacher') {
+      window.location.href = '/teacher'
+    } else {
+      setError('Unauthorized role.')
+      setLoading(false)
+    }
+
+  } catch (err) {
+    clearTimeout(timeout)
+    console.error('Login error:', err)
+    setError('Something went wrong: ' + err.message)
+    setLoading(false)
+  }
+}
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="flex justify-center">
+          <img
+            className="h-24 w-auto"
+            src={logo}
+            alt="Methodist Boys' High School"
+          />
+        </div>
+        <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
+          Methodist Boys' High School
+        </h2>
+        <p className="mt-2 text-center text-sm text-gray-600">
+          EduNexus Portal
+        </p>
+      </div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          {/* Tabs */}
+          <div className="flex border-b border-gray-200">
+            <button
+              className={`flex-1 py-2 px-4 text-center font-medium flex items-center justify-center ${
+                activeTab === 'student'
+                  ? 'border-b-2 border-blue-900 text-blue-900'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+              onClick={() => setActiveTab('student')}
+            >
+              <Users className="h-4 w-4 mr-2" />
+              Student Login
+            </button>
+            <button
+              className={`flex-1 py-2 px-4 text-center font-medium flex items-center justify-center ${
+                activeTab === 'staff'
+                  ? 'border-b-2 border-blue-900 text-blue-900'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+              onClick={() => setActiveTab('staff')}
+            >
+              <GraduationCap className="h-4 w-4 mr-2" />
+              Staff Login
+            </button>
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 flex items-center bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
+              <AlertCircle className="h-4 w-4 mr-2" />
+              {error}
+            </div>
+          )}
+
+          {/* Student Login Form */}
+          {activeTab === 'student' && (
+            <form className="mt-6 space-y-6" onSubmit={handleStudentLogin}>
+              <div>
+                <label htmlFor="full-name" className="block text-sm font-medium text-gray-700">
+                  Full Name
+                </label>
+                <input
+                  id="full-name"
+                  name="full-name"
+                  type="text"
+                  required
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Enter full name"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-900 focus:border-blue-900"
+                />
+              </div>
+              <div>
+                <label htmlFor="pin" className="block text-sm font-medium text-gray-700">
+                  4-digit PIN
+                </label>
+                <div className="relative">
+                  <input
+                    id="pin"
+                    name="pin"
+                    type={showPin ? 'text' : 'password'}
+                    required
+                    maxLength={4}
+                    value={pin}
+                    onChange={(e) => setPin(e.target.value)}
+                    placeholder="Enter 4-digit PIN"
+                    className="mt-1 block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-900 focus:border-blue-900"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPin(!showPin)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 mt-1"
+                  >
+                    {showPin ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-900 disabled:opacity-50"
+                >
+                  {loading ? (
+                    <div className="flex items-center justify-center">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Authenticating...
+                    </div>
+                  ) : (
+                    'Sign In'
+                  )}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Staff Login Form */}
+          {activeTab === 'staff' && (
+            <form className="mt-6 space-y-6" onSubmit={handleStaffLogin}>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={staffEmail}
+                  onChange={(e) => setStaffEmail(e.target.value)}
+                  placeholder="Enter email address"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-900 focus:border-blue-900"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={staffPassword}
+                    onChange={(e) => setStaffPassword(e.target.value)}
+                    placeholder="Enter password"
+                    className="mt-1 block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-900 focus:border-blue-900"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 mt-1"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-900 disabled:opacity-50"
+                >
+                  {loading ? (
+                    <div className="flex items-center justify-center">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Authenticating...
+                    </div>
+                  ) : (
+                    'Sign In'
+                  )}
+                </button>
+              </div>
+            </form>
+          )}
+
+                  </div>
+      </div>
+
+      <div className="mt-8 text-center text-sm text-gray-500">
+        © 2026 All Rights Reserved | Developed by Alie Amadu Sesay
+      </div>
+    </div>
+  )
+}
+
+export default Login
