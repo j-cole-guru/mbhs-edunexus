@@ -17,8 +17,15 @@ const Sidebar = ({ onClose }) => {
   const currentProfile = profile || (staff ? { role: staff.role, full_name: staff.full_name } : null)
 
   const getNavLinks = () => {
+    const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
+    const department = staff.department || 'both'
+
     if (currentProfile?.role === 'admin') {
-      return [
+      const superAdminLinks = [
+        { path: '/admin', label: 'System Dashboard', icon: LayoutDashboard },
+      ]
+
+      const deptAdminLinks = [
         { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
         { path: '/admin/levels', label: 'Manage Levels', icon: Layers },
         { path: '/admin/classes', label: 'Manage Classes', icon: BookOpen },
@@ -30,6 +37,8 @@ const Sidebar = ({ onClose }) => {
         { path: '/admin/timetable', label: 'Upload Timetable', icon: Clock },
         { path: '/admin/promote', label: 'Promote Students', icon: ArrowRight },
       ]
+
+      return department === 'both' ? superAdminLinks : deptAdminLinks
     } else if (currentProfile?.role === 'teacher') {
       return [
         { path: '/teacher', label: 'Dashboard', icon: LayoutDashboard },
