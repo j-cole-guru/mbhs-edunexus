@@ -135,7 +135,8 @@ const Login = () => {
       email: data.user.email,
       access_token: data.access_token,
       role: profile.role,
-      full_name: profile.full_name
+      full_name: profile.full_name,
+      department: profile.department || 'both'
     }))
 
     if (profile.role === 'admin') {

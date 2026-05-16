@@ -9,13 +9,13 @@ import Layout from './components/layout/Layout'
 import AdminDashboard from './pages/admin/Dashboard'
 import ManageLevels from './pages/admin/ManageLevels'
 import ManageClasses from './pages/admin/ManageClasses'
-import ManageSubjects from './pages/admin/ManageSubjects'
 import ManageTerms from './pages/admin/ManageTerms'
 import ManageTeachers from './pages/admin/ManageTeachers'
 import ManageStudents from './pages/admin/ManageStudents'
 import Results from './pages/admin/Results'
 import Attendance from './pages/admin/Attendance'
 import Timetable from './pages/admin/Timetable'
+import PromoteStudents from './pages/admin/PromoteStudents'
 
 // Teacher Pages
 import TeacherDashboard from './pages/teacher/Dashboard'
@@ -65,16 +65,6 @@ function App() {
               <ProtectedRoute role="admin">
                 <Layout role="admin">
                   <ManageClasses />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/subjects"
-            element={
-              <ProtectedRoute role="admin">
-                <Layout role="admin">
-                  <ManageSubjects />
                 </Layout>
               </ProtectedRoute>
             }
@@ -135,6 +125,16 @@ function App() {
               <ProtectedRoute role="admin">
                 <Layout role="admin">
                   <Timetable />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/promote"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <PromoteStudents />
                 </Layout>
               </ProtectedRoute>
             }

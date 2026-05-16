@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { LayoutDashboard, Users, GraduationCap, BookOpen, Library, Layers, CalendarDays, ClipboardList, UserCheck, Clock, LogOut, X } from 'lucide-react'
+import { LayoutDashboard, Users, GraduationCap, BookOpen, Layers, CalendarDays, ClipboardList, UserCheck, Clock, LogOut, X, ArrowRight } from 'lucide-react'
 import logo from '../../assets/logo.png'
 
 const Sidebar = ({ onClose }) => {
@@ -22,13 +22,13 @@ const Sidebar = ({ onClose }) => {
         { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
         { path: '/admin/levels', label: 'Manage Levels', icon: Layers },
         { path: '/admin/classes', label: 'Manage Classes', icon: BookOpen },
-        { path: '/admin/subjects', label: 'Manage Subjects', icon: Library },
         { path: '/admin/terms', label: 'Manage Terms', icon: CalendarDays },
         { path: '/admin/teachers', label: 'Manage Teachers', icon: GraduationCap },
         { path: '/admin/students', label: 'Manage Students', icon: Users },
         { path: '/admin/results', label: 'Upload Results', icon: ClipboardList },
         { path: '/admin/attendance', label: 'Attendance Reports', icon: UserCheck },
         { path: '/admin/timetable', label: 'Upload Timetable', icon: Clock },
+        { path: '/admin/promote', label: 'Promote Students', icon: ArrowRight },
       ]
     } else if (currentProfile?.role === 'teacher') {
       return [

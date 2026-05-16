@@ -57,6 +57,20 @@ const AdminResults = () => {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
+  const getAdminDepartment = () => {
+    const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
+    return staff.department || 'both'
+  }
+
+  const getDepartmentLevels = async () => {
+    const dept = getAdminDepartment()
+    const url = dept === 'both'
+      ? `${BASE_URL}/levels?select=*&order=name`
+      : `${BASE_URL}/levels?select=*&department=eq.${dept}&order=name`
+    const res = await fetch(url, { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } })
+    return await res.json()
+  }
+
   useEffect(() => {
     const load = async () => {
       await Promise.all([fetchTerms(), fetchLevels(), fetchClasses()])
@@ -74,15 +88,20 @@ const AdminResults = () => {
   }
 
   const fetchLevels = async () => {
-    const res = await fetch(`${BASE_URL}/levels?select=*&order=name.asc`, { 
-      headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } 
-    })
-    const d = await res.json()
+    const d = await getDepartmentLevels()
     setLevels(Array.isArray(d) ? d : [])
   }
 
   const fetchClasses = async () => {
-    const res = await fetch(`${BASE_URL}/classes?select=*&order=name.asc`, { 
+    const levelData = await getDepartmentLevels()
+    const levelIds = levelData.map(l => l.id)
+    
+    if (levelIds.length === 0) {
+      setClasses([])
+      return
+    }
+
+    const res = await fetch(`${BASE_URL}/classes?select=*&level_id=in.(${levelIds.join(',')})&order=name.asc`, { 
       headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } 
     })
     const d = await res.json()

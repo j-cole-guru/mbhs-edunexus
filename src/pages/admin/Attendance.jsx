@@ -32,6 +32,20 @@ export default function AdminAttendance() {
   const [day, setDay] = useState('')
   const [selectedDate, setSelectedDate] = useState('')
 
+  const getAdminDepartment = () => {
+    const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
+    return staff.department || 'both'
+  }
+
+  const getDepartmentLevels = async () => {
+    const dept = getAdminDepartment()
+    const url = dept === 'both'
+      ? `${BASE_URL}/levels?select=*&order=name`
+      : `${BASE_URL}/levels?select=*&department=eq.${dept}&order=name`
+    const res = await fetch(url, { headers })
+    return await res.json()
+  }
+
   useEffect(() => {
     loadInitialData()
   }, [])
@@ -45,12 +59,18 @@ export default function AdminAttendance() {
 
   const loadInitialData = async () => {
     try {
-      const [levelsRes, classesRes, termsRes] = await Promise.all([
-        fetch(`${BASE_URL}/levels?select=*&order=name`, { headers }),
-        fetch(`${BASE_URL}/classes?select=*&order=name`, { headers }),
+      const levelsData = await getDepartmentLevels()
+      const levelIds = levelsData.map(l => l.id)
+      
+      const classesUrl = levelIds.length > 0 
+        ? `${BASE_URL}/classes?select=*&level_id=in.(${levelIds.join(',')})&order=name`
+        : `${BASE_URL}/classes?select=*&order=name`
+      
+      const [classesRes, termsRes] = await Promise.all([
+        fetch(classesUrl, { headers }),
         fetch(`${BASE_URL}/terms?select=*&order=created_at.asc`, { headers })
       ])
-      setLevels(await levelsRes.json())
+      setLevels(levelsData)
       setClasses(await classesRes.json())
       setTerms(await termsRes.json())
     } catch (err) {

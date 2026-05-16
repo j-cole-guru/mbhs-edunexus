@@ -20,68 +20,74 @@ const AdminDashboard = () => {
       // Get staff data from localStorage
       const staff = JSON.parse(localStorage.getItem('mbhs_staff'))
       const token = staff?.access_token
+      const dept = staff?.department || 'both'
 
       if (!token) {
         throw new Error('No authentication token found')
       }
 
-      // Fetch total students
-      const studentsRes = await fetch(
-        'https://tvitevnovhiimpdukebm.supabase.co/rest/v1/students?select=count',
-        {
-          headers: {
-            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
-            'Authorization': `Bearer ${token}`,
-            'Prefer': 'count=exact'
-          }
-        }
-      )
+      const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y'
+      const BASE_URL = 'https://tvitevnovhiimpdukebm.supabase.co/rest/v1'
+      const headers = {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
 
-      // Fetch total teachers
-      const teachersRes = await fetch(
-        'https://tvitevnovhiimpdukebm.supabase.co/rest/v1/teachers?select=count',
-        {
-          headers: {
-            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
-            'Authorization': `Bearer ${token}`,
-            'Prefer': 'count=exact'
-          }
-        }
-      )
+      // Get level IDs for this department
+      const levelsUrl = dept === 'both'
+        ? `${BASE_URL}/levels?select=id`
+        : `${BASE_URL}/levels?select=id&department=eq.${dept}`
+      const levelsRes = await fetch(levelsUrl, { headers })
+      const levels = await levelsRes.json()
+      const levelIds = levels.map(l => l.id)
 
-      // Fetch total classes
-      const classesRes = await fetch(
-        'https://tvitevnovhiimpdukebm.supabase.co/rest/v1/classes?select=count',
-        {
-          headers: {
-            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
-            'Authorization': `Bearer ${token}`,
-            'Prefer': 'count=exact'
-          }
-        }
-      )
+      // Count students in these levels
+      let studentsCount = 0
+      if (levelIds.length > 0) {
+        const studentsRes = await fetch(
+          `${BASE_URL}/students?level_id=in.(${levelIds.join(',')})&select=id`,
+          { headers }
+        )
+        const students = await studentsRes.json()
+        studentsCount = Array.isArray(students) ? students.length : 0
+      }
+
+      // Count teachers in these levels
+      let teachersCount = 0
+      if (levelIds.length > 0) {
+        const teachersRes = await fetch(
+          `${BASE_URL}/teachers?level_id=in.(${levelIds.join(',')})&select=id`,
+          { headers }
+        )
+        const teachers = await teachersRes.json()
+        teachersCount = Array.isArray(teachers) ? teachers.length : 0
+      }
+
+      // Count classes in these levels
+      let classesCount = 0
+      if (levelIds.length > 0) {
+        const classesRes = await fetch(
+          `${BASE_URL}/classes?level_id=in.(${levelIds.join(',')})&select=id`,
+          { headers }
+        )
+        const classes = await classesRes.json()
+        classesCount = Array.isArray(classes) ? classes.length : 0
+      }
 
       // Fetch current term
       const termRes = await fetch(
-        'https://tvitevnovhiimpdukebm.supabase.co/rest/v1/terms?is_current=eq.true&select=*',
-        {
-          headers: {
-            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y',
-            'Authorization': `Bearer ${token}`
-          }
-        }
+        `${BASE_URL}/terms?is_current=eq.true&select=*`,
+        { headers }
       )
-
-      const studentsCount = studentsRes.ok ? parseInt(studentsRes.headers.get('content-range')?.split('/')[1] || '0') : 0
-      const teachersCount = teachersRes.ok ? parseInt(teachersRes.headers.get('content-range')?.split('/')[1] || '0') : 0
-      const classesCount = classesRes.ok ? parseInt(classesRes.headers.get('content-range')?.split('/')[1] || '0') : 0
-      const currentTermData = termRes.ok ? await termRes.json() : null
+      const termData = await termRes.json()
 
       setStats({
         totalStudents: studentsCount,
         totalTeachers: teachersCount,
         totalClasses: classesCount,
-        currentTerm: currentTermData?.[0] || null
+        currentTerm: Array.isArray(termData) ? termData[0] || null : null,
+        department: dept
       })
     } catch (error) {
       console.error('Error fetching dashboard stats:', error)
@@ -90,7 +96,8 @@ const AdminDashboard = () => {
         totalStudents: 0,
         totalTeachers: 0,
         totalClasses: 0,
-        currentTerm: null
+        currentTerm: null,
+        department: 'both'
       })
     } finally {
       setLoading(false)
@@ -108,7 +115,7 @@ const AdminDashboard = () => {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="page-title">Dashboard</h1>
+        <h1 className="page-title">{stats.department === 'both' ? 'All Departments' : `${stats.department} Department`} — Dashboard</h1>
         <p className="text-gray-600 mt-2">School Management Overview</p>
       </div>
 

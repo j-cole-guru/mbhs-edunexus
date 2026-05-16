@@ -49,6 +49,20 @@ const ManageStudents = () => {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
+  const getAdminDepartment = () => {
+    const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
+    return staff.department || 'both'
+  }
+
+  const getDepartmentLevels = async () => {
+    const dept = getAdminDepartment()
+    const url = dept === 'both'
+      ? '/levels?select=*&order=name'
+      : `/levels?select=*&department=eq.${dept}&order=name`
+    const res = await apiFetch(url)
+    return res
+  }
+
   useEffect(() => {
     fetchStudents()
     fetchLevels()
@@ -57,7 +71,16 @@ const ManageStudents = () => {
 
   const fetchStudents = async () => {
     try {
-      const data = await apiFetch('/students?select=*,classes(name),levels(name)&order=created_at.desc')
+      const levelData = await getDepartmentLevels()
+      const levelIds = levelData.map(l => l.id)
+      
+      if (levelIds.length === 0) {
+        setStudents([])
+        setLoading(false)
+        return
+      }
+
+      const data = await apiFetch(`/students?select=*,classes(name),levels(name)&level_id=in.(${levelIds.join(',')})&order=created_at.desc`)
       console.log('Students fetched:', data)
       setStudents(data)
     } catch (error) {
@@ -70,7 +93,7 @@ const ManageStudents = () => {
 
   const fetchLevels = async () => {
     try {
-      const data = await apiFetch('/levels?select=*')
+      const data = await getDepartmentLevels()
       setLevels(data)
     } catch (error) {
       console.error('Error fetching levels:', error)
@@ -79,7 +102,15 @@ const ManageStudents = () => {
 
   const fetchClasses = async () => {
     try {
-      const data = await apiFetch('/classes?select=*')
+      const levelData = await getDepartmentLevels()
+      const levelIds = levelData.map(l => l.id)
+      
+      if (levelIds.length === 0) {
+        setClasses([])
+        return
+      }
+
+      const data = await apiFetch(`/classes?select=*&level_id=in.(${levelIds.join(',')})`)
       setClasses(data)
     } catch (error) {
       console.error('Error fetching classes:', error)

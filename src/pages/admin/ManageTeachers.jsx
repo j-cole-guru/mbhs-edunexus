@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Plus, Trash2, GraduationCap, CheckCircle, AlertCircle } from 'lucide-react'
+import { Plus, Trash2, GraduationCap, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react'
 
 const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y'
 const BASE_URL = 'https://tvitevnovhiimpdukebm.supabase.co/rest/v1'
@@ -24,6 +24,28 @@ const ManageTeachers = () => {
   })
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  
+  // Admin creation states
+  const [adminName, setAdminName] = useState('')
+  const [adminEmail, setAdminEmail] = useState('')
+  const [adminPassword, setAdminPassword] = useState('')
+  const [adminDepartment, setAdminDepartment] = useState('')
+  const [adminSuccess, setAdminSuccess] = useState('')
+  const [adminError, setAdminError] = useState('')
+
+  const getAdminDepartment = () => {
+    const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
+    return staff.department || 'both'
+  }
+
+  const getDepartmentLevels = async () => {
+    const dept = getAdminDepartment()
+    const url = dept === 'both'
+      ? `${BASE_URL}/levels?select=*&order=name`
+      : `${BASE_URL}/levels?select=*&department=eq.${dept}&order=name`
+    const res = await fetch(url, { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } })
+    return await res.json()
+  }
 
   useEffect(() => {
     const loadData = async () => {
@@ -37,10 +59,7 @@ const ManageTeachers = () => {
 
   const fetchLevels = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/levels?select=*`, {
-        headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
-      })
-      const data = await res.json()
+      const data = await getDepartmentLevels()
       setLevels(Array.isArray(data) ? data : [])
     } catch (error) {
       console.error('Error fetching levels:', error)
@@ -49,7 +68,15 @@ const ManageTeachers = () => {
 
   const fetchClasses = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/classes?select=*`, {
+      const levelData = await getDepartmentLevels()
+      const levelIds = levelData.map(l => l.id)
+      
+      if (levelIds.length === 0) {
+        setClasses([])
+        return
+      }
+
+      const res = await fetch(`${BASE_URL}/classes?select=*&level_id=in.(${levelIds.join(',')})`, {
         headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
       })
       const data = await res.json()
@@ -61,7 +88,15 @@ const ManageTeachers = () => {
 
   const fetchTeachers = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/teachers?select=*&order=created_at.desc`, {
+      const levelData = await getDepartmentLevels()
+      const levelIds = levelData.map(l => l.id)
+      
+      if (levelIds.length === 0) {
+        setTeachers([])
+        return
+      }
+
+      const res = await fetch(`${BASE_URL}/teachers?select=*&level_id=in.(${levelIds.join(',')})&order=created_at.desc`, {
         headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
       })
       const teachers = await res.json()
@@ -215,6 +250,62 @@ const ManageTeachers = () => {
     }
   }
 
+  const handleCreateAdmin = async () => {
+    if (!adminName || !adminEmail || !adminPassword || !adminDepartment) {
+      setAdminError('All fields are required.')
+      return
+    }
+    setAdminError('')
+    setAdminSuccess('')
+    try {
+      // Create auth account
+      const SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODE0Nzk0OSwiZXhwIjoyMDkzNzIzOTQ5fQ.39YaOjLVvB6CIKg--T2-97B-F-62t8n-8ZYrhKUQokk'
+      const authRes = await fetch('https://tvitevnovhiimpdukebm.supabase.co/auth/v1/admin/users', {
+        method: 'POST',
+        headers: {
+          'apikey': SERVICE_ROLE_KEY,
+          'Authorization': `Bearer ${SERVICE_ROLE_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: adminEmail,
+          password: adminPassword,
+          email_confirm: true,
+          user_metadata: { full_name: adminName, role: 'admin' }
+        })
+      })
+      const authData = await authRes.json()
+      console.log('Admin auth created:', authData)
+
+      // Insert into profiles with department
+      await fetch(`${BASE_URL}/profiles`, {
+        method: 'POST',
+        headers: {
+          'apikey': ANON_KEY,
+          'Authorization': `Bearer ${getToken()}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({
+          id: authData.id,
+          full_name: adminName,
+          email: adminEmail,
+          role: 'admin',
+          department: adminDepartment
+        })
+      })
+
+      setAdminSuccess(`${adminDepartment} Admin created successfully. Email: ${adminEmail}`)
+      setAdminName('')
+      setAdminEmail('')
+      setAdminPassword('')
+      setAdminDepartment('')
+    } catch (err) {
+      console.error('Error creating admin:', err)
+      setAdminError('Failed to create admin account.')
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -229,6 +320,65 @@ const ManageTeachers = () => {
         <h1 className="page-title">Teacher Management</h1>
         <p className="text-gray-600 mt-2">Create and manage teaching staff</p>
       </div>
+
+      {getAdminDepartment() === 'both' && (
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Department Administrators</h2>
+          <p className="text-sm text-gray-500 mb-4">Create admin accounts for JSS and SSS departments.</p>
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">Full Name</label>
+              <input
+                type="text"
+                value={adminName}
+                onChange={e => setAdminName(e.target.value)}
+                placeholder="Enter full name"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
+              <input
+                type="email"
+                value={adminEmail}
+                onChange={e => setAdminEmail(e.target.value)}
+                placeholder="Enter email"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">Password</label>
+              <input
+                type="password"
+                value={adminPassword}
+                onChange={e => setAdminPassword(e.target.value)}
+                placeholder="Enter password"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">Department</label>
+              <select
+                value={adminDepartment}
+                onChange={e => setAdminDepartment(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              >
+                <option value="">Select Department</option>
+                <option value="JSS">JSS</option>
+                <option value="SSS">SSS</option>
+              </select>
+            </div>
+          </div>
+          <button
+            onClick={handleCreateAdmin}
+            className="bg-black text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800"
+          >
+            Create Department Admin
+          </button>
+          {adminSuccess && <p className="text-green-600 text-sm mt-2">{adminSuccess}</p>}
+          {adminError && <p className="text-red-600 text-sm mt-2">{adminError}</p>}
+        </div>
+      )}
 
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8">
         <h2 className="section-title mb-4">Create New Teacher</h2>

@@ -35,8 +35,23 @@ const ManageLevels = () => {
   const [levels, setLevels] = useState([])
   const [loading, setLoading] = useState(true)
   const [newLevelName, setNewLevelName] = useState('')
+  const [newLevelDepartment, setNewLevelDepartment] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+
+  const getAdminDepartment = () => {
+    const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
+    return staff.department || 'both'
+  }
+
+  const getDepartmentLevels = async () => {
+    const dept = getAdminDepartment()
+    const url = dept === 'both'
+      ? '/levels?select=*&order=name'
+      : `/levels?select=*&department=eq.${dept}&order=name`
+    const data = await apiFetch(url)
+    return data
+  }
 
   useEffect(() => {
     fetchLevels()
@@ -44,7 +59,7 @@ const ManageLevels = () => {
 
   const fetchLevels = async () => {
     try {
-      const data = await apiFetch('/levels?select=*&order=created_at.desc')
+      const data = await getDepartmentLevels()
       console.log('Levels fetched:', data)
       setLevels(data)
     } catch (error) {
@@ -65,15 +80,21 @@ const ManageLevels = () => {
       return
     }
 
+    if (!newLevelDepartment) {
+      setError('Department is required')
+      return
+    }
+
     try {
-      console.log('Creating level:', newLevelName.trim())
+      console.log('Creating level:', newLevelName.trim(), 'Department:', newLevelDepartment)
       const data = await apiFetch('/levels', {
         method: 'POST',
-        body: JSON.stringify({ name: newLevelName.trim() }),
+        body: JSON.stringify({ name: newLevelName.trim(), department: newLevelDepartment }),
         prefer: 'return=representation'
       })
       console.log('Level created successfully:', data)
       setNewLevelName('')
+      setNewLevelDepartment('')
       setSuccess('Level created successfully')
       // Refresh the list
       await fetchLevels()
@@ -144,6 +165,15 @@ const ManageLevels = () => {
             placeholder="Enter level name (e.g., JSS1, SS2)"
             className="flex-1 form-input"
           />
+          <select
+            value={newLevelDepartment}
+            onChange={(e) => setNewLevelDepartment(e.target.value)}
+            className="flex-1 form-input"
+          >
+            <option value="">Select Department</option>
+            <option value="JSS">JSS</option>
+            <option value="SSS">SSS</option>
+          </select>
           <button
             type="submit"
             className="px-6 py-2 btn-primary flex items-center"
@@ -174,6 +204,9 @@ const ManageLevels = () => {
                     Level Name
                   </th>
                   <th className="table-header">
+                    Department
+                  </th>
+                  <th className="table-header">
                     Created At
                   </th>
                   <th className="table-header text-right">
@@ -187,6 +220,11 @@ const ManageLevels = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
                         {level.name}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500">
+                        {level.department || 'N/A'}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
