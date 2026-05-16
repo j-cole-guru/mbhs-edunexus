@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Activity, CheckCircle, AlertCircle, Clock, Database, Users, Server } from 'lucide-react'
 
-const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y'
-const BASE_URL = 'https://tvitevnovhiimpdukebm.supabase.co/rest/v1'
+const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
 const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
 
 export default function SystemHealth() {
@@ -36,7 +36,7 @@ export default function SystemHealth() {
     } catch { newHealth.database = 'error' }
 
     try {
-      const authRes = await fetch('https://tvitevnovhiimpdukebm.supabase.co/auth/v1/settings', {
+      const authRes = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/settings`, {
         headers: { 'apikey': ANON_KEY }
       })
       newHealth.auth = authRes.ok ? 'healthy' : 'error'

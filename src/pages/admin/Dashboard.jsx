@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { LayoutDashboard, Users, GraduationCap, BookOpen, CalendarDays, Plus, ClipboardList, UserCheck, Clock, Layers, ArrowRight } from 'lucide-react'
+import { LayoutDashboard, Users, GraduationCap, BookOpen, CalendarDays, Plus, ClipboardList, UserCheck, Clock, Layers, ArrowRight, MessageSquare } from 'lucide-react'
 
-const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y'
-const SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODE0Nzk0OSwiZXhwIjoyMDkzNzIzOTQ5fQ.39YaOjLVvB6CIKg--T2-97B-F-62t8n-8ZYrhKUQokk'
-const BASE_URL = 'https://tvitevnovhiimpdukebm.supabase.co/rest/v1'
+const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+const SERVICE_ROLE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
+const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
 
 const getToken = () => {
   const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
@@ -26,6 +26,7 @@ const AdminDashboard = () => {
     jssTeachers: [], sssTeachers: [],
     allClasses: [], currentTerm: []
   })
+  const [unreadReports, setUnreadReports] = useState(0)
 
   // States for Department Admin Creation
   const [adminName, setAdminName] = useState('')
@@ -50,14 +51,17 @@ const AdminDashboard = () => {
         const jssLevelIds = jssLevels.map(l => l.id)
         const sssLevelIds = sssLevels.map(l => l.id)
 
-        const [jssStudents, sssStudents, jssTeachers, sssTeachers, allClasses, currentTerm] = await Promise.all([
+        const [jssStudents, sssStudents, jssTeachers, sssTeachers, allClasses, currentTerm, reportsData] = await Promise.all([
           jssLevelIds.length > 0 ? fetch(`${BASE_URL}/students?level_id=in.(${jssLevelIds.join(',')})&select=id`, { headers }).then(r => r.json()) : Promise.resolve([]),
           sssLevelIds.length > 0 ? fetch(`${BASE_URL}/students?level_id=in.(${sssLevelIds.join(',')})&select=id`, { headers }).then(r => r.json()) : Promise.resolve([]),
           jssLevelIds.length > 0 ? fetch(`${BASE_URL}/teachers?level_id=in.(${jssLevelIds.join(',')})&select=id`, { headers }).then(r => r.json()) : Promise.resolve([]),
           sssLevelIds.length > 0 ? fetch(`${BASE_URL}/teachers?level_id=in.(${sssLevelIds.join(',')})&select=id`, { headers }).then(r => r.json()) : Promise.resolve([]),
           fetch(`${BASE_URL}/classes?select=id`, { headers }).then(r => r.json()),
           fetch(`${BASE_URL}/terms?is_current=eq.true&select=name,year`, { headers }).then(r => r.json()),
+          fetch(`${BASE_URL}/reports?status=eq.unread&select=id`, { headers }).then(r => r.json()),
         ])
+        
+        setUnreadReports(Array.isArray(reportsData) ? reportsData.length : 0)
 
         setStats({
           jssLevels, sssLevels,
@@ -73,12 +77,15 @@ const AdminDashboard = () => {
         const levels = await fetch(`${BASE_URL}/levels?select=id&department=eq.${department}`, { headers }).then(r => r.json())
         const levelIds = levels.map(l => l.id)
         
-        const [students, teachers, classes, currentTerm] = await Promise.all([
+        const [students, teachers, classes, currentTerm, reportsData] = await Promise.all([
           levelIds.length > 0 ? fetch(`${BASE_URL}/students?level_id=in.(${levelIds.join(',')})&select=id`, { headers }).then(r => r.json()) : Promise.resolve([]),
           levelIds.length > 0 ? fetch(`${BASE_URL}/teachers?level_id=in.(${levelIds.join(',')})&select=id`, { headers }).then(r => r.json()) : Promise.resolve([]),
           levelIds.length > 0 ? fetch(`${BASE_URL}/classes?level_id=in.(${levelIds.join(',')})&select=id`, { headers }).then(r => r.json()) : Promise.resolve([]),
-          fetch(`${BASE_URL}/terms?is_current=eq.true&select=name,year`, { headers }).then(r => r.json())
+          fetch(`${BASE_URL}/terms?is_current=eq.true&select=name,year`, { headers }).then(r => r.json()),
+          fetch(`${BASE_URL}/reports?status=eq.unread&select=id`, { headers }).then(r => r.json())
         ])
+
+        setUnreadReports(Array.isArray(reportsData) ? reportsData.length : 0)
 
         setStats({
           levels,
@@ -103,7 +110,7 @@ const AdminDashboard = () => {
     setAdminError('')
     setAdminSuccess('')
     try {
-      const authRes = await fetch('https://tvitevnovhiimpdukebm.supabase.co/auth/v1/admin/users', {
+      const authRes = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/admin/users`, {
         method: 'POST',
         headers: {
           'apikey': SERVICE_ROLE_KEY,
@@ -181,6 +188,11 @@ const AdminDashboard = () => {
           <div className="bg-white border border-gray-200 rounded-lg p-5">
             <p className="text-xs uppercase tracking-wide text-gray-500">Current Term</p>
             <p className="text-lg font-bold mt-1 text-gray-900">{stats.currentTerm[0] ? `${stats.currentTerm[0].name} ${stats.currentTerm[0].year}` : 'Not Set'}</p>
+          </div>
+          <div className="bg-white rounded-lg shadow p-5 border-l-4 border-yellow-500">
+            <p className="text-xs uppercase tracking-wide text-gray-500">Unread Reports</p>
+            <p className="text-3xl font-bold text-gray-900">{unreadReports}</p>
+            <p className="text-xs text-yellow-600 mt-1">Student reports pending review</p>
           </div>
         </div>
 
@@ -316,6 +328,16 @@ const AdminDashboard = () => {
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Current Term</p>
               <p className="text-lg font-bold text-gray-900">{stats.currentTerm[0] ? stats.currentTerm[0].name : 'Not Set'}</p>
+            </div>
+          </div>
+        </button>
+
+        <button onClick={() => window.location.href = '/admin/reports'} className="stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
+          <div className="flex items-center">
+            <div className="stat-icon bg-yellow-100"><MessageSquare className="h-4 w-4 text-yellow-600" /></div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Unread Reports</p>
+              <p className="text-2xl font-bold text-gray-900">{unreadReports}</p>
             </div>
           </div>
         </button>

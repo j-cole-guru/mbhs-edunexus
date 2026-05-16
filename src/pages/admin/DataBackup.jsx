@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { Database, Download, RefreshCw } from 'lucide-react'
 import * as XLSX from 'xlsx'
 
-const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y'
-const BASE_URL = 'https://tvitevnovhiimpdukebm.supabase.co/rest/v1'
+const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
 const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
 
 export default function DataBackup() {

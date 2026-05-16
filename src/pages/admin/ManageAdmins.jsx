@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { UserCog, Trash2, Plus } from 'lucide-react'
 
-const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y'
-const BASE_URL = 'https://tvitevnovhiimpdukebm.supabase.co/rest/v1'
-const SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODE0Nzk0OSwiZXhwIjoyMDkzNzIzOTQ5fQ.39YaOjLVvB6CIKg--T2-97B-F-62t8n-8ZYrhKUQokk'
+const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+const SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
+const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
+
 const getToken = () => JSON.parse(localStorage.getItem('mbhs_staff') || '{}').access_token || ANON_KEY
 const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
 
@@ -33,7 +34,7 @@ export default function ManageAdmins() {
     if (!name || !email || !password || !department) { setError('All fields required.'); return }
     setError(''); setSuccess('')
     try {
-      const authRes = await fetch('https://tvitevnovhiimpdukebm.supabase.co/auth/v1/admin/users', {
+      const authRes = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/admin/users`, {
         method: 'POST',
         headers: { 'apikey': SERVICE_KEY, 'Authorization': `Bearer ${SERVICE_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, email_confirm: true, user_metadata: { full_name: name, role: 'admin' } })
@@ -53,6 +54,24 @@ export default function ManageAdmins() {
     } catch (err) { 
       console.error('Admin creation error:', err)
       setError(err.message || 'Failed to create admin.') 
+    }
+  }
+
+  const handleDeleteAdmin = async (adminId, adminEmail) => {
+    if (!window.confirm(`Are you sure you want to delete the admin account for ${adminEmail}? This cannot be undone.`)) return
+    try {
+      await fetch(`${BASE_URL}/profiles?id=eq.${adminId}`, {
+        method: 'DELETE',
+        headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+      })
+      await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/admin/users/${adminId}`, {
+        method: 'DELETE',
+        headers: { 'apikey': SERVICE_KEY, 'Authorization': `Bearer ${SERVICE_KEY}` }
+      })
+      setSuccess('Admin account deleted successfully.')
+      fetchAdmins()
+    } catch {
+      setError('Failed to delete admin account.')
     }
   }
 
@@ -112,6 +131,7 @@ export default function ManageAdmins() {
                 <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Email</th>
                 <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Department</th>
                 <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Created</th>
+                <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -125,6 +145,16 @@ export default function ManageAdmins() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-gray-500 text-xs">{new Date(admin.created_at).toLocaleDateString()}</td>
+                  <td className="px-4 py-3">
+                    {admin.department !== 'both' && (
+                      <button
+                        onClick={() => handleDeleteAdmin(admin.id, admin.email)}
+                        className="flex items-center gap-1 text-red-600 hover:text-red-800 text-xs font-medium"
+                      >
+                        <Trash2 size={14} /> Delete
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Plus, Trash2, GraduationCap, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react'
 
-const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y'
-const BASE_URL = 'https://tvitevnovhiimpdukebm.supabase.co/rest/v1'
+const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
 const getToken = () => {
   const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
   return staff.access_token || ANON_KEY
@@ -143,10 +143,10 @@ const ManageTeachers = () => {
 
     try {
       // ⚠️ Replace with your service_role key from Supabase Dashboard → Settings → API
-      const SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODE0Nzk0OSwiZXhwIjoyMDkzNzIzOTQ5fQ.39YaOjLVvB6CIKg--T2-97B-F-62t8n-8ZYrhKUQokk'
+      const SERVICE_ROLE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
 
       // Step 1: Create auth user via admin API (requires service_role key)
-      const authRes = await fetch('https://tvitevnovhiimpdukebm.supabase.co/auth/v1/admin/users', {
+      const authRes = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/admin/users`, {
         method: 'POST',
         headers: {
           'apikey': SERVICE_ROLE_KEY,

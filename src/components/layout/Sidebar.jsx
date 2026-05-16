@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { LayoutDashboard, Users, GraduationCap, BookOpen, Layers, CalendarDays, ClipboardList, UserCheck, Clock, LogOut, X, ArrowRight, Activity, Shield, FileText, UserCog, Database } from 'lucide-react'
+import { LayoutDashboard, Users, GraduationCap, BookOpen, Layers, CalendarDays, ClipboardList, UserCheck, Clock, LogOut, X, ArrowRight, Activity, Shield, FileText, UserCog, Database, MessageSquare } from 'lucide-react'
 import logo from '../../assets/logo.png'
 
 const Sidebar = ({ onClose }) => {
@@ -41,6 +41,7 @@ const Sidebar = ({ onClose }) => {
         { path: '/admin/attendance', label: 'Attendance Reports', icon: UserCheck },
         { path: '/admin/timetable', label: 'Upload Timetable', icon: Clock },
         { path: '/admin/promote', label: 'Promote Students', icon: ArrowRight },
+        { path: '/admin/reports', label: 'Student Reports', icon: MessageSquare },
       ]
 
       return department === 'both' ? superAdminLinks : deptAdminLinks
@@ -56,6 +57,7 @@ const Sidebar = ({ onClose }) => {
         { path: '/student/results', label: 'My Results', icon: ClipboardList },
         { path: '/student/attendance', label: 'Attendance', icon: UserCheck },
         { path: '/student/timetable', label: 'Timetable', icon: Clock },
+        { path: '/student/report', label: 'Submit Report', icon: MessageSquare },
       ]
     }
     return []

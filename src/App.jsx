@@ -21,6 +21,7 @@ import SecurityLogs from './pages/admin/SecurityLogs'
 import AuditTrail from './pages/admin/AuditTrail'
 import ManageAdmins from './pages/admin/ManageAdmins'
 import DataBackup from './pages/admin/DataBackup'
+import StudentReports from './pages/admin/StudentReports'
 
 // Teacher Pages
 import TeacherDashboard from './pages/teacher/Dashboard'
@@ -33,6 +34,7 @@ import StudentDashboard from './pages/student/Dashboard'
 import StudentResults from './pages/student/Results'
 import StudentAttendance from './pages/student/Attendance'
 import StudentTimetable from './pages/student/Timetable'
+import MakeReport from './pages/student/MakeReport'
 
 function App() {
   return (
@@ -194,6 +196,16 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin/reports"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <StudentReports />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
 
           {/* Teacher Routes */}
           <Route
@@ -274,6 +286,16 @@ function App() {
               <ProtectedRoute role="student">
                 <Layout role="student">
                   <StudentTimetable />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/report"
+            element={
+              <ProtectedRoute role="student">
+                <Layout role="student">
+                  <MakeReport />
                 </Layout>
               </ProtectedRoute>
             }
