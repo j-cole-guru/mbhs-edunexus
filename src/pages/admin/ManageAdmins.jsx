@@ -11,12 +11,12 @@ const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
 export default function ManageAdmins() {
   const [admins, setAdmins] = useState([])
   const [loading, setLoading] = useState(true)
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [department, setDepartment] = useState('')
-  const [success, setSuccess] = useState('')
-  const [error, setError] = useState('')
+  const [adminName, setAdminName] = useState('')
+  const [adminEmail, setAdminEmail] = useState('')
+  const [adminPassword, setAdminPassword] = useState('')
+  const [adminDepartment, setAdminDepartment] = useState('')
+  const [adminSuccess, setAdminSuccess] = useState('')
+  const [adminError, setAdminError] = useState('')
 
   useEffect(() => { fetchAdmins() }, [])
 
@@ -30,30 +30,94 @@ export default function ManageAdmins() {
     finally { setLoading(false) }
   }
 
-  const handleCreate = async () => {
-    if (!name || !email || !password || !department) { setError('All fields required.'); return }
-    setError(''); setSuccess('')
-    try {
-      const authRes = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/admin/users`, {
-        method: 'POST',
-        headers: { 'apikey': SERVICE_KEY, 'Authorization': `Bearer ${SERVICE_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, email_confirm: true, user_metadata: { full_name: name, role: 'admin' } })
-      })
-      const authData = await authRes.json()
-      
-      if (!authRes.ok) throw new Error(authData.message || 'Auth creation failed')
+  const handleCreateAdmin = async () => {
+    if (!adminName || !adminEmail || !adminPassword || !adminDepartment) {
+      setAdminError('All fields are required.')
+      return
+    }
+    setAdminError('')
+    setAdminSuccess('')
 
-      await fetch(`${BASE_URL}/profiles`, {
+    const SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
+    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+    const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+    const BASE_URL = `${SUPABASE_URL}/rest/v1`
+
+    console.log('Service key exists:', !!SERVICE_KEY)
+    console.log('URL:', SUPABASE_URL)
+
+    try {
+      // Step 1 - Create auth account
+      const authRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
         method: 'POST',
-        headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
-        body: JSON.stringify({ id: authData.id, full_name: name, email, role: 'admin', department })
+        headers: {
+          'apikey': SERVICE_KEY,
+          'Authorization': `Bearer ${SERVICE_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: adminEmail,
+          password: adminPassword,
+          email_confirm: true,
+          user_metadata: {
+            full_name: adminName,
+            role: 'admin'
+          }
+        })
       })
-      setSuccess(`${department} Admin created successfully.`)
-      setName(''); setEmail(''); setPassword(''); setDepartment('')
+
+      const authText = await authRes.text()
+      console.log('Auth response status:', authRes.status)
+      console.log('Auth response:', authText)
+
+      if (!authRes.ok) {
+        setAdminError(`Failed to create auth account: ${authText}`)
+        return
+      }
+
+      const authData = JSON.parse(authText)
+      const newUserId = authData.id
+
+      if (!newUserId) {
+        setAdminError('Auth account created but no user ID returned.')
+        return
+      }
+
+      // Step 2 - Insert into profiles
+      const profileRes = await fetch(`${BASE_URL}/profiles`, {
+        method: 'POST',
+        headers: {
+          'apikey': ANON_KEY,
+          'Authorization': `Bearer ${getToken()}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({
+          id: newUserId,
+          full_name: adminName,
+          email: adminEmail,
+          role: 'admin',
+          department: adminDepartment
+        })
+      })
+
+      const profileText = await profileRes.text()
+      console.log('Profile response:', profileText)
+
+      if (!profileRes.ok) {
+        setAdminError(`Auth created but profile failed: ${profileText}`)
+        return
+      }
+
+      setAdminSuccess(`${adminDepartment} Admin created successfully. Email: ${adminEmail}`)
+      setAdminName('')
+      setAdminEmail('')
+      setAdminPassword('')
+      setAdminDepartment('')
       fetchAdmins()
-    } catch (err) { 
-      console.error('Admin creation error:', err)
-      setError(err.message || 'Failed to create admin.') 
+    } catch (err) {
+      console.error('Create admin error:', err)
+      setAdminError('Something went wrong: ' + err.message)
     }
   }
 
@@ -84,22 +148,22 @@ export default function ManageAdmins() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">Full Name</label>
-            <input value={name} onChange={e => setName(e.target.value)} placeholder="Enter full name"
+            <input value={adminName} onChange={e => setAdminName(e.target.value)} placeholder="Enter full name"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter email"
+            <input type="email" value={adminEmail} onChange={e => setAdminEmail(e.target.value)} placeholder="Enter email"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">Password</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter password"
+            <input type="password" value={adminPassword} onChange={e => setAdminPassword(e.target.value)} placeholder="Enter password"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">Department</label>
-            <select value={department} onChange={e => setDepartment(e.target.value)}
+            <select value={adminDepartment} onChange={e => setAdminDepartment(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900">
               <option value="">Select Department</option>
               <option value="JSS">JSS</option>
@@ -107,12 +171,12 @@ export default function ManageAdmins() {
             </select>
           </div>
         </div>
-        <button onClick={handleCreate}
+        <button onClick={handleCreateAdmin}
           className="flex items-center gap-2 bg-black text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800">
           <Plus size={16} /> Create Admin
         </button>
-        {success && <p className="text-green-600 text-sm mt-3">{success}</p>}
-        {error && <p className="text-red-600 text-sm mt-3">{error}</p>}
+        {adminSuccess && <p className="text-green-600 text-sm mt-3">{adminSuccess}</p>}
+        {adminError && <p className="text-red-600 text-sm mt-3">{adminError}</p>}
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">

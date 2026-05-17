@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { LayoutDashboard, Users, GraduationCap, BookOpen, CalendarDays, Plus, ClipboardList, UserCheck, Clock, Layers, ArrowRight, MessageSquare } from 'lucide-react'
+import { LayoutDashboard, Users, GraduationCap, BookOpen, CalendarDays, Plus, ClipboardList, UserCheck, Clock, Layers, ArrowRight, MessageSquare, Trash2 } from 'lucide-react'
 
 const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 const SERVICE_ROLE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
@@ -36,8 +36,59 @@ const AdminDashboard = () => {
   const [adminSuccess, setAdminSuccess] = useState('')
   const [adminError, setAdminError] = useState('')
 
+  const [allUsers, setAllUsers] = useState([])
+  const [usersLoading, setUsersLoading] = useState(false)
+
+  const fetchAllUsers = async () => {
+    setUsersLoading(true)
+    try {
+      const res = await fetch(
+        `${BASE_URL}/profiles?select=*&order=created_at.desc`,
+        { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } }
+      )
+      const data = await res.json()
+      setAllUsers(Array.isArray(data) ? data : [])
+    } catch { setAllUsers([]) }
+    finally { setUsersLoading(false) }
+  }
+
+  const handleDeleteUser = async (userId, userEmail, userDepartment) => {
+    if (userDepartment === 'both') {
+      alert('Cannot delete the super admin account.')
+      return
+    }
+    if (!window.confirm(`Are you sure you want to permanently delete the account for ${userEmail}? This cannot be undone.`)) return
+
+    const SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
+    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+    const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+    try {
+      // Delete from profiles
+      await fetch(`${BASE_URL}/profiles?id=eq.${userId}`, {
+        method: 'DELETE',
+        headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+      })
+
+      // Delete from Supabase Auth
+      await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': SERVICE_KEY,
+          'Authorization': `Bearer ${SERVICE_KEY}`
+        }
+      })
+
+      setAdminSuccess('User deleted successfully.')
+      fetchAllUsers()
+    } catch (err) {
+      setAdminError('Failed to delete user: ' + err.message)
+    }
+  }
+
   useEffect(() => {
     fetchStats()
+    fetchAllUsers()
   }, [])
 
   const fetchStats = async () => {
@@ -109,26 +160,54 @@ const AdminDashboard = () => {
     }
     setAdminError('')
     setAdminSuccess('')
+
+    const SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
+    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+    const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+    const BASE_URL = `${SUPABASE_URL}/rest/v1`
+
+    console.log('Service key exists:', !!SERVICE_KEY)
+    console.log('URL:', SUPABASE_URL)
+
     try {
-      const authRes = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/admin/users`, {
+      // Step 1 - Create auth account
+      const authRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
         method: 'POST',
         headers: {
-          'apikey': SERVICE_ROLE_KEY,
-          'Authorization': `Bearer ${SERVICE_ROLE_KEY}`,
+          'apikey': SERVICE_KEY,
+          'Authorization': `Bearer ${SERVICE_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           email: adminEmail,
           password: adminPassword,
           email_confirm: true,
-          user_metadata: { full_name: adminName, role: 'admin' }
+          user_metadata: {
+            full_name: adminName,
+            role: 'admin'
+          }
         })
       })
-      const authData = await authRes.json()
-      
-      if (!authRes.ok) throw new Error(authData.message || 'Auth creation failed')
 
-      await fetch(`${BASE_URL}/profiles`, {
+      const authText = await authRes.text()
+      console.log('Auth response status:', authRes.status)
+      console.log('Auth response:', authText)
+
+      if (!authRes.ok) {
+        setAdminError(`Failed to create auth account: ${authText}`)
+        return
+      }
+
+      const authData = JSON.parse(authText)
+      const newUserId = authData.id
+
+      if (!newUserId) {
+        setAdminError('Auth account created but no user ID returned.')
+        return
+      }
+
+      // Step 2 - Insert into profiles
+      const profileRes = await fetch(`${BASE_URL}/profiles`, {
         method: 'POST',
         headers: {
           'apikey': ANON_KEY,
@@ -137,21 +216,31 @@ const AdminDashboard = () => {
           'Prefer': 'return=representation'
         },
         body: JSON.stringify({
-          id: authData.id,
+          id: newUserId,
           full_name: adminName,
           email: adminEmail,
           role: 'admin',
           department: adminDepartment
         })
       })
-      setAdminSuccess(`${adminDepartment} Admin created. Email: ${adminEmail}`)
+
+      const profileText = await profileRes.text()
+      console.log('Profile response:', profileText)
+
+      if (!profileRes.ok) {
+        setAdminError(`Auth created but profile failed: ${profileText}`)
+        return
+      }
+
+      setAdminSuccess(`${adminDepartment} Admin created successfully. Email: ${adminEmail}`)
       setAdminName('')
       setAdminEmail('')
       setAdminPassword('')
       setAdminDepartment('')
+
     } catch (err) {
-      console.error('Admin Creation Error:', err)
-      setAdminError(err.message || 'Failed to create admin account.')
+      console.error('Create admin error:', err)
+      setAdminError('Something went wrong: ' + err.message)
     }
   }
 
@@ -274,6 +363,63 @@ const AdminDashboard = () => {
           </button>
           {adminSuccess && <p className="text-green-600 text-sm mt-3">{adminSuccess}</p>}
           {adminError && <p className="text-red-600 text-sm mt-3">{adminError}</p>}
+        </div>
+
+        <div className="bg-white rounded-lg shadow overflow-hidden mt-6">
+          <div className="px-6 py-4 border-b flex items-center justify-between">
+            <h2 className="font-bold text-gray-900">System Users ({allUsers.length})</h2>
+            <button onClick={fetchAllUsers}
+              className="text-xs text-blue-900 font-medium hover:underline">
+              Refresh
+            </button>
+          </div>
+          {usersLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          ) : allUsers.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">No users found.</div>
+          ) : (
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Email</th>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Role</th>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Department</th>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allUsers.map((user, i) => (
+                  <tr key={user.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <td className="px-4 py-3 font-medium text-gray-900">{user.full_name}</td>
+                    <td className="px-4 py-3 text-gray-600">{user.email}</td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-1 rounded text-xs font-semibold capitalize ${user.role === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'}`}>
+                        {user.role}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-1 rounded text-xs font-semibold ${user.department === 'JSS' ? 'bg-blue-100 text-blue-700' : user.department === 'SSS' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'}`}>
+                        {user.department || 'N/A'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      {user.department !== 'both' && (
+                        <button
+                          onClick={() => handleDeleteUser(user.id, user.email, user.department)}
+                          className="flex items-center gap-1 text-red-600 hover:text-red-800 text-xs font-medium"
+                        >
+                          <Trash2 size={14} /> Delete
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
         <div className="mt-8 text-center text-sm text-gray-400">
