@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Activity, CheckCircle, AlertCircle, Clock, Database, Users, Server } from 'lucide-react'
+import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
 
-const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
 const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
 
 export default function SystemHealth() {
@@ -36,7 +35,7 @@ export default function SystemHealth() {
     } catch { newHealth.database = 'error' }
 
     try {
-      const authRes = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/settings`, {
+      const authRes = await fetch(`${SUPABASE_URL}/auth/v1/settings`, {
         headers: { 'apikey': ANON_KEY }
       })
       newHealth.auth = authRes.ok ? 'healthy' : 'error'

@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react'
 import { UserCog, Trash2, Plus } from 'lucide-react'
-
-const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-const SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
-const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
+import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
 
 const getToken = () => JSON.parse(localStorage.getItem('mbhs_staff') || '{}').access_token || ANON_KEY
 const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
@@ -20,9 +17,7 @@ export default function ManageAdmins() {
   const [occupiedDepartments, setOccupiedDepartments] = useState([])
 
   const checkOccupiedDepartments = async () => {
-    const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-    const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
-    try {
+            try {
       const res = await fetch(
         `${BASE_URL}/profiles?role=eq.admin&select=department`,
         { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } }
@@ -59,10 +54,7 @@ export default function ManageAdmins() {
     setAdminError('')
     setAdminSuccess('')
 
-    const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-    const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
-
-    // Check if department already has an admin
+            // Check if department already has an admin
     try {
       const checkRes = await fetch(
         `${BASE_URL}/profiles?role=eq.admin&department=eq.${adminDepartment}&select=id,full_name,email`,
@@ -82,15 +74,12 @@ export default function ManageAdmins() {
       return
     }
 
-    const SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
-    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
-
-    console.log('Service key exists:', !!SERVICE_KEY)
+            console.log('Service key exists:', !!SERVICE_KEY)
     console.log('URL:', SUPABASE_URL)
 
     try {
       // Step 1 - Create auth account
-      const authRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
+      const authRes = await fetch(`${AUTH_URL}/admin/users`, {
         method: 'POST',
         headers: {
           'apikey': SERVICE_KEY,
@@ -171,7 +160,7 @@ export default function ManageAdmins() {
         method: 'DELETE',
         headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
       })
-      await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/admin/users/${adminId}`, {
+      await fetch(`${AUTH_URL}/admin/users/${adminId}`, {
         method: 'DELETE',
         headers: { 'apikey': SERVICE_KEY, 'Authorization': `Bearer ${SERVICE_KEY}` }
       })

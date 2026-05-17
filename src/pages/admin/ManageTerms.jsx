@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { Plus, Trash2, CalendarDays, CheckCircle, AlertCircle } from 'lucide-react'
+import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
 
 const getAuth = () => {
   const staff = JSON.parse(localStorage.getItem('mbhs_staff'))
   return {
     token: staff?.access_token,
-    apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-    baseUrl: `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
+    apikey: ANON_KEY,
+    baseUrl: `${SUPABASE_URL}/rest/v1`
   }
 }
 
 const apiFetch = async (endpoint, options = {}) => {
   const staff = JSON.parse(localStorage.getItem('mbhs_staff'))
   const token = staff?.access_token
-  const apikey = import.meta.env.VITE_SUPABASE_ANON_KEY
-  const baseUrl = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
+  const apikey = ANON_KEY
+  const baseUrl = `${SUPABASE_URL}/rest/v1`
 
   const res = await fetch(`${baseUrl}${endpoint}`, {
     ...options,

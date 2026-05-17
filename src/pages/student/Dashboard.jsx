@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import { UserCheck, Clock, BookOpen, GraduationCap } from 'lucide-react'
-
-const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
+import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
 
 const headers = {
   'apikey': ANON_KEY,

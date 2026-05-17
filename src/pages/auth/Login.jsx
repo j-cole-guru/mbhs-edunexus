@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
 import { Users, GraduationCap, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react'
 import logo from '../../assets/logo.png'
+import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
 
 const Login = () => {
   const [activeTab, setActiveTab] = useState('student')
@@ -29,11 +30,11 @@ const Login = () => {
     try {
       console.log('Attempting student login with:', fullName)
       
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/rpc/student_login_by_name`, {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/student_login_by_name`, {
         method: 'POST',
         headers: {
-          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'apikey': ANON_KEY,
+          'Authorization': `Bearer ${ANON_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -46,11 +47,11 @@ const Login = () => {
 
       if (!data || data.length === 0) {
         // Log failed student login attempt
-        await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/security_logs`, {
+        await fetch(`${SUPABASE_URL}/rest/v1/security_logs`, {
           method: 'POST',
           headers: {
-            'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            'apikey': ANON_KEY,
+            'Authorization': `Bearer ${ANON_KEY}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
@@ -67,11 +68,11 @@ const Login = () => {
 
       localStorage.setItem('mbhs_student', JSON.stringify(data[0]))
       // Log successful student login
-      await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/security_logs`, {
+      await fetch(`${SUPABASE_URL}/rest/v1/security_logs`, {
         method: 'POST',
         headers: {
-          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'apikey': ANON_KEY,
+          'Authorization': `Bearer ${ANON_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -111,13 +112,13 @@ const Login = () => {
     console.log('About to call Supabase...')
 
     const response = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/token?grant_type=password`,
+      `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` 
+          'apikey': ANON_KEY,
+          'Authorization': `Bearer ${ANON_KEY}` 
         },
         body: JSON.stringify({
           email: staffEmail,
@@ -134,11 +135,11 @@ const Login = () => {
 
     if (!response.ok) {
       // Log failed staff login attempt
-      await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/security_logs`, {
+      await fetch(`${SUPABASE_URL}/rest/v1/security_logs`, {
         method: 'POST',
         headers: {
-          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'apikey': ANON_KEY,
+          'Authorization': `Bearer ${ANON_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -155,10 +156,10 @@ const Login = () => {
 
     // Fetch profile
     const profileResponse = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/profiles?id=eq.${data.user.id}&select=*`,
+      `${SUPABASE_URL}/rest/v1/profiles?id=eq.${data.user.id}&select=*`,
       {
         headers: {
-          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+          'apikey': ANON_KEY,
           'Authorization': `Bearer ${data.access_token}` 
         }
       }
@@ -185,11 +186,11 @@ const Login = () => {
     }))
 
     // Log successful staff login
-    await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/security_logs`, {
+    await fetch(`${SUPABASE_URL}/rest/v1/security_logs`, {
       method: 'POST',
       headers: {
-        'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({

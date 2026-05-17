@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Plus, Trash2, GraduationCap, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react'
+import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
 
-const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
 const getToken = () => {
   const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
   return staff.access_token || ANON_KEY
@@ -143,14 +142,12 @@ const ManageTeachers = () => {
 
     try {
       // ⚠️ Replace with your service_role key from Supabase Dashboard → Settings → API
-      const SERVICE_ROLE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
-
-      // Step 1: Create auth user via admin API (requires service_role key)
-      const authRes = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/admin/users`, {
+            // Step 1: Create auth user via admin API (requires service_role key)
+      const authRes = await fetch(`${AUTH_URL}/admin/users`, {
         method: 'POST',
         headers: {
-          'apikey': SERVICE_ROLE_KEY,
-          'Authorization': `Bearer ${SERVICE_ROLE_KEY}`,
+          'apikey': SERVICE_KEY,
+          'Authorization': `Bearer ${SERVICE_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({

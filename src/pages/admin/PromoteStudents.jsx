@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Users, ArrowRight } from 'lucide-react'
+import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
 
-const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
 const getToken = () => JSON.parse(localStorage.getItem('mbhs_staff') || '{}').access_token || ANON_KEY
 const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
 

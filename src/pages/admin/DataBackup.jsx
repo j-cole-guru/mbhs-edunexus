@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { Database, Download, RefreshCw } from 'lucide-react'
 import * as XLSX from 'xlsx'
+import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
 
-const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
 const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
 
 export default function DataBackup() {

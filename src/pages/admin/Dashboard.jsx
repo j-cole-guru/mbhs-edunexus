@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { LayoutDashboard, Users, GraduationCap, BookOpen, CalendarDays, Plus, ClipboardList, UserCheck, Clock, Layers, ArrowRight, MessageSquare, Trash2 } from 'lucide-react'
-
-const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-const SERVICE_ROLE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
-const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
+import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
 
 const getToken = () => {
   const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
@@ -41,9 +38,7 @@ const AdminDashboard = () => {
   const [occupiedDepartments, setOccupiedDepartments] = useState([])
 
   const checkOccupiedDepartments = async () => {
-    const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-    const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
-    try {
+            try {
       const res = await fetch(
         `${BASE_URL}/profiles?role=eq.admin&select=department`,
         { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } }
@@ -77,11 +72,7 @@ const AdminDashboard = () => {
     }
     if (!window.confirm(`Are you sure you want to permanently delete the account for ${userEmail}? This cannot be undone.`)) return
 
-    const SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
-    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
-    const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-
-    try {
+                try {
       // Delete from profiles
       await fetch(`${BASE_URL}/profiles?id=eq.${userId}`, {
         method: 'DELETE',
@@ -89,7 +80,7 @@ const AdminDashboard = () => {
       })
 
       // Delete from Supabase Auth
-      await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
+      await fetch(`${AUTH_URL}/admin/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'apikey': SERVICE_KEY,
@@ -181,10 +172,7 @@ const AdminDashboard = () => {
     setAdminError('')
     setAdminSuccess('')
 
-    const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-    const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
-
-    // Check if department already has an admin
+            // Check if department already has an admin
     try {
       const checkRes = await fetch(
         `${BASE_URL}/profiles?role=eq.admin&department=eq.${adminDepartment}&select=id,full_name,email`,
@@ -204,15 +192,12 @@ const AdminDashboard = () => {
       return
     }
 
-    const SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
-    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
-
-    console.log('Service key exists:', !!SERVICE_KEY)
+            console.log('Service key exists:', !!SERVICE_KEY)
     console.log('URL:', SUPABASE_URL)
 
     try {
       // Step 1 - Create auth account
-      const authRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
+      const authRes = await fetch(`${AUTH_URL}/admin/users`, {
         method: 'POST',
         headers: {
           'apikey': SERVICE_KEY,

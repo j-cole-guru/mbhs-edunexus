@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Plus, Trash2, Users, CheckCircle, AlertCircle } from 'lucide-react'
+import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
 
 const getAuth = () => {
   const staff = JSON.parse(localStorage.getItem('mbhs_staff'))
   return {
     token: staff?.access_token,
-    apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-    baseUrl: `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
+    apikey: ANON_KEY,
+    baseUrl: `${SUPABASE_URL}/rest/v1`
   }
 }
 
@@ -128,10 +129,10 @@ const ManageStudents = () => {
       // Step 1 - Check if PIN already exists
       const staff = JSON.parse(localStorage.getItem('mbhs_staff'))
       const token = staff?.access_token
-      const apikey = import.meta.env.VITE_SUPABASE_ANON_KEY
+      const apikey = ANON_KEY
 
       const pinCheck = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/students?pin=eq.${formData.pin}&select=id`,
+        `${SUPABASE_URL}/rest/v1/students?pin=eq.${formData.pin}&select=id`,
         {
           headers: {
             'apikey': apikey,
@@ -149,7 +150,7 @@ const ManageStudents = () => {
       // Step 2 - Get auto generated student number
       let studentNumber = null
       try {
-        const numRes = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/rpc/generate_student_number`, {
+        const numRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/generate_student_number`, {
           method: 'POST',
           headers: {
             'apikey': apikey,
@@ -190,7 +191,7 @@ const ManageStudents = () => {
       }
       console.log('Sending student data:', JSON.stringify(studentData))
 
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/students`, {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/students`, {
         method: 'POST',
         headers: {
           'apikey': apikey,

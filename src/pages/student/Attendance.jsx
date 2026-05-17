@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { CheckCircle, XCircle, Clock, Calendar, ChevronDown, ChevronRight, UserCheck } from 'lucide-react'
-
-const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
+import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
 
 const StudentAttendance = () => {
   const [student, setStudent] = useState(null)
