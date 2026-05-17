@@ -38,6 +38,24 @@ const AdminDashboard = () => {
 
   const [allUsers, setAllUsers] = useState([])
   const [usersLoading, setUsersLoading] = useState(false)
+  const [occupiedDepartments, setOccupiedDepartments] = useState([])
+
+  const checkOccupiedDepartments = async () => {
+    const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+    const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
+    try {
+      const res = await fetch(
+        `${BASE_URL}/profiles?role=eq.admin&select=department`,
+        { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } }
+      )
+      const data = await res.json()
+      const occupied = data
+        .map(d => d.department)
+        .filter(d => d === 'JSS' || d === 'SSS')
+      setOccupiedDepartments(occupied)
+      console.log('Occupied departments:', occupied)
+    } catch { setOccupiedDepartments([]) }
+  }
 
   const fetchAllUsers = async () => {
     setUsersLoading(true)
@@ -81,6 +99,7 @@ const AdminDashboard = () => {
 
       setAdminSuccess('User deleted successfully.')
       fetchAllUsers()
+      checkOccupiedDepartments()
     } catch (err) {
       setAdminError('Failed to delete user: ' + err.message)
     }
@@ -89,6 +108,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchStats()
     fetchAllUsers()
+    checkOccupiedDepartments()
   }, [])
 
   const fetchStats = async () => {
@@ -161,10 +181,31 @@ const AdminDashboard = () => {
     setAdminError('')
     setAdminSuccess('')
 
+    const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+    const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
+
+    // Check if department already has an admin
+    try {
+      const checkRes = await fetch(
+        `${BASE_URL}/profiles?role=eq.admin&department=eq.${adminDepartment}&select=id,full_name,email`,
+        { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } }
+      )
+      const existing = await checkRes.json()
+      console.log('Existing admins for department:', existing)
+
+      if (Array.isArray(existing) && existing.length > 0) {
+        setAdminError(
+          `The ${adminDepartment} department already has an admin assigned (${existing[0].full_name} — ${existing[0].email}). Please delete the existing admin first before assigning a new one.`
+        )
+        return
+      }
+    } catch (err) {
+      setAdminError('Failed to check department availability. Please try again.')
+      return
+    }
+
     const SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
     const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
-    const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-    const BASE_URL = `${SUPABASE_URL}/rest/v1`
 
     console.log('Service key exists:', !!SERVICE_KEY)
     console.log('URL:', SUPABASE_URL)
@@ -237,6 +278,8 @@ const AdminDashboard = () => {
       setAdminEmail('')
       setAdminPassword('')
       setAdminDepartment('')
+      fetchAllUsers()
+      checkOccupiedDepartments()
 
     } catch (err) {
       console.error('Create admin error:', err)
@@ -349,11 +392,26 @@ const AdminDashboard = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">Department</label>
-              <select value={adminDepartment} onChange={e => setAdminDepartment(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900">
+              <select
+                value={adminDepartment}
+                onChange={e => setAdminDepartment(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              >
                 <option value="">Select Department</option>
-                <option value="JSS">JSS</option>
-                <option value="SSS">SSS</option>
+                <option
+                  value="JSS"
+                  disabled={occupiedDepartments.includes('JSS')}
+                  className={occupiedDepartments.includes('JSS') ? 'text-gray-400' : ''}
+                >
+                  JSS {occupiedDepartments.includes('JSS') ? '(Slot Occupied)' : '(Available)'}
+                </option>
+                <option
+                  value="SSS"
+                  disabled={occupiedDepartments.includes('SSS')}
+                  className={occupiedDepartments.includes('SSS') ? 'text-gray-400' : ''}
+                >
+                  SSS {occupiedDepartments.includes('SSS') ? '(Slot Occupied)' : '(Available)'}
+                </option>
               </select>
             </div>
           </div>
