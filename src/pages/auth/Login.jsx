@@ -92,50 +92,84 @@ const Login = () => {
   }
 
   const handleStaffLogin = async (e) => {
-  e.preventDefault()
-  setLoading(true)
-  setError('')
+    e.preventDefault()
+    setLoading(true)
+    setError('')
 
-  console.log('handleStaffLogin fired')
-  console.log('Email:', staffEmail)
-  console.log('Password:', staffPassword)
+    console.log('handleStaffLogin fired')
+    console.log('Email:', staffEmail)
+    console.log('Password:', staffPassword)
 
-  const controller = new AbortController()
-  const timeout = setTimeout(() => {
-    controller.abort()
-    console.log('Request timed out!')
-    setError('Request timed out. Please check your connection.')
-    setLoading(false)
-  }, 10000)
+    const attemptLogin = async () => {
+      console.log('About to call Supabase...')
+      const response = await fetch(
+        `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': ANON_KEY,
+            'Authorization': `Bearer ${ANON_KEY}`
+          },
+          body: JSON.stringify({
+            email: staffEmail,
+            password: staffPassword
+          })
+        }
+      )
+      return response
+    }
 
-  try {
-    console.log('About to call Supabase...')
-
-    const response = await fetch(
-      `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': ANON_KEY,
-          'Authorization': `Bearer ${ANON_KEY}` 
-        },
-        body: JSON.stringify({
-          email: staffEmail,
-          password: staffPassword
-        }),
-        signal: controller.signal
+    try {
+      let response
+      try {
+        response = await attemptLogin()
+      } catch (firstErr) {
+        console.log('First attempt failed, retrying...', firstErr.message)
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        response = await attemptLogin()
       }
-    )
 
-    clearTimeout(timeout)
-    console.log('Response status:', response.status)
-    const data = await response.json()
-    console.log('Response data:', data)
+      console.log('Response status:', response.status)
+      const data = await response.json()
+      console.log('Response data:', data)
 
-    if (!response.ok) {
-      // Log failed staff login attempt
-      await fetch(`${SUPABASE_URL}/rest/v1/security_logs`, {
+      if (!response.ok) {
+        setError(data.error_description || data.message || 'Invalid email or password.')
+        setLoading(false)
+        return
+      }
+
+      const profileResponse = await fetch(
+        `${BASE_URL}/profiles?id=eq.${data.user.id}&select=*`,
+        {
+          headers: {
+            'apikey': ANON_KEY,
+            'Authorization': `Bearer ${data.access_token}`
+          }
+        }
+      )
+      const profiles = await profileResponse.json()
+      console.log('Profile:', profiles)
+      const profile = profiles[0]
+
+      if (!profile) {
+        setError('Profile not found. Contact administrator.')
+        setLoading(false)
+        return
+      }
+
+      localStorage.setItem('mbhs_staff', JSON.stringify({
+        id: data.user.id,
+        email: data.user.email,
+        access_token: data.access_token,
+        role: profile.role,
+        full_name: profile.full_name,
+        department: profile.department || 'both'
+      }))
+
+      // Log successful login to security logs
+      await fetch(`${BASE_URL}/security_logs`, {
         method: 'POST',
         headers: {
           'apikey': ANON_KEY,
@@ -143,80 +177,28 @@ const Login = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          event_type: 'FAILED_LOGIN',
+          event_type: 'SUCCESSFUL_LOGIN',
           email: staffEmail,
-          details: `Failed login attempt for ${staffEmail}`,
-          severity: 'medium'
+          details: `Successful login for ${staffEmail} as ${profile.role}`,
+          severity: 'low'
         })
       })
-      setError(data.error_description || 'Login failed')
-      setLoading(false)
-      return
-    }
 
-    // Fetch profile
-    const profileResponse = await fetch(
-      `${SUPABASE_URL}/rest/v1/profiles?id=eq.${data.user.id}&select=*`,
-      {
-        headers: {
-          'apikey': ANON_KEY,
-          'Authorization': `Bearer ${data.access_token}` 
-        }
+      if (profile.role === 'admin') {
+        window.location.href = '/admin'
+      } else if (profile.role === 'teacher') {
+        window.location.href = '/teacher'
+      } else {
+        setError('Unauthorized role.')
+        setLoading(false)
       }
-    )
 
-    const profiles = await profileResponse.json()
-    console.log('Profile:', profiles)
-    const profile = profiles[0]
-
-    if (!profile) {
-      setError('Profile not found. Contact administrator.')
-      setLoading(false)
-      return
-    }
-
-    // Save staff data to localStorage before redirect
-    localStorage.setItem('mbhs_staff', JSON.stringify({
-      id: data.user.id,
-      email: data.user.email,
-      access_token: data.access_token,
-      role: profile.role,
-      full_name: profile.full_name,
-      department: profile.department || 'both'
-    }))
-
-    // Log successful staff login
-    await fetch(`${SUPABASE_URL}/rest/v1/security_logs`, {
-      method: 'POST',
-      headers: {
-        'apikey': ANON_KEY,
-        'Authorization': `Bearer ${ANON_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        event_type: 'SUCCESSFUL_LOGIN',
-        email: staffEmail,
-        details: `Successful login for ${staffEmail}`,
-        severity: 'low'
-      })
-    })
-
-    if (profile.role === 'admin') {
-      window.location.href = '/admin'
-    } else if (profile.role === 'teacher') {
-      window.location.href = '/teacher'
-    } else {
-      setError('Unauthorized role.')
+    } catch (err) {
+      console.error('Login error:', err)
+      setError('Something went wrong. Please try again.')
       setLoading(false)
     }
-
-  } catch (err) {
-    clearTimeout(timeout)
-    console.error('Login error:', err)
-    setError('Something went wrong: ' + err.message)
-    setLoading(false)
   }
-}
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
