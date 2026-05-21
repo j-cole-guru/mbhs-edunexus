@@ -137,7 +137,7 @@ const TeacherDashboard = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <div className="overflow-x-auto">\n<table className="w-full">
+            <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="table-header">Student Number</th>
@@ -158,7 +158,7 @@ const TeacherDashboard = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>\n</div>
+            </table>
           </div>
         )}
       </div>

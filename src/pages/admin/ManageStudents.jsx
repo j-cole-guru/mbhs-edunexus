@@ -412,8 +412,9 @@ const ManageStudents = () => {
             </div>
           </div>
 
-          <button type="submit"
-            className="w-full md:w-auto px-6 py-2 btn-primary flex items-center"
+          <button
+            type="submit"
+            className="px-6 py-2 btn-primary flex items-center"
           >
             <Plus className="h-4 w-4 mr-2" />
             Create Student
@@ -434,7 +435,7 @@ const ManageStudents = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <div className="overflow-x-auto">\n<table className="w-full">
+            <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="table-header">
@@ -505,7 +506,7 @@ const ManageStudents = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>\n</div>
+            </table>
           </div>
         )}
       </div>

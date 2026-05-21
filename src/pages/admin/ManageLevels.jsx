@@ -175,8 +175,9 @@ const ManageLevels = () => {
             <option value="JSS">JSS</option>
             <option value="SSS">SSS</option>
           </select>
-          <button type="submit"
-            className="w-full md:w-auto px-6 py-2 btn-primary flex items-center"
+          <button
+            type="submit"
+            className="px-6 py-2 btn-primary flex items-center"
           >
             <Plus className="h-4 w-4 mr-2" />
             Create Level
@@ -197,7 +198,7 @@ const ManageLevels = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <div className="overflow-x-auto">\n<table className="w-full">
+            <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="table-header">
@@ -244,7 +245,7 @@ const ManageLevels = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>\n</div>
+            </table>
           </div>
         )}
       </div>

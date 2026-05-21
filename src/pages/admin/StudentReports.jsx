@@ -89,13 +89,13 @@ export default function StudentReports() {
           <p className="text-gray-500 text-sm mt-1">Reports and complaints submitted by students</p>
         </div>
         <button onClick={fetchReports}
-          className="w-full md:w-auto flex items-center gap-2 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800">
+          className="flex items-center gap-2 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800">
           <RefreshCw size={16} /> Refresh
         </button>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-lg shadow p-5 border-l-4 border-yellow-500">
           <p className="text-xs uppercase tracking-wide text-gray-500">Unread</p>
           <p className="text-3xl font-bold text-gray-900">{reports.filter(r => r.status === 'unread').length}</p>
@@ -141,7 +141,7 @@ export default function StudentReports() {
           ))}
         </div>
         <button onClick={fetchReports}
-          className="w-full md:w-auto bg-black text-white px-4 py-2 rounded-lg text-xs font-medium">
+          className="bg-black text-white px-4 py-2 rounded-lg text-xs font-medium">
           Apply Filters
         </button>
       </div>
@@ -220,14 +220,9 @@ export default function StudentReports() {
         </div>
       </div>
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-  <p className="text-xs text-gray-400">
-    © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
-  </p>
-  <p className="text-xs text-gray-400 mt-1">
-    Developed by Alie Amadu Sesay
-  </p>
-</footer>
+      <div className="mt-8 text-center text-sm text-gray-400">
+        © 2026 All Rights Reserved | Developed by Alie Amadu Sesay
+      </div>
     </div>
   )
 }

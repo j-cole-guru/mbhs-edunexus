@@ -123,7 +123,7 @@ export default function StudentResults() {
 
                       {expandedAssessments[key] && (
                         <div className="p-4">
-                          <div className="overflow-x-auto">\n<table className="w-full text-sm min-w-[600px]">
+                          <table className="w-full text-sm">
                             <thead>
                               <tr className="text-left text-gray-500 uppercase text-xs tracking-wide border-b">
                                 <th className="pb-2">Subject</th>
@@ -149,7 +149,7 @@ export default function StudentResults() {
                                 </tr>
                               ))}
                             </tbody>
-                          </table>\n</div>
+                          </table>
                           <div className="mt-3 pt-3 border-t flex items-center justify-between">
                             <span className="text-sm text-gray-500">Assessment Average</span>
                             <span className="font-bold text-blue-900">{gpa} — {getGrade(parseFloat(gpa))}</span>
@@ -165,14 +165,9 @@ export default function StudentResults() {
         ))
       )}
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-  <p className="text-xs text-gray-400">
-    © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
-  </p>
-  <p className="text-xs text-gray-400 mt-1">
-    Developed by Alie Amadu Sesay
-  </p>
-</footer>
+      <div className="mt-8 text-center text-sm text-gray-400">
+        © 2026 All Rights Reserved | Developed by Alie Amadu Sesay
+      </div>
     </div>
   )
 }

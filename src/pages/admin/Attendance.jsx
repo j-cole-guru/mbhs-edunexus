@@ -180,7 +180,7 @@ export default function AdminAttendance() {
       <div className="bg-white rounded-lg shadow p-6 mb-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Filter Attendance</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">Level</label>
             <select
@@ -266,8 +266,9 @@ export default function AdminAttendance() {
           </div>
         </div>
 
-        <button onClick={fetchAttendance}
-          className="w-full md:w-auto flex items-center gap-2 bg-blue-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition"
+        <button
+          onClick={fetchAttendance}
+          className="flex items-center gap-2 bg-blue-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition"
         >
           <Search size={16} />
           View Attendance
@@ -276,7 +277,7 @@ export default function AdminAttendance() {
 
       {/* Summary Cards */}
       {records.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
             <p className="text-sm text-gray-500 uppercase tracking-wide">Present</p>
             <p className="text-2xl font-bold text-gray-900">{totalPresent}</p>
@@ -303,7 +304,7 @@ export default function AdminAttendance() {
             Select filters above and click View Attendance to see records.
           </div>
         ) : (
-          <div className="overflow-x-auto">\n<table className="w-full text-sm min-w-[600px]">
+          <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Student Number</th>
@@ -328,18 +329,13 @@ export default function AdminAttendance() {
                 </tr>
               ))}
             </tbody>
-          </table>\n</div>
+          </table>
         )}
       </div>
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-  <p className="text-xs text-gray-400">
-    © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
-  </p>
-  <p className="text-xs text-gray-400 mt-1">
-    Developed by Alie Amadu Sesay
-  </p>
-</footer>
+      <div className="mt-8 text-center text-sm text-gray-400">
+        © 2026 All Rights Reserved | Developed by Alie Amadu Sesay
+      </div>
     </div>
   )
 }

@@ -147,7 +147,7 @@ export default function PromoteStudents() {
           <div className="mt-6">
             <h3 className="font-semibold text-gray-700 mb-3">Students to be Promoted ({students.length})</h3>
             <div className="border border-gray-200 rounded-lg overflow-hidden">
-              <div className="overflow-x-auto">\n<table className="w-full text-sm min-w-[600px]">
+              <table className="w-full text-sm">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Student Number</th>
@@ -164,7 +164,7 @@ export default function PromoteStudents() {
                     </tr>
                   ))}
                 </tbody>
-              </table>\n</div>
+              </table>
             </div>
           </div>
         )}
@@ -172,9 +172,10 @@ export default function PromoteStudents() {
         {error && <p className="text-red-600 text-sm mt-4">{error}</p>}
         {success && <p className="text-green-600 text-sm mt-4">{success}</p>}
 
-        <button onClick={handlePromote}
+        <button
+          onClick={handlePromote}
           disabled={loading || students.length === 0}
-          className="w-full md:w-auto mt-6 bg-blue-900 text-white px-8 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="mt-6 bg-blue-900 text-white px-8 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           {loading ? (
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -185,14 +186,9 @@ export default function PromoteStudents() {
         </button>
       </div>
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-  <p className="text-xs text-gray-400">
-    © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
-  </p>
-  <p className="text-xs text-gray-400 mt-1">
-    Developed by Alie Amadu Sesay
-  </p>
-</footer>
+      <div className="mt-8 text-center text-sm text-gray-400">
+        © 2026 All Rights Reserved | Developed by Alie Amadu Sesay
+      </div>
     </div>
   )
 }

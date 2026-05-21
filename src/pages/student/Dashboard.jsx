@@ -187,7 +187,7 @@ export default function StudentDashboard() {
               Keep up the good work and ensure you attend all your classes on time.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <button 
               onClick={() => window.location.href = '/student/timetable'}
               className="bg-white/10 hover:bg-white/20 transition-colors py-3 px-4 rounded-lg text-sm font-medium border border-white/10 text-center"
