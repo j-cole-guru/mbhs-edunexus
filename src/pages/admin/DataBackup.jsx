@@ -70,7 +70,7 @@ export default function DataBackup() {
           <p className="text-gray-400 text-sm mt-1">Includes students, teachers, results, attendance and more</p>
         </div>
         <button onClick={downloadFullBackup} disabled={loading}
-          className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-lg text-sm font-bold hover:bg-gray-100 disabled:opacity-50">
+          className="w-full md:w-auto flex items-center gap-2 bg-white text-black px-6 py-3 rounded-lg text-sm font-bold hover:bg-gray-100 disabled:opacity-50">
           <Download size={16} />
           Download Full Backup
         </button>
@@ -78,7 +78,7 @@ export default function DataBackup() {
 
       {success && <p className="text-green-600 text-sm mb-4 font-medium">{success}</p>}
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {backupItems.map(item => (
           <div key={item.table} className="bg-white rounded-lg shadow p-4 flex flex-col items-start justify-between gap-4">
             <div className="flex items-center gap-2 text-gray-700">
@@ -95,9 +95,14 @@ export default function DataBackup() {
         ))}
       </div>
 
-      <div className="mt-8 text-center text-sm text-gray-400">
-        © 2026 All Rights Reserved | Developed by Alie Amadu Sesay
-      </div>
+      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+  <p className="text-xs text-gray-400">
+    © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
+  </p>
+  <p className="text-xs text-gray-400 mt-1">
+    Developed by Alie Amadu Sesay
+  </p>
+</footer>
     </div>
   )
 }

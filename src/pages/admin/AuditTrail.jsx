@@ -31,7 +31,7 @@ export default function AuditTrail() {
           <p className="text-gray-500 text-sm mt-1">Track all admin actions across the system</p>
         </div>
         <button onClick={fetchAudit}
-          className="flex items-center gap-2 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800">
+          className="w-full md:w-auto flex items-center gap-2 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800">
           <RefreshCw size={16} /> Refresh
         </button>
       </div>
@@ -44,7 +44,7 @@ export default function AuditTrail() {
         ) : logs.length === 0 ? (
           <div className="p-8 text-center text-gray-500">No audit records found.</div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">\n<table className="w-full text-sm min-w-[600px]">
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Admin</th>
@@ -69,13 +69,18 @@ export default function AuditTrail() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table>\n</div>
         )}
       </div>
 
-      <div className="mt-8 text-center text-sm text-gray-400">
-        © 2026 All Rights Reserved | Developed by Alie Amadu Sesay
-      </div>
+      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+  <p className="text-xs text-gray-400">
+    © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
+  </p>
+  <p className="text-xs text-gray-400 mt-1">
+    Developed by Alie Amadu Sesay
+  </p>
+</footer>
     </div>
   )
 }

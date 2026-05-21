@@ -73,26 +73,18 @@ const Sidebar = ({ onClose }) => {
 
   return (
     <div className="flex flex-col h-full bg-black text-white">
-      {/* Logo Section */}
-      <div className="p-6 border-b border-gray-800 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <img
-            src={logo}
-            alt="MBHS Logo"
-            className="h-10 w-auto"
-          />
-          <div>
-            <h1 className="text-lg font-bold">MBHS</h1>
-            <p className="text-xs text-gray-400">EduNexus</p>
-          </div>
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-800">
+        <div className="flex items-center gap-2">
+          <img src="/favicon.png" alt="MBHS Logo" className="w-8 h-8 object-contain" />
+          <span className="font-bold text-white text-sm">MBHS EduNexus</span>
         </div>
-        
-        {/* Close Button (Mobile Only) */}
-        <button 
+        {/* Close button - mobile only */}
+        <button
           onClick={onClose}
-          className="lg:hidden p-1 text-gray-400 hover:text-white transition-colors"
+          className="md:hidden text-gray-400 hover:text-white"
         >
-          <X className="h-6 w-6" />
+          <X size={20} />
         </button>
       </div>
 

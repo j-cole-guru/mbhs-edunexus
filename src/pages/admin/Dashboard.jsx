@@ -289,7 +289,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Overall Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-black text-white rounded-lg p-5">
             <p className="text-xs uppercase tracking-wide text-gray-400">Total Students</p>
             <p className="text-3xl font-bold mt-1">{stats.jssStudents.length + stats.sssStudents.length}</p>
@@ -356,7 +356,7 @@ const AdminDashboard = () => {
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-lg font-bold text-gray-900 mb-2">Department Administrators</h2>
           <p className="text-sm text-gray-500 mb-4">Create admin accounts for JSS and SSS departments.</p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">Full Name</label>
               <input type="text" value={adminName} onChange={e => setAdminName(e.target.value)}
@@ -401,7 +401,7 @@ const AdminDashboard = () => {
             </div>
           </div>
           <button onClick={handleCreateAdmin}
-            className="bg-black text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800">
+            className="w-full md:w-auto bg-black text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800">
             Create Department Admin
           </button>
           {adminSuccess && <p className="text-green-600 text-sm mt-3">{adminSuccess}</p>}
@@ -412,7 +412,7 @@ const AdminDashboard = () => {
           <div className="px-6 py-4 border-b flex items-center justify-between">
             <h2 className="font-bold text-gray-900">System Users ({allUsers.length})</h2>
             <button onClick={fetchAllUsers}
-              className="text-xs text-blue-900 font-medium hover:underline">
+              className="w-full md:w-auto text-xs text-blue-900 font-medium hover:underline">
               Refresh
             </button>
           </div>
@@ -423,7 +423,7 @@ const AdminDashboard = () => {
           ) : allUsers.length === 0 ? (
             <div className="p-8 text-center text-gray-500">No users found.</div>
           ) : (
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto">\n<table className="w-full text-sm min-w-[600px]">
               <thead className="bg-gray-50 border-b">
                 <tr>
                   <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
@@ -461,13 +461,18 @@ const AdminDashboard = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table>\n</div>
           )}
         </div>
 
-        <div className="mt-8 text-center text-sm text-gray-400">
-          © 2026 All Rights Reserved | Developed by Alie Amadu Sesay
-        </div>
+        <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+  <p className="text-xs text-gray-400">
+    © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
+  </p>
+  <p className="text-xs text-gray-400 mt-1">
+    Developed by Alie Amadu Sesay
+  </p>
+</footer>
       </div>
     )
   }
@@ -481,7 +486,7 @@ const AdminDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <button onClick={() => window.location.href = '/admin/students'} className="stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
+        <button onClick={() => window.location.href = '/admin/students'} className="w-full md:w-auto stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
           <div className="flex items-center">
             <div className="stat-icon bg-blue-100"><Users className="h-4 w-4 text-blue-600" /></div>
             <div className="ml-4">
@@ -491,7 +496,7 @@ const AdminDashboard = () => {
           </div>
         </button>
 
-        <button onClick={() => window.location.href = '/admin/teachers'} className="stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
+        <button onClick={() => window.location.href = '/admin/teachers'} className="w-full md:w-auto stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
           <div className="flex items-center">
             <div className="stat-icon bg-green-100"><GraduationCap className="h-4 w-4 text-green-600" /></div>
             <div className="ml-4">
@@ -501,7 +506,7 @@ const AdminDashboard = () => {
           </div>
         </button>
 
-        <button onClick={() => window.location.href = '/admin/classes'} className="stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
+        <button onClick={() => window.location.href = '/admin/classes'} className="w-full md:w-auto stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
           <div className="flex items-center">
             <div className="stat-icon bg-purple-100"><BookOpen className="h-4 w-4 text-purple-600" /></div>
             <div className="ml-4">
@@ -511,7 +516,7 @@ const AdminDashboard = () => {
           </div>
         </button>
 
-        <button onClick={() => window.location.href = '/admin/terms'} className="stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
+        <button onClick={() => window.location.href = '/admin/terms'} className="w-full md:w-auto stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
           <div className="flex items-center">
             <div className="stat-icon bg-orange-100"><CalendarDays className="h-4 w-4 text-orange-600" /></div>
             <div className="ml-4">
@@ -521,7 +526,7 @@ const AdminDashboard = () => {
           </div>
         </button>
 
-        <button onClick={() => window.location.href = '/admin/reports'} className="stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
+        <button onClick={() => window.location.href = '/admin/reports'} className="w-full md:w-auto stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
           <div className="flex items-center">
             <div className="stat-icon bg-yellow-100"><MessageSquare className="h-4 w-4 text-yellow-600" /></div>
             <div className="ml-4">
@@ -535,15 +540,15 @@ const AdminDashboard = () => {
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <h2 className="section-title mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button onClick={() => window.location.href = '/admin/students'} className="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-left transition-colors">
+          <button onClick={() => window.location.href = '/admin/students'} className="w-full md:w-auto p-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-left transition-colors">
             <Plus className="h-6 w-6 mb-2 text-blue-600" />
             <span className="font-medium text-gray-900">Add New Student</span>
           </button>
-          <button onClick={() => window.location.href = '/admin/results'} className="p-4 bg-green-50 hover:bg-green-100 rounded-lg text-left transition-colors">
+          <button onClick={() => window.location.href = '/admin/results'} className="w-full md:w-auto p-4 bg-green-50 hover:bg-green-100 rounded-lg text-left transition-colors">
             <ClipboardList className="h-6 w-6 mb-2 text-green-600" />
             <span className="font-medium text-gray-900">Enter Results</span>
           </button>
-          <button onClick={() => window.location.href = '/admin/attendance'} className="p-4 bg-purple-50 hover:bg-purple-100 rounded-lg text-left transition-colors">
+          <button onClick={() => window.location.href = '/admin/attendance'} className="w-full md:w-auto p-4 bg-purple-50 hover:bg-purple-100 rounded-lg text-left transition-colors">
             <UserCheck className="h-6 w-6 mb-2 text-purple-600" />
             <span className="font-medium text-gray-900">Check Attendance</span>
           </button>

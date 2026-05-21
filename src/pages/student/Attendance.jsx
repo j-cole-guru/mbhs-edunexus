@@ -95,7 +95,7 @@ const StudentAttendance = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
         <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Recorded Days</p>
           <p className="text-2xl font-black text-gray-900">{stats.total}</p>

@@ -366,7 +366,7 @@ const ManageTeachers = () => {
             </div>
           </div>
 
-          <button type="submit" className="px-6 py-2 btn-primary flex items-center">
+          <button type="submit" className="w-full md:w-auto px-6 py-2 btn-primary flex items-center">
             <Plus className="h-4 w-4 mr-2" />
             Create Teacher
           </button>
@@ -385,7 +385,7 @@ const ManageTeachers = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <div className="overflow-x-auto">\n<table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="table-header">Employee Number</th>
@@ -409,7 +409,7 @@ const ManageTeachers = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{teacher.level_name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{teacher.class_name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button onClick={() => handleDeleteTeacher(teacher.id)} className="text-red-600 hover:text-red-900 flex items-center">
+                      <button onClick={() => handleDeleteTeacher(teacher.id)} className="w-full md:w-auto text-red-600 hover:text-red-900 flex items-center">
                         <Trash2 className="h-4 w-4 mr-1" />
                         Delete
                       </button>
@@ -417,7 +417,7 @@ const ManageTeachers = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table>\n</div>
           </div>
         )}
       </div>

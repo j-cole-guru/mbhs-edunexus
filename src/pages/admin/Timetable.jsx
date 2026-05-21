@@ -248,12 +248,12 @@ const AdminTimetable = () => {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
           <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
             <h2 className="section-title">Preview — {parsedData.length} rows</h2>
-            <button onClick={handleSave} disabled={saving} className="px-6 py-2 btn-primary flex items-center">
+            <button onClick={handleSave} disabled={saving} className="w-full md:w-auto px-6 py-2 btn-primary flex items-center">
               <CheckCircle className="h-4 w-4 mr-2" />{saving ? 'Saving...' : 'Save Timetable'}
             </button>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <div className="overflow-x-auto">\n<table className="w-full">
               <thead className="bg-gray-50"><tr>
                 <th className="table-header">Day</th><th className="table-header">Subject</th>
                 <th className="table-header">Start Time</th><th className="table-header">End Time</th>
@@ -268,7 +268,7 @@ const AdminTimetable = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table>\n</div>
           </div>
         </div>
       )}
@@ -278,10 +278,9 @@ const AdminTimetable = () => {
           <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
             <h2 className="section-title">Current Timetable — {classes.find(c => c.id === selectedClass)?.name || ''}</h2>
             {existingTimetable.length > 0 && (
-              <button 
-                onClick={handleDelete} 
+              <button onClick={handleDelete} 
                 disabled={saving}
-                className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 border border-red-200 rounded-lg hover:bg-red-100 transition disabled:opacity-50 text-sm font-medium"
+                className="w-full md:w-auto flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 border border-red-200 rounded-lg hover:bg-red-100 transition disabled:opacity-50 text-sm font-medium"
               >
                 <Trash2 size={16} />
                 Delete Timetable

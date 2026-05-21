@@ -299,12 +299,12 @@ const AdminResults = () => {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
             <h2 className="section-title">Preview — {parsedData.length} rows</h2>
-            <button onClick={handleSave} disabled={saving} className="px-6 py-2 btn-primary flex items-center">
+            <button onClick={handleSave} disabled={saving} className="w-full md:w-auto px-6 py-2 btn-primary flex items-center">
               <CheckCircle className="h-4 w-4 mr-2" />{saving ? 'Saving...' : 'Save Results'}
             </button>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <div className="overflow-x-auto">\n<table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="table-header">Student Number</th>
@@ -327,7 +327,7 @@ const AdminResults = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table>\n</div>
           </div>
         </div>
       )}

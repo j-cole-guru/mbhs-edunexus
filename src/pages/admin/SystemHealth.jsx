@@ -102,14 +102,14 @@ export default function SystemHealth() {
           </p>
         </div>
         <button onClick={runHealthCheck}
-          className="flex items-center gap-2 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800">
+          className="w-full md:w-auto flex items-center gap-2 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800">
           <Activity size={16} />
           Run Check
         </button>
       </div>
 
       {/* Service Status */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
           { label: 'Database', key: 'database', icon: <Database size={20} /> },
           { label: 'Authentication', key: 'auth', icon: <Users size={20} /> },
@@ -158,9 +158,14 @@ export default function SystemHealth() {
         </div>
       </div>
 
-      <div className="mt-8 text-center text-sm text-gray-400">
-        © 2026 All Rights Reserved | Developed by Alie Amadu Sesay
-      </div>
+      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+  <p className="text-xs text-gray-400">
+    © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
+  </p>
+  <p className="text-xs text-gray-400 mt-1">
+    Developed by Alie Amadu Sesay
+  </p>
+</footer>
     </div>
   )
 }

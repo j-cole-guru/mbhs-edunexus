@@ -170,10 +170,9 @@ export default function MakeReport() {
           </div>
         )}
 
-        <button
-          onClick={handleSubmit}
+        <button onClick={handleSubmit}
           disabled={loading}
-          className="flex items-center gap-2 bg-blue-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 disabled:opacity-50"
+          className="w-full md:w-auto flex items-center gap-2 bg-blue-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 disabled:opacity-50"
         >
           {loading ? (
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -207,9 +206,14 @@ export default function MakeReport() {
         )}
       </div>
 
-      <div className="mt-8 text-center text-sm text-gray-400">
-        © 2026 All Rights Reserved | Developed by Alie Amadu Sesay
-      </div>
+      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+  <p className="text-xs text-gray-400">
+    © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
+  </p>
+  <p className="text-xs text-gray-400 mt-1">
+    Developed by Alie Amadu Sesay
+  </p>
+</footer>
     </div>
   )
 }
