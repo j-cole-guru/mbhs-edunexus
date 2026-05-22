@@ -104,10 +104,21 @@ export default function StudentDashboard() {
     const isSuspended = student.archive_reason
       ?.toLowerCase()
       .includes("suspend");
-
     // Clear local storage if suspended so they have to login again and see the updated reason
     // OR simply update the object in state if you're fetching fresh data.
-    // For now, let's just make the message strictly conditional.
+    // Build a reason-aware message: suspended accounts should not be congratulated.
+    let statusMessage;
+    if (isSuspended) {
+      const reasonText = student.archive_reason || "suspended";
+      const reasonLower = reasonText.toLowerCase();
+      if (reasonLower.includes("suspend") || reasonLower.includes("misconduct")) {
+        statusMessage = `Dear ${student.full_name}, your account is suspended due to ${reasonText}. Please come to the school with a parent or guardian to discuss this matter.`;
+      } else {
+        statusMessage = `Dear ${student.full_name}, your account status: ${reasonText}. Please contact the school administration for details.`;
+      }
+    } else {
+      statusMessage = `Welcome back, ${student.full_name}. You have successfully completed your studies at Methodist Boys' High School. Your academic records are preserved and available for your reference.`;
+    }
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-8 text-center">
@@ -122,11 +133,7 @@ export default function StudentDashboard() {
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
             {isSuspended ? "Account Restricted" : "Alumni Portal"}
           </h1>
-          <p className="text-gray-600 mb-6">
-            {isSuspended
-              ? `Dear ${student.full_name}, your account is currently ${student.archive_reason || "suspended"}. Please contact the school administration for further clarification.`
-              : `Welcome back, ${student.full_name}. You have successfully completed your studies at Methodist Boys' High School. Your academic records are preserved and available for your reference.`}
-          </p>
+          <p className="text-gray-600 mb-6">{statusMessage}</p>
           <div className="bg-blue-50 rounded-lg p-4 mb-6 text-left">
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div>
