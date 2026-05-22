@@ -83,7 +83,7 @@ const ManageStudents = () => {
     try {
       const levelData = await getDepartmentLevels()
       const levelIds = levelData.map(l => l.id)
-      
+
       if (levelIds.length === 0) {
         setStudents([])
         setLoading(false)
@@ -105,7 +105,7 @@ const ManageStudents = () => {
     try {
       const levelData = await getDepartmentLevels()
       const levelIds = levelData.map(l => l.id)
-      
+
       if (levelIds.length === 0) {
         setArchivedStudents([])
         return
@@ -132,7 +132,7 @@ const ManageStudents = () => {
     try {
       const levelData = await getDepartmentLevels()
       const levelIds = levelData.map(l => l.id)
-      
+
       if (levelIds.length === 0) {
         setClasses([])
         return
@@ -152,7 +152,7 @@ const ManageStudents = () => {
 
     try {
       console.log('Creating student with data:', formData)
-      
+
       // Step 1 - Check if PIN already exists
       const staff = JSON.parse(localStorage.getItem('mbhs_staff'))
       const token = staff?.access_token
@@ -163,7 +163,7 @@ const ManageStudents = () => {
         {
           headers: {
             'apikey': apikey,
-            'Authorization': `Bearer ${token}` 
+            'Authorization': `Bearer ${token}`
           }
         }
       )
@@ -354,11 +354,11 @@ const ManageStudents = () => {
   const filteredStudents = students.filter(student => {
     const classMatch = !filterClass || student.class_id === filterClass
     const levelMatch = !filterLevel || student.level_id === filterLevel
-    return classMatch && levelMatch
+    return classMatch && levelMatch && student.is_active === true
   })
 
   // Get available classes for selected level
-  const availableClasses = filterLevel 
+  const availableClasses = filterLevel
     ? classes.filter(cls => cls.level_id === filterLevel)
     : []
 
@@ -387,7 +387,7 @@ const ManageStudents = () => {
   }
 
   // Check if all visible students are selected
-  const allVisibleSelected = filteredStudents.length > 0 && 
+  const allVisibleSelected = filteredStudents.length > 0 &&
     filteredStudents.every(s => selectedStudentIds.includes(s.id))
 
   return (
@@ -400,14 +400,14 @@ const ManageStudents = () => {
       {/* Create Student Form */}
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8">
         <h2 className="section-title mb-4">Create New Student</h2>
-        
+
         {error && (
           <div className="mb-4 flex items-center error-message">
             <AlertCircle className="h-4 w-4 mr-2" />
             {error}
           </div>
         )}
-        
+
         {success && (
           <div className="mb-4 flex items-center success-message">
             <CheckCircle className="h-4 w-4 mr-2" />
@@ -551,7 +551,7 @@ const ManageStudents = () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="section-title mb-4">All Students</h2>
-          
+
           {/* Toggle buttons */}
           <div className="flex gap-2">
             <button
@@ -568,7 +568,7 @@ const ManageStudents = () => {
             </button>
           </div>
         </div>
-        
+
         {!showArchived ? (
           students.length === 0 ? (
             <div className="px-6 py-8 text-center text-gray-500">
@@ -814,7 +814,7 @@ const ManageStudents = () => {
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-2">Archive Student{archiveModalStudent.isMultiple ? 's' : ''}</h2>
             <p className="text-sm text-gray-600 mb-4">
-              {archiveModalStudent.isMultiple 
+              {archiveModalStudent.isMultiple
                 ? `You are about to archive ${archiveModalStudent.count} student(s). They will no longer be active but can still log in to view their records.`
                 : `You are about to archive ${archiveModalStudent.full_name}. They will no longer be active but can still log in to view their records.`
               }
