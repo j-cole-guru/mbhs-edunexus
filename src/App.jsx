@@ -1,40 +1,46 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider } from './context/AuthContext'
-import ProtectedRoute from './routes/ProtectedRoute'
-import Login from './pages/auth/Login'
-import Layout from './components/layout/Layout'
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import Login from "./pages/auth/Login";
+import Layout from "./components/layout/Layout";
 
 // Admin Pages
-import AdminDashboard from './pages/admin/Dashboard'
-import ManageLevels from './pages/admin/ManageLevels'
-import ManageClasses from './pages/admin/ManageClasses'
-import ManageTerms from './pages/admin/ManageTerms'
-import ManageTeachers from './pages/admin/ManageTeachers'
-import ManageStudents from './pages/admin/ManageStudents'
-import Results from './pages/admin/Results'
-import Attendance from './pages/admin/Attendance'
-import Timetable from './pages/admin/Timetable'
-import PromoteStudents from './pages/admin/PromoteStudents'
-import SystemHealth from './pages/admin/SystemHealth'
-import SecurityLogs from './pages/admin/SecurityLogs'
-import AuditTrail from './pages/admin/AuditTrail'
-import ManageAdmins from './pages/admin/ManageAdmins'
-import DataBackup from './pages/admin/DataBackup'
-import StudentReports from './pages/admin/StudentReports'
+import AdminDashboard from "./pages/admin/Dashboard";
+import ManageLevels from "./pages/admin/ManageLevels";
+import ManageClasses from "./pages/admin/ManageClasses";
+import ManageTerms from "./pages/admin/ManageTerms";
+import ManageTeachers from "./pages/admin/ManageTeachers";
+import ManageStudents from "./pages/admin/ManageStudents";
+import Results from "./pages/admin/Results";
+import Attendance from "./pages/admin/Attendance";
+import Timetable from "./pages/admin/Timetable";
+import PromoteStudents from "./pages/admin/PromoteStudents";
+import ArchiveStudents from "./pages/admin/ArchiveStudents";
+import SystemHealth from "./pages/admin/SystemHealth";
+import SecurityLogs from "./pages/admin/SecurityLogs";
+import AuditTrail from "./pages/admin/AuditTrail";
+import ManageAdmins from "./pages/admin/ManageAdmins";
+import DataBackup from "./pages/admin/DataBackup";
+import StudentReports from "./pages/admin/StudentReports";
 
 // Teacher Pages
-import TeacherDashboard from './pages/teacher/Dashboard'
-import TeacherResults from './pages/teacher/EnterResults'
-import TeacherAttendance from './pages/teacher/Attendance'
-import TeacherTimetable from './pages/teacher/Timetable'
+import TeacherDashboard from "./pages/teacher/Dashboard";
+import TeacherResults from "./pages/teacher/EnterResults";
+import TeacherAttendance from "./pages/teacher/Attendance";
+import TeacherTimetable from "./pages/teacher/Timetable";
 
 // Student Pages
-import StudentDashboard from './pages/student/Dashboard'
-import StudentResults from './pages/student/Results'
-import StudentAttendance from './pages/student/Attendance'
-import StudentTimetable from './pages/student/Timetable'
-import MakeReport from './pages/student/MakeReport'
+import StudentDashboard from "./pages/student/Dashboard";
+import StudentResults from "./pages/student/Results";
+import StudentAttendance from "./pages/student/Attendance";
+import StudentTimetable from "./pages/student/Timetable";
+import MakeReport from "./pages/student/MakeReport";
 
 function App() {
   return (
@@ -142,6 +148,16 @@ function App() {
               <ProtectedRoute role="admin">
                 <Layout role="admin">
                   <PromoteStudents />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/archive"
+            element={
+              <ProtectedRoute role="admin">
+                <Layout role="admin">
+                  <ArchiveStudents />
                 </Layout>
               </ProtectedRoute>
             }
@@ -303,7 +319,7 @@ function App() {
         </Routes>
       </Router>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;
