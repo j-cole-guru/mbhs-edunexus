@@ -3,7 +3,15 @@ import { Archive, Users, CheckCircle, AlertCircle, Search } from "lucide-react";
 import { ANON_KEY, SUPABASE_URL } from "../../lib/config";
 
 const getAuth = () => {
-  const staff = JSON.parse(localStorage.getItem("mbhs_staff"));
+  const staffData = localStorage.getItem("mbhs_staff");
+  if (!staffData)
+    return {
+      token: null,
+      apikey: ANON_KEY,
+      baseUrl: `${SUPABASE_URL}/rest/v1`,
+    };
+
+  const staff = JSON.parse(staffData);
   return {
     token: staff?.access_token,
     apikey: ANON_KEY,
@@ -13,6 +21,13 @@ const getAuth = () => {
 
 const apiFetch = async (endpoint, options = {}) => {
   const { token, apikey, baseUrl } = getAuth();
+
+  if (!token) {
+    console.error("No authentication token found.");
+    // Optional: redirect to login or show an error
+    return null;
+  }
+
   const res = await fetch(`${baseUrl}${endpoint}`, {
     ...options,
     headers: {
@@ -23,6 +38,12 @@ const apiFetch = async (endpoint, options = {}) => {
       ...options.headers,
     },
   });
+
+  if (res.status === 401) {
+    console.error("Unauthorized: Please log in again.");
+    return null;
+  }
+
   const text = await res.text();
   if (!text || text.trim() === "") return null;
   try {
