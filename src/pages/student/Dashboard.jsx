@@ -101,21 +101,27 @@ export default function StudentDashboard() {
     );
 
   if (student && !student.is_active) {
+    const isSuspended = student.archive_reason
+      ?.toLowerCase()
+      .includes("suspend");
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-8 text-center">
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <GraduationCap size={32} className="text-blue-900" />
+          <div
+            className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${isSuspended ? "bg-red-100" : "bg-blue-100"}`}
+          >
+            <GraduationCap
+              size={32}
+              className={isSuspended ? "text-red-900" : "text-blue-900"}
+            />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Alumni Portal
+            {isSuspended ? "Account Restricted" : "Alumni Portal"}
           </h1>
           <p className="text-gray-600 mb-6">
-            Welcome back,{" "}
-            <span className="font-semibold">{student.full_name}</span>. You have
-            successfully completed your studies at Methodist Boys' High School.
-            Your academic records are preserved and available for your
-            reference.
+            {isSuspended
+              ? `Dear ${student.full_name}, your account has been ${student.archive_reason || "suspended"}. Please contact the school administration for further clarification.`
+              : `Welcome back, ${student.full_name}. You have successfully completed your studies at Methodist Boys' High School. Your academic records are preserved and available for your reference.`}
           </p>
           <div className="bg-blue-50 rounded-lg p-4 mb-6 text-left">
             <div className="grid grid-cols-2 gap-3 text-sm">
