@@ -194,6 +194,19 @@ const ManageTeachers = () => {
     }
 
     try {
+      // Step 0: Check if email already exists in profiles
+      const existingProfileRes = await fetch(
+        `${BASE_URL}/profiles?email=eq.${encodeURIComponent(formData.email)}&select=id`,
+        {
+          headers: { apikey: ANON_KEY, Authorization: `Bearer ${getToken()}` },
+        },
+      );
+      const existingProfiles = await existingProfileRes.json();
+      if (Array.isArray(existingProfiles) && existingProfiles.length > 0) {
+        setError(`Email "${formData.email}" is already registered in the system`);
+        return;
+      }
+
       // ⚠️ Replace with your service_role key from Supabase Dashboard → Settings → API
       // Step 1: Create auth user via admin API (requires service_role key)
       const authRes = await fetch(`${AUTH_URL}/admin/users`, {
@@ -212,8 +225,11 @@ const ManageTeachers = () => {
       });
       const authData = await authRes.json();
       if (!authRes.ok || !authData.id) {
-        const msg =
-          authData?.message || authData?.msg || JSON.stringify(authData);
+        let msg = authData?.message || authData?.msg || JSON.stringify(authData);
+        // Handle specific error cases
+        if (authRes.status === 422 && msg.includes("already been registered")) {
+          msg = `Email "${formData.email}" is already registered. Please use a different email.`;
+        }
         throw new Error(`Auth API error (${authRes.status}): ${msg}`);
       }
       const newUserId = authData.id;
