@@ -211,8 +211,8 @@ const ArchiveStudents = () => {
       setError("Please select at least one student to archive");
       return;
     }
-    if (!graduationYear) {
-      setError("Please enter a graduation year");
+    if (archiveReason === "Graduated" && !graduationYear) {
+      setError("Please enter a graduation year for graduated students");
       return;
     }
 
@@ -222,14 +222,19 @@ const ArchiveStudents = () => {
 
     try {
       const idsString = `(${selectedStudentIds.join(",")})`;
+      const payload = {
+        is_active: false,
+        archived_at: new Date().toISOString(),
+        archive_reason: archiveReason,
+      };
+      if (archiveReason === "Graduated") {
+        payload.graduation_year = graduationYear;
+      } else {
+        payload.graduation_year = null;
+      }
       await apiFetch(`/students?id=in.${idsString}`, {
         method: "PATCH",
-        body: JSON.stringify({
-          is_active: false,
-          archived_at: new Date().toISOString(),
-          graduation_year: graduationYear,
-          archive_reason: archiveReason,
-        }),
+        body: JSON.stringify(payload),
       });
 
       setSuccess(
@@ -376,8 +381,14 @@ const ArchiveStudents = () => {
                     value={graduationYear}
                     onChange={(e) => setGraduationYear(e.target.value)}
                     placeholder="e.g. 2026"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+                    disabled={archiveReason !== "Graduated"}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 disabled:bg-gray-100 disabled:cursor-not-allowed"
                   />
+                  {archiveReason !== "Graduated" && (
+                    <p className="mt-2 text-xs text-gray-500">
+                      Graduation year is only required for graduated students.
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -498,7 +509,7 @@ const ArchiveStudents = () => {
                 <th className="px-6 py-3 text-left font-medium">Student No.</th>
                 <th className="px-6 py-3 text-left font-medium">Full Name</th>
                 <th className="px-6 py-3 text-left font-medium">
-                  Graduation Year
+                  Year
                 </th>
                 <th className="px-6 py-3 text-left font-medium">Reason</th>
                 <th className="px-6 py-3 text-left font-medium">Archived On</th>
@@ -510,7 +521,9 @@ const ArchiveStudents = () => {
                 <tr key={s.id}>
                   <td className="px-6 py-4">{s.student_number}</td>
                   <td className="px-6 py-4">{s.full_name}</td>
-                  <td className="px-6 py-4">{s.graduation_year}</td>
+                  <td className="px-6 py-4 text-gray-600">
+                    {s.archive_reason === "Graduated" ? s.graduation_year || "N/A" : "N/A"}
+                  </td>
                   <td className="px-6 py-4">{s.archive_reason}</td>
                   <td className="px-6 py-4">
                     {new Date(s.archived_at).toLocaleDateString()}
