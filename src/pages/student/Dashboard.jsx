@@ -101,37 +101,42 @@ export default function StudentDashboard() {
     );
 
   if (student && (!student.is_active || student.archive_reason)) {
-    const isSuspended = student.archive_reason
-      ?.toLowerCase()
-      .includes("suspend");
-    // Clear local storage if suspended so they have to login again and see the updated reason
-    // OR simply update the object in state if you're fetching fresh data.
+    const archiveReason = student.archive_reason?.trim() || "";
+    const reasonLower = archiveReason.toLowerCase();
+    const isSuspended = reasonLower.includes("suspend");
     // Build a reason-aware message: suspended accounts should not be congratulated.
+    let statusTitle;
     let statusMessage;
+    let statusVariant = {
+      bg: "bg-blue-100",
+      text: "text-blue-900",
+    };
+
     if (isSuspended) {
-      const reasonText = student.archive_reason || "suspended";
-      const reasonLower = reasonText.toLowerCase();
-      if (reasonLower.includes("suspend") || reasonLower.includes("misconduct")) {
-        statusMessage = `Dear ${student.full_name}, your account is suspended due to ${reasonText}. Please come to the school with a parent or guardian to discuss this matter.`;
-      } else {
-        statusMessage = `Dear ${student.full_name}, your account status: ${reasonText}. Please contact the school administration for details.`;
-      }
-    } else {
+      statusTitle = "Suspended Account";
+      statusMessage = `Dear ${student.full_name}, your account has been suspended due to ${archiveReason}. Please come to the school with a parent or guardian to discuss this matter.`;
+      statusVariant = { bg: "bg-red-100", text: "text-red-900" };
+    } else if (archiveReason) {
+      statusTitle = "Alumni Portal";
       statusMessage = `Welcome back, ${student.full_name}. You have successfully completed your studies at Methodist Boys' High School. Your academic records are preserved and available for your reference.`;
+    } else {
+      statusTitle = "Account Archived";
+      statusMessage = `Dear ${student.full_name}, your account has been archived. Please contact the school administration for more information.`;
     }
+
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-8 text-center">
           <div
-            className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${isSuspended ? "bg-red-100" : "bg-blue-100"}`}
+            className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${statusVariant.bg}`}
           >
             <GraduationCap
               size={32}
-              className={isSuspended ? "text-red-900" : "text-blue-900"}
+              className={statusVariant.text}
             />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            {isSuspended ? "Account Restricted" : "Alumni Portal"}
+            {statusTitle}
           </h1>
           <p className="text-gray-600 mb-6">{statusMessage}</p>
           <div className="bg-blue-50 rounded-lg p-4 mb-6 text-left">
