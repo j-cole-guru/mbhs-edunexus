@@ -1,183 +1,167 @@
-import React, { useState, useEffect } from 'react'
-import { Plus, Trash2, CalendarDays, CheckCircle, AlertCircle } from 'lucide-react'
-import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
+import React, { useState, useEffect } from "react";
+import {
+  Plus,
+  Trash2,
+  CalendarDays,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
+import { ANON_KEY, BASE_URL, getToken } from "../../lib/config";
 
-const getAuth = () => {
-  const staff = JSON.parse(localStorage.getItem('mbhs_staff'))
-  return {
-    token: staff?.access_token,
-    apikey: ANON_KEY,
-    baseUrl: `${SUPABASE_URL}/rest/v1`
-  }
-}
-
-const apiFetch = async (endpoint, options = {}) => {
-  const staff = JSON.parse(localStorage.getItem('mbhs_staff'))
-  const token = staff?.access_token
-  const apikey = ANON_KEY
-  const baseUrl = `${SUPABASE_URL}/rest/v1`
-
-  const res = await fetch(`${baseUrl}${endpoint}`, {
+const safeFetch = async (url, options = {}) => {
+  const token = getToken();
+  const res = await fetch(url, {
     ...options,
     headers: {
-      'apikey': apikey,
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      'Prefer': options.prefer || 'return=representation',
-      ...options.headers
-    }
-  })
-  const text = await res.text()
-  if (!text || text.trim() === '') return null
+      apikey: ANON_KEY,
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Prefer: "return=representation",
+      ...options.headers,
+    },
+  });
+  const text = await res.text();
+  console.log(`[${options.method || "GET"}] ${url}`);
+  console.log("Status:", res.status);
+  console.log("Response:", text);
+  if (!text || text.trim() === "") return null;
   try {
-    return JSON.parse(text)
+    return JSON.parse(text);
   } catch {
-    return null
+    return null;
   }
-}
+};
 
 const ManageTerms = () => {
-  const [terms, setTerms] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [terms, setTerms] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
-    name: '',
+    name: "",
     year: new Date().getFullYear(),
-    start_date: '',
-    end_date: '',
-    is_current: false
-  })
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
-
-  const getTermStatus = (term) => {
-    if (term.is_current) return { label: 'Current', color: 'bg-green-100 text-green-700' }
-    const today = new Date()
-    const endDate = new Date(term.end_date)
-    if (endDate > today) return { label: 'Upcoming', color: 'bg-blue-100 text-blue-700' }
-    return { label: 'Past', color: 'bg-gray-100 text-gray-500' }
-  }
+    start_date: "",
+    end_date: "",
+    is_current: false,
+  });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    fetchTerms()
-  }, [])
+    fetchTerms();
+  }, []);
 
   const fetchTerms = async () => {
-    try {
-      const data = await apiFetch('/terms?select=*&order=created_at.desc')
-      console.log('Terms fetched:', data)
-      setTerms(data)
-    } catch (error) {
-      console.error('Error fetching terms:', error)
-      setError('Failed to fetch terms')
-    } finally {
-      setLoading(false)
-    }
-  }
+    setLoading(true);
+    const data = await safeFetch(
+      `${BASE_URL}/terms?select=*&order=created_at.desc`,
+    );
+    setTerms(Array.isArray(data) ? data : []);
+    setLoading(false);
+  };
 
   const handleCreateTerm = async (e) => {
-    e.preventDefault()
-    setError('')
-    setSuccess('')
+    e.preventDefault();
+    setError("");
+    setSuccess("");
 
     if (!formData.name.trim() || !formData.start_date || !formData.end_date) {
-      setError('All fields are required')
-      return
+      setError("All fields are required");
+      return;
     }
 
     if (new Date(formData.start_date) >= new Date(formData.end_date)) {
-      setError('End date must be after start date')
-      return
+      setError("End date must be after start date");
+      return;
     }
 
     try {
-      console.log('Creating term with data:', formData)
-      
-      // If setting as current, first unset all current terms
       if (formData.is_current) {
-        console.log('Setting new current term, unsetting all others first')
-        await apiFetch('/terms?is_current=eq.true', {
-          method: 'PATCH',
-          body: JSON.stringify({ is_current: false })
-        })
+        await safeFetch(`${BASE_URL}/terms?is_current=eq.true`, {
+          method: "PATCH",
+          body: JSON.stringify({ is_current: false }),
+        });
       }
-      
-      const data = await apiFetch('/terms', {
-        method: 'POST',
+
+      const result = await safeFetch(`${BASE_URL}/terms`, {
+        method: "POST",
         body: JSON.stringify(formData),
-        prefer: 'return=representation'
-      })
-      console.log('Term created successfully:', data)
-      setFormData({
-        name: '',
-        year: new Date().getFullYear(),
-        start_date: '',
-        end_date: '',
-        is_current: false
-      })
-      setSuccess('Term created successfully')
-      // Refresh the list
-      await fetchTerms()
-    } catch (error) {
-      console.error('Error creating term:', error)
-      setError('Failed to create term')
+      });
+
+      if (result) {
+        setSuccess("Term created successfully.");
+        setFormData({
+          name: "",
+          year: new Date().getFullYear(),
+          start_date: "",
+          end_date: "",
+          is_current: false,
+        });
+        await fetchTerms();
+      } else {
+        setError("Failed to create term. Please try again.");
+      }
+    } catch (err) {
+      console.error("Create term error:", err);
+      setError("Something went wrong: " + err.message);
     }
-  }
+  };
 
   const handleSetCurrent = async (id) => {
     try {
       // First, unset all current terms
-      await apiFetch('/terms?is_current=eq.true', {
-        method: 'PATCH',
-        body: JSON.stringify({ is_current: false })
-      })
+      await apiFetch("/terms?is_current=eq.true", {
+        method: "PATCH",
+        body: JSON.stringify({ is_current: false }),
+      });
 
       // Then set the new current term
       await apiFetch(`/terms?id=eq.${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ is_current: true })
-      })
+        method: "PATCH",
+        body: JSON.stringify({ is_current: true }),
+      });
 
-      if (error) throw error
+      if (error) throw error;
 
       // Update local state
-      setTerms(terms.map(term => ({
-        ...term,
-        is_current: term.id === id
-      })))
-      
-      setSuccess('Current term updated successfully')
+      setTerms(
+        terms.map((term) => ({
+          ...term,
+          is_current: term.id === id,
+        })),
+      );
+
+      setSuccess("Current term updated successfully");
     } catch (error) {
-      console.error('Error setting current term:', error)
-      setError('Failed to update current term')
+      console.error("Error setting current term:", error);
+      setError("Failed to update current term");
     }
-  }
+  };
 
   const handleDeleteTerm = async (id) => {
-    if (!confirm('Are you sure you want to delete this term?')) {
-      return
+    if (!confirm("Are you sure you want to delete this term?")) {
+      return;
     }
 
     try {
-      console.log('Deleting term:', id)
+      console.log("Deleting term:", id);
       await apiFetch(`/terms?id=eq.${id}`, {
-        method: 'DELETE'
-      })
-      console.log('Term deleted successfully')
-      setSuccess('Term deleted successfully')
+        method: "DELETE",
+      });
+      console.log("Term deleted successfully");
+      setSuccess("Term deleted successfully");
       // Refresh the list
-      await fetchTerms()
+      await fetchTerms();
     } catch (error) {
-      console.error('Error deleting term:', error)
-      setError('Failed to delete term')
+      console.error("Error deleting term:", error);
+      setError("Failed to delete term");
     }
-  }
+  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
       </div>
-    )
+    );
   }
 
   return (
@@ -190,14 +174,14 @@ const ManageTerms = () => {
       {/* Create Term Form */}
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8">
         <h2 className="section-title mb-4">Create New Term</h2>
-        
+
         {error && (
           <div className="mb-4 flex items-center error-message">
             <AlertCircle className="h-4 w-4 mr-2" />
             {error}
           </div>
         )}
-        
+
         {success && (
           <div className="mb-4 flex items-center success-message">
             <CheckCircle className="h-4 w-4 mr-2" />
@@ -214,7 +198,9 @@ const ManageTerms = () => {
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="e.g., First Term"
                 className="w-full form-input"
               />
@@ -226,7 +212,9 @@ const ManageTerms = () => {
               <input
                 type="number"
                 value={formData.year}
-                onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({ ...formData, year: parseInt(e.target.value) })
+                }
                 min="2020"
                 max="2030"
                 className="w-full form-input"
@@ -239,7 +227,9 @@ const ManageTerms = () => {
               <input
                 type="date"
                 value={formData.start_date}
-                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, start_date: e.target.value })
+                }
                 className="w-full form-input"
               />
             </div>
@@ -250,7 +240,9 @@ const ManageTerms = () => {
               <input
                 type="date"
                 value={formData.end_date}
-                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, end_date: e.target.value })
+                }
                 className="w-full form-input"
               />
             </div>
@@ -260,10 +252,15 @@ const ManageTerms = () => {
               type="checkbox"
               id="is_current"
               checked={formData.is_current}
-              onChange={(e) => setFormData({ ...formData, is_current: e.target.checked })}
+              onChange={(e) =>
+                setFormData({ ...formData, is_current: e.target.checked })
+              }
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
-            <label htmlFor="is_current" className="ml-2 block text-sm text-gray-700">
+            <label
+              htmlFor="is_current"
+              className="ml-2 block text-sm text-gray-700"
+            >
               Set as current term
             </label>
           </div>
@@ -282,7 +279,7 @@ const ManageTerms = () => {
         <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="section-title">All Terms</h2>
         </div>
-        
+
         {terms.length === 0 ? (
           <div className="px-6 py-8 text-center text-gray-500">
             No terms found. Create your first term above.
@@ -292,24 +289,12 @@ const ManageTerms = () => {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="table-header">
-                    Term Name
-                  </th>
-                  <th className="table-header">
-                    Year
-                  </th>
-                  <th className="table-header">
-                    Start Date
-                  </th>
-                  <th className="table-header">
-                    End Date
-                  </th>
-                  <th className="table-header">
-                    Status
-                  </th>
-                  <th className="table-header text-right">
-                    Actions
-                  </th>
+                  <th className="table-header">Term Name</th>
+                  <th className="table-header">Year</th>
+                  <th className="table-header">Start Date</th>
+                  <th className="table-header">End Date</th>
+                  <th className="table-header">Status</th>
+                  <th className="table-header text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -321,9 +306,7 @@ const ManageTerms = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">
-                        {term.year}
-                      </div>
+                      <div className="text-sm text-gray-500">{term.year}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500">
@@ -336,7 +319,9 @@ const ManageTerms = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getTermStatus(term).color}`}>
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getTermStatus(term).color}`}
+                      >
                         {getTermStatus(term).label}
                       </span>
                     </td>
@@ -365,7 +350,7 @@ const ManageTerms = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ManageTerms
+export default ManageTerms;
