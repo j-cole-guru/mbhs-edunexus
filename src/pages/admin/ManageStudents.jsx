@@ -315,12 +315,16 @@ const ManageStudents = () => {
   };
 
   const handleArchiveStudent = async () => {
-    setError('Archiving is no longer available here. Please use the Archive Students page.')
-  }
+    setError(
+      "Archiving is no longer available here. Please use the Archive Students page.",
+    );
+  };
 
   const handleRestoreStudent = async (studentId) => {
-    setError('Restoring is no longer available here. Please use the Archive Students page.')
-  }
+    setError(
+      "Restoring is no longer available here. Please use the Archive Students page.",
+    );
+  };
 
   if (loading) {
     return (
@@ -554,140 +558,14 @@ const ManageStudents = () => {
           <h2 className="section-title mb-4">All Students</h2>
         </div>
 
-        {/* View Archived Table (Moved here) */}
-        {showArchived ? (
-          archivedStudents.length === 0 ? (
-            <div className="px-6 py-8 text-center text-gray-500">
-              <Users className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <p className="text-sm font-medium">No archived students found.</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="table-header">Student Number</th>
-                    <th className="table-header">Name</th>
-                    <th className="table-header">Graduation Year</th>
-                    <th className="table-header">Reason</th>
-                    <th className="table-header">Archived On</th>
-                    <th className="table-header text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {archivedStudents.map((student) => (
-                    <tr key={student.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {student.student_number}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {student.full_name}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">
-                          {student.graduation_year || "N/A"}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">
-                          {student.archive_reason || "N/A"}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">
-                          {student.archived_at
-                            ? new Date(student.archived_at).toLocaleDateString()
-                            : "N/A"}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button
-                          onClick={() => handleRestoreStudent(student.id)}
-                          className="flex items-center gap-1 text-green-600 hover:text-green-800"
-                        >
-                          <RotateCcw className="h-4 w-4" />
-                          Restore
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )
-        ) : (
-          <div className="px-6 py-8 text-center text-gray-500">
-            <Users className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-            <p className="text-sm font-medium">Use the Archive Students page to manage active students.</p>
-          </div>
-        )}
-      </div>
-      </div>
-
-      {/* Archive Modal */}
-      {archiveModalStudent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-2">
-              Archive Student{archiveModalStudent.isMultiple ? "s" : ""}
-            </h2>
-            <p className="text-sm text-gray-600 mb-4">
-              {archiveModalStudent.isMultiple
-                ? `You are about to archive ${archiveModalStudent.count} student(s). They will no longer be active but can still log in to view their records.`
-                : `You are about to archive ${archiveModalStudent.full_name}. They will no longer be active but can still log in to view their records.`}
-            </p>
-            <div className="space-y-3 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
-                  Graduation Year *
-                </label>
-                <input
-                  type="text"
-                  value={graduationYear}
-                  onChange={(e) => setGraduationYear(e.target.value)}
-                  placeholder="e.g. 2026"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
-                  Reason (Optional)
-                </label>
-                <input
-                  type="text"
-                  value={archiveReason}
-                  onChange={(e) => setArchiveReason(e.target.value)}
-                  placeholder="e.g. Graduated, Left school"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
-                />
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={handleArchiveStudent}
-                className="flex-1 bg-blue-900 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-800"
-              >
-                Confirm Archive
-              </button>
-              <button
-                onClick={() => {
-                  setArchiveModalStudent(null);
-                  setSelectedStudentIds([]);
-                  setGraduationYear("");
-                  setArchiveReason("");
-                }}
-                className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-200"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
+        {/* Removed redundant archive UI and modal */}
+        <div className="px-6 py-8 text-center text-gray-500">
+          <Users className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+          <p className="text-sm font-medium">
+            Use the Archive Students page to manage and archive student records.
+          </p>
         </div>
-      )}
+      </div>
     </div>
   );
 };
