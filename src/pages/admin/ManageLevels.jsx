@@ -49,11 +49,13 @@ const ManageLevels = () => {
 
   const getDepartmentLevels = async () => {
     const dept = getAdminDepartment();
+    console.log("Current Admin Dept:", dept); // Debugging
     const url =
       dept === "both"
         ? "/levels?select=*&order=name"
-        : `/levels?select=*&department=eq.${dept}&order=name`;
+        : `/levels?select=*&department=ilike.${dept}&order=name`; // Changed to ilike for case-insensitive match
     const data = await apiFetch(url);
+    console.log("Levels API response:", data); // Debugging
     return data;
   };
 
