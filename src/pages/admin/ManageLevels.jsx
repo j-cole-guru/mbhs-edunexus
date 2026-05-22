@@ -10,20 +10,20 @@ import {
 
 import { ANON_KEY, BASE_URL, getToken } from "../../lib/config";
 
-const safeFetch = async (url, options = {}) => {
+const apiFetch = async (endpoint, options = {}) => {
   const token = getToken();
-  const res = await fetch(url, {
+  const res = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
     headers: {
       apikey: ANON_KEY,
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
-      Prefer: "return=representation",
+      Prefer: options.prefer || "return=representation",
       ...options.headers,
     },
   });
   const text = await res.text();
-  console.log(`[${options.method || "GET"}] ${url}`);
+  console.log(`[${options.method || "GET"}] ${BASE_URL}${endpoint}`);
   console.log("Status:", res.status);
   console.log("Response:", text);
   if (!text || text.trim() === "") return null;
@@ -65,7 +65,7 @@ const ManageLevels = () => {
     try {
       const data = await getDepartmentLevels();
       console.log("Levels fetched:", data);
-      setLevels(data);
+      setLevels(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching levels:", error);
       setError("Failed to fetch levels");
