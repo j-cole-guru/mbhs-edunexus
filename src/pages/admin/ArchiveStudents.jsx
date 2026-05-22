@@ -146,7 +146,7 @@ const ArchiveStudents = () => {
     setSuccess("");
     try {
       const data = await apiFetch(
-        `/students?select=*&class_id=eq.${filterClass}&is_active=eq.true&order=full_name`,
+        `/students?select=id,student_number,full_name,gender&class_id=eq.${filterClass}&is_active=eq.true&order=full_name`,
       );
       console.log("Students fetched for archiving:", data);
       setStudents(Array.isArray(data) ? data : []);
@@ -159,10 +159,14 @@ const ArchiveStudents = () => {
     }
   };
 
-  const toggleStudentSelection = (id) => {
-    setSelectedStudentIds((prev) =>
-      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id],
-    );
+  const toggleStudentSelection = (studentId) => {
+    setSelectedStudentIds((prev) => {
+      if (prev.includes(studentId)) {
+        return prev.filter((id) => id !== studentId);
+      } else {
+        return [...prev, studentId];
+      }
+    });
   };
 
   const selectAllStudents = () => {
@@ -434,10 +438,7 @@ const ArchiveStudents = () => {
                         <input
                           type="checkbox"
                           checked={selectedStudentIds.includes(student.id)}
-                          onChange={(e) => {
-                            e.stopPropagation();
-                            toggleStudentSelection(student.id);
-                          }}
+                          onChange={() => toggleStudentSelection(student.id)}
                           className="rounded border-gray-300 text-blue-900 focus:ring-blue-900"
                         />
                       </td>
