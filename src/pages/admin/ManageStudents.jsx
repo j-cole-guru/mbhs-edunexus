@@ -39,6 +39,9 @@ const ManageStudents = () => {
   const [classes, setClasses] = useState([])
   const [loading, setLoading] = useState(true)
   const [showArchived, setShowArchived] = useState(false)
+  const [filterLevel, setFilterLevel] = useState('')
+  const [filterClass, setFilterClass] = useState('')
+  const [selectedStudentIds, setSelectedStudentIds] = useState([])
   const [graduationYear, setGraduationYear] = useState('')
   const [archiveReason, setArchiveReason] = useState('')
   const [archiveModalStudent, setArchiveModalStudent] = useState(null)
@@ -282,30 +285,39 @@ const ManageStudents = () => {
   }
 
   const handleArchiveStudent = async () => {
-    if (!archiveModalStudent) return
     if (!graduationYear) {
       alert('Please enter the graduation year.')
       return
     }
+    if (selectedStudentIds.length === 0) {
+      alert('Please select at least one student to archive.')
+      return
+    }
     try {
-      await apiFetch(`/students?id=eq.${archiveModalStudent.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-          is_active: false,
-          archived_at: new Date().toISOString(),
-          graduation_year: graduationYear,
-          archive_reason: archiveReason || 'Graduated'
+      // Archive all selected students
+      for (const studentId of selectedStudentIds) {
+        await apiFetch(`/students?id=eq.${studentId}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            is_active: false,
+            archived_at: new Date().toISOString(),
+            graduation_year: graduationYear,
+            archive_reason: archiveReason || 'Graduated'
+          })
         })
-      })
+      }
+      setSelectedStudentIds([])
       setArchiveModalStudent(null)
       setGraduationYear('')
       setArchiveReason('')
-      setSuccess('Student archived successfully')
+      setFilterLevel('')
+      setFilterClass('')
+      setSuccess(`${selectedStudentIds.length} student(s) archived successfully`)
       await fetchStudents()
       await fetchArchivedStudents()
     } catch (err) {
       console.error('Archive error:', err)
-      setError('Failed to archive student')
+      setError('Failed to archive students')
     }
   }
 
@@ -337,6 +349,46 @@ const ManageStudents = () => {
       </div>
     )
   }
+
+  // Filter students by class and level
+  const filteredStudents = students.filter(student => {
+    const classMatch = !filterClass || student.class_id === filterClass
+    const levelMatch = !filterLevel || student.level_id === filterLevel
+    return classMatch && levelMatch
+  })
+
+  // Get available classes for selected level
+  const availableClasses = filterLevel 
+    ? classes.filter(cls => cls.level_id === filterLevel)
+    : []
+
+  // Toggle student selection
+  const toggleStudentSelection = (studentId) => {
+    setSelectedStudentIds(prev =>
+      prev.includes(studentId)
+        ? prev.filter(id => id !== studentId)
+        : [...prev, studentId]
+    )
+  }
+
+  // Select all visible students
+  const selectAllStudents = () => {
+    const allIds = filteredStudents.map(s => s.id)
+    setSelectedStudentIds(prev => {
+      const newSet = new Set([...prev, ...allIds])
+      return Array.from(newSet)
+    })
+  }
+
+  // Deselect all visible students
+  const deselectAllStudents = () => {
+    const visibleIds = new Set(filteredStudents.map(s => s.id))
+    setSelectedStudentIds(prev => prev.filter(id => !visibleIds.has(id)))
+  }
+
+  // Check if all visible students are selected
+  const allVisibleSelected = filteredStudents.length > 0 && 
+    filteredStudents.every(s => selectedStudentIds.includes(s.id))
 
   return (
     <div>
@@ -524,80 +576,160 @@ const ManageStudents = () => {
               <p className="text-sm font-medium">No active students found.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="table-header">
-                      Student Number
-                    </th>
-                    <th className="table-header">
-                      Name
-                    </th>
-                    <th className="table-header">
-                      Class
-                    </th>
-                    <th className="table-header">
-                      Level
-                    </th>
-                    <th className="table-header">
-                      Gender
-                    </th>
-                    <th className="table-header">
-                      Guardian
-                    </th>
-                    <th className="table-header text-right">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {students.map((student) => (
-                    <tr key={student.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {student.student_number}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {student.full_name}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">
-                          {student.classes?.name || 'N/A'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">
-                          {student.levels?.name || 'N/A'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">
-                          {student.gender}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">
-                          {student.guardian_name}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button
-                          onClick={() => setArchiveModalStudent(student)}
-                          className="flex items-center gap-1 text-yellow-600 hover:text-yellow-800"
-                        >
-                          <Archive className="h-4 w-4" />
-                          Archive
-                        </button>
-                      </td>
+            <>
+              {/* Filters */}
+              <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Level</label>
+                    <select
+                      value={filterLevel}
+                      onChange={(e) => {
+                        setFilterLevel(e.target.value)
+                        setFilterClass('')
+                        setSelectedStudentIds([])
+                      }}
+                      className="w-full form-select text-sm"
+                    >
+                      <option value="">All Levels</option>
+                      {levels.map((level) => (
+                        <option key={level.id} value={level.id}>
+                          {level.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Class</label>
+                    <select
+                      value={filterClass}
+                      onChange={(e) => {
+                        setFilterClass(e.target.value)
+                        setSelectedStudentIds([])
+                      }}
+                      className="w-full form-select text-sm"
+                      disabled={!filterLevel}
+                    >
+                      <option value="">All Classes</option>
+                      {availableClasses.map((cls) => (
+                        <option key={cls.id} value={cls.id}>
+                          {cls.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Selected students info and archive button */}
+                {selectedStudentIds.length > 0 && (
+                  <div className="flex items-center justify-between bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    <span className="text-sm font-medium text-blue-900">
+                      {selectedStudentIds.length} student(s) selected
+                    </span>
+                    <button
+                      onClick={() => {
+                        if (selectedStudentIds.length > 0) {
+                          setArchiveModalStudent({ isMultiple: true, count: selectedStudentIds.length })
+                        }
+                      }}
+                      className="flex items-center gap-2 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800"
+                    >
+                      <Archive className="h-4 w-4" />
+                      Archive Selected
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left">
+                        <input
+                          type="checkbox"
+                          checked={allVisibleSelected && filteredStudents.length > 0}
+                          onChange={() => allVisibleSelected ? deselectAllStudents() : selectAllStudents()}
+                          className="rounded"
+                        />
+                      </th>
+                      <th className="table-header">
+                        Student Number
+                      </th>
+                      <th className="table-header">
+                        Name
+                      </th>
+                      <th className="table-header">
+                        Class
+                      </th>
+                      <th className="table-header">
+                        Level
+                      </th>
+                      <th className="table-header">
+                        Gender
+                      </th>
+                      <th className="table-header">
+                        Guardian
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredStudents.length === 0 ? (
+                      <tr>
+                        <td colSpan="7" className="px-6 py-8 text-center text-gray-500 text-sm">
+                          No students found for the selected level and class.
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredStudents.map((student) => (
+                        <tr key={student.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <input
+                              type="checkbox"
+                              checked={selectedStudentIds.includes(student.id)}
+                              onChange={() => toggleStudentSelection(student.id)}
+                              className="rounded"
+                            />
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium text-gray-900">
+                              {student.student_number}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium text-gray-900">
+                              {student.full_name}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-500">
+                              {student.classes?.name || 'N/A'}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-500">
+                              {student.levels?.name || 'N/A'}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-500">
+                              {student.gender}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-500">
+                              {student.guardian_name}
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )
           )
         ) : (
           archivedStudents.length === 0 ? (
@@ -680,14 +812,16 @@ const ManageStudents = () => {
       {archiveModalStudent && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-2">Archive Student</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-2">Archive Student{archiveModalStudent.isMultiple ? 's' : ''}</h2>
             <p className="text-sm text-gray-600 mb-4">
-              You are about to archive <span className="font-semibold">{archiveModalStudent.full_name}</span>.
-              They will no longer be active but can still log in to view their records.
+              {archiveModalStudent.isMultiple 
+                ? `You are about to archive ${archiveModalStudent.count} student(s). They will no longer be active but can still log in to view their records.`
+                : `You are about to archive ${archiveModalStudent.full_name}. They will no longer be active but can still log in to view their records.`
+              }
             </p>
             <div className="space-y-3 mb-6">
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">Graduation Year</label>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Graduation Year *</label>
                 <input
                   type="text"
                   value={graduationYear}
@@ -715,7 +849,12 @@ const ManageStudents = () => {
                 Confirm Archive
               </button>
               <button
-                onClick={() => setArchiveModalStudent(null)}
+                onClick={() => {
+                  setArchiveModalStudent(null)
+                  setSelectedStudentIds([])
+                  setGraduationYear('')
+                  setArchiveReason('')
+                }}
                 className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-200"
               >
                 Cancel
