@@ -48,11 +48,9 @@ const apiFetch = async (endpoint, options = {}) => {
 
 const ManageStudents = () => {
   const [students, setStudents] = useState([]);
-  const [archivedStudents, setArchivedStudents] = useState([]);
   const [levels, setLevels] = useState([]);
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showArchived, setShowArchived] = useState(false);
   const [filterLevel, setFilterLevel] = useState("");
   const [filterClass, setFilterClass] = useState("");
   const [selectedStudentIds, setSelectedStudentIds] = useState([]);
@@ -89,7 +87,6 @@ const ManageStudents = () => {
 
   useEffect(() => {
     fetchStudents();
-    fetchArchivedStudents();
     fetchLevels();
     fetchClasses();
   }, []);
@@ -607,217 +604,80 @@ const ManageStudents = () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="section-title mb-4">All Students</h2>
-
-          {/* Toggle buttons */}
-          <div className="flex gap-2">
-            <button
-              onClick={() => setShowArchived(false)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium ${!showArchived ? "bg-blue-900 text-white" : "bg-gray-100 text-gray-600"}`}
-            >
-              Active Students ({students.length})
-            </button>
-            <button
-              onClick={() => setShowArchived(true)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium ${showArchived ? "bg-blue-900 text-white" : "bg-gray-100 text-gray-600"}`}
-            >
-              Archived Students ({archivedStudents.length})
-            </button>
-          </div>
         </div>
 
-        {!showArchived ? (
-          <>
-            <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Filter by Level
-                  </label>
-                  <select
-                    value={filterLevel}
-                    onChange={(e) => {
-                      setFilterLevel(e.target.value);
-                      setFilterClass("");
-                      setSelectedStudentIds([]);
-                    }}
-                    className="w-full form-select text-sm"
-                  >
-                    <option value="">Select Level</option>
-                    {levels.map((level) => (
-                      <option key={level.id} value={level.id}>
-                        {level.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Filter by Class
-                  </label>
-                  <select
-                    value={filterClass}
-                    onChange={(e) => {
-                      setFilterClass(e.target.value);
-                      setSelectedStudentIds([]);
-                    }}
-                    className="w-full form-select text-sm"
-                    disabled={!filterLevel}
-                  >
-                    <option value="">Select Class</option>
-                    {availableClasses.map((cls) => (
-                      <option key={cls.id} value={cls.id}>
-                        {cls.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Selected students info and archive button */}
-              {selectedStudentIds.length > 0 && (
-                <div className="flex items-center justify-between bg-blue-50 p-3 rounded-lg border border-blue-200">
-                  <span className="text-sm font-medium text-blue-900">
-                    {selectedStudentIds.length} student(s) selected
-                  </span>
-                  <button
-                    onClick={() => {
-                      if (selectedStudentIds.length > 0) {
-                        setArchiveModalStudent({
-                          isMultiple: true,
-                          count: selectedStudentIds.length,
-                        });
-                      }
-                    }}
-                    className="flex items-center gap-2 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800"
-                  >
-                    <Archive className="h-4 w-4" />
-                    Archive Selected
-                  </button>
-                </div>
-              )}
+        {/* View Archived Table (Moved here) */}
+        {showArchived ? (
+          archivedStudents.length === 0 ? (
+            <div className="px-6 py-8 text-center text-gray-500">
+              <Users className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+              <p className="text-sm font-medium">No archived students found.</p>
             </div>
-
-            {filteredStudents.length === 0 ? (
-              <div className="px-6 py-8 text-center text-gray-500">
-                <Users className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <p className="text-sm font-medium">
-                  Please select a class and level to view students.
-                </p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left">
-                        <input
-                          type="checkbox"
-                          checked={
-                            allVisibleSelected && filteredStudents.length > 0
-                          }
-                          onChange={() =>
-                            allVisibleSelected
-                              ? deselectAllStudents()
-                              : selectAllStudents()
-                          }
-                          className="rounded"
-                        />
-                      </th>
-                      <th className="table-header">Student Number</th>
-                      <th className="table-header">Name</th>
-                      <th className="table-header">Gender</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredStudents.map((student) => (
-                      <tr key={student.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <input
-                            type="checkbox"
-                            checked={selectedStudentIds.includes(student.id)}
-                            onChange={() => toggleStudentSelection(student.id)}
-                            className="rounded"
-                          />
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="table-header">Student Number</th>
+                    <th className="table-header">Name</th>
+                    <th className="table-header">Graduation Year</th>
+                    <th className="table-header">Reason</th>
+                    <th className="table-header">Archived On</th>
+                    <th className="table-header text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {archivedStudents.map((student) => (
+                    <tr key={student.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
                           {student.student_number}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
                           {student.full_name}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {student.gender}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </>
-        ) : archivedStudents.length === 0 ? (
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500">
+                          {student.graduation_year || "N/A"}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500">
+                          {student.archive_reason || "N/A"}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500">
+                          {student.archived_at
+                            ? new Date(student.archived_at).toLocaleDateString()
+                            : "N/A"}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button
+                          onClick={() => handleRestoreStudent(student.id)}
+                          className="flex items-center gap-1 text-green-600 hover:text-green-800"
+                        >
+                          <RotateCcw className="h-4 w-4" />
+                          Restore
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
+        ) : (
           <div className="px-6 py-8 text-center text-gray-500">
             <Users className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-            <p className="text-sm font-medium">No archived students found.</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="table-header">Student Number</th>
-                  <th className="table-header">Name</th>
-                  <th className="table-header">Graduation Year</th>
-                  <th className="table-header">Reason</th>
-                  <th className="table-header">Archived On</th>
-                  <th className="table-header text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {archivedStudents.map((student) => (
-                  <tr key={student.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {student.student_number}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {student.full_name}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">
-                        {student.graduation_year || "N/A"}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">
-                        {student.archive_reason || "N/A"}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">
-                        {student.archived_at
-                          ? new Date(student.archived_at).toLocaleDateString()
-                          : "N/A"}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => handleRestoreStudent(student.id)}
-                        className="flex items-center gap-1 text-green-600 hover:text-green-800"
-                      >
-                        <RotateCcw className="h-4 w-4" />
-                        Restore
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <p className="text-sm font-medium">Use the Archive Students page to manage active students.</p>
           </div>
         )}
+      </div>
       </div>
 
       {/* Archive Modal */}

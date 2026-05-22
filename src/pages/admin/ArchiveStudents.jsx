@@ -53,6 +53,25 @@ const ArchiveStudents = () => {
   const [success, setSuccess] = useState("");
   const [showArchived, setShowArchived] = useState(false);
 
+  const handleRestore = async (studentId) => {
+    try {
+      await apiFetch(`/students?id=eq.${studentId}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          is_active: true,
+          archived_at: null,
+          graduation_year: null,
+          archive_reason: null,
+        }),
+      });
+      setSuccess("Student restored successfully");
+      fetchArchivedStudents();
+    } catch (err) {
+      console.error("Restore error:", err);
+      setError("Failed to restore student");
+    }
+  };
+
   useEffect(() => {
     fetchLevels();
     fetchClasses();
@@ -425,6 +444,7 @@ const ArchiveStudents = () => {
                 </th>
                 <th className="px-6 py-3 text-left font-medium">Reason</th>
                 <th className="px-6 py-3 text-left font-medium">Archived On</th>
+                <th className="px-6 py-3 text-left font-medium">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -436,6 +456,14 @@ const ArchiveStudents = () => {
                   <td className="px-6 py-4">{s.archive_reason}</td>
                   <td className="px-6 py-4">
                     {new Date(s.archived_at).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => handleRestore(s.id)}
+                      className="text-green-600 hover:text-green-800 text-xs font-medium"
+                    >
+                      Restore
+                    </button>
                   </td>
                 </tr>
               ))}
