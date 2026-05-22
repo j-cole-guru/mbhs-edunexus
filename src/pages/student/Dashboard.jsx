@@ -104,6 +104,10 @@ export default function StudentDashboard() {
     const isSuspended = student.archive_reason
       ?.toLowerCase()
       .includes("suspend");
+
+    // Clear local storage if suspended so they have to login again and see the updated reason
+    // OR simply update the object in state if you're fetching fresh data.
+    // For now, let's just make the message strictly conditional.
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-8 text-center">
@@ -120,7 +124,7 @@ export default function StudentDashboard() {
           </h1>
           <p className="text-gray-600 mb-6">
             {isSuspended
-              ? `Dear ${student.full_name}, your account has been ${student.archive_reason || "suspended"}. Please contact the school administration for further clarification.`
+              ? `Dear ${student.full_name}, your account is currently ${student.archive_reason || "suspended"}. Please contact the school administration for further clarification.`
               : `Welcome back, ${student.full_name}. You have successfully completed your studies at Methodist Boys' High School. Your academic records are preserved and available for your reference.`}
           </p>
           <div className="bg-blue-50 rounded-lg p-4 mb-6 text-left">
