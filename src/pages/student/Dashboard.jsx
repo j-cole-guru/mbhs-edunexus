@@ -112,13 +112,20 @@ export default function StudentDashboard() {
       text: "text-blue-900",
     };
 
+    const isGraduated = reasonLower.includes("graduate");
+
     if (isSuspended) {
       statusTitle = "Suspended Account";
       statusMessage = `Dear ${student.full_name}, your account has been suspended due to ${archiveReason}. Please come to the school with a parent or guardian to discuss this matter.`;
       statusVariant = { bg: "bg-red-100", text: "text-red-900" };
-    } else if (archiveReason) {
+    } else if (isGraduated) {
       statusTitle = "Alumni Portal";
       statusMessage = `Welcome back, ${student.full_name}. You have successfully completed your studies at Methodist Boys' High School. Your academic records are preserved and available for your reference.`;
+      statusVariant = { bg: "bg-blue-100", text: "text-blue-900" };
+    } else if (archiveReason) {
+      statusTitle = "Account Archived";
+      statusMessage = `Dear ${student.full_name}, your account has been archived due to ${archiveReason}. Please contact the school administration for more information.`;
+      statusVariant = { bg: "bg-yellow-100", text: "text-yellow-900" };
     } else {
       statusTitle = "Account Archived";
       statusMessage = `Dear ${student.full_name}, your account has been archived. Please contact the school administration for more information.`;
