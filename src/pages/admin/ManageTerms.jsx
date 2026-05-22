@@ -108,18 +108,16 @@ const ManageTerms = () => {
   const handleSetCurrent = async (id) => {
     try {
       // First, unset all current terms
-      await apiFetch("/terms?is_current=eq.true", {
+      await safeFetch(`${BASE_URL}/terms?is_current=eq.true`, {
         method: "PATCH",
         body: JSON.stringify({ is_current: false }),
       });
 
       // Then set the new current term
-      await apiFetch(`/terms?id=eq.${id}`, {
+      await safeFetch(`${BASE_URL}/terms?id=eq.${id}`, {
         method: "PATCH",
         body: JSON.stringify({ is_current: true }),
       });
-
-      if (error) throw error;
 
       // Update local state
       setTerms(
@@ -143,7 +141,7 @@ const ManageTerms = () => {
 
     try {
       console.log("Deleting term:", id);
-      await apiFetch(`/terms?id=eq.${id}`, {
+      await safeFetch(`${BASE_URL}/terms?id=eq.${id}`, {
         method: "DELETE",
       });
       console.log("Term deleted successfully");
