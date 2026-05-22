@@ -74,6 +74,43 @@ const ArchiveStudents = () => {
   const [success, setSuccess] = useState("");
   const [showArchived, setShowArchived] = useState(false);
 
+// Add imports at the top
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+
+const ArchiveStudents = () => {
+  const queryClient = useQueryClient();
+  // ... state declarations
+
+  // Replace fetchLevels/Classes/Archived useEffect with these Query hooks
+  // (already added useQuery calls)
+
+  // Update handleArchive to invalidate queries
+  const handleArchive = async () => {
+    // ... existing logic
+    try {
+      const idsString = `(${selectedStudentIds.join(",")})`;
+      await apiFetch(`/students?id=in.${idsString}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          is_active: false,
+          archived_at: new Date().toISOString(),
+          graduation_year: graduationYear,
+          archive_reason: archiveReason,
+        }),
+      });
+
+      setSuccess(`${selectedStudentIds.length} student(s) archived successfully`);
+      setStudents((prev) => prev.filter((s) => !selectedStudentIds.includes(s.id)));
+      setSelectedStudentIds([]);
+
+      // Invalidate queries to trigger automatic refetch
+      queryClient.invalidateQueries({ queryKey: ['archivedStudents'] });
+    } catch (err) {
+      // ...
+    }
+  };
+
+  // Update handleRestore to invalidate queries
   const handleRestore = async (studentId) => {
     try {
       await apiFetch(`/students?id=eq.${studentId}`, {
@@ -86,55 +123,47 @@ const ArchiveStudents = () => {
         }),
       });
       setSuccess("Student restored successfully");
-      fetchArchivedStudents();
+      queryClient.invalidateQueries({ queryKey: ['archivedStudents'] });
     } catch (err) {
       console.error("Restore error:", err);
       setError("Failed to restore student");
     }
   };
+import { useQuery } from '@tanstack/react-query';
 
-  useEffect(() => {
-    fetchLevels();
-    fetchClasses();
-    fetchArchivedStudents();
-  }, []);
+// ... existing imports
 
-  const fetchLevels = async () => {
-    try {
+const ArchiveStudents = () => {
+  // ... existing state
+
+  // Replace manual fetchLevels
+  const { data: levels = [], isLoading: loadingLevels } = useQuery({
+    queryKey: ['levels'],
+    queryFn: async () => {
       const dept = getAdminDepartment();
-      const endpoint =
-        dept === "both"
-          ? "/levels?select=*&order=name"
-          : `/levels?select=*&department=eq.${dept}&order=name`;
+      const endpoint = dept === "both" ? "/levels?select=*&order=name" : `/levels?select=*&department=eq.${dept}&order=name`;
       const data = await apiFetch(endpoint);
-      console.log("Levels response:", data); // Debugging
-      setLevels(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Error fetching levels:", error);
+      return Array.isArray(data) ? data : [];
     }
-  };
+  });
 
-  const fetchClasses = async () => {
-    try {
+  // Replace manual fetchClasses
+  const { data: classes = [], isLoading: loadingClasses } = useQuery({
+    queryKey: ['classes'],
+    queryFn: async () => {
       const data = await apiFetch("/classes?select=*&order=name");
-      console.log("Classes response:", data); // Debugging
-      setClasses(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Error fetching classes:", error);
+      return Array.isArray(data) ? data : [];
     }
-  };
+  });
 
-  const fetchArchivedStudents = async () => {
-    try {
-      const data = await apiFetch(
-        `/students?select=*,classes(name),levels(name)&is_active=eq.false&order=archived_at.desc`,
-      );
-      console.log("Archived students response:", data); // Debugging
-      setArchivedStudents(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Error fetching archived students:", error);
+  // Replace manual fetchArchivedStudents
+  const { data: archivedStudents = [], refetch: refetchArchived } = useQuery({
+    queryKey: ['archivedStudents'],
+    queryFn: async () => {
+      const data = await apiFetch(`/students?select=*,classes(name),levels(name)&is_active=eq.false&order=archived_at.desc`);
+      return Array.isArray(data) ? data : [];
     }
-  };
+  });
 
   const fetchStudents = async () => {
     if (!filterClass) {
