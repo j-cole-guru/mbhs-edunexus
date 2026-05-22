@@ -104,6 +104,7 @@ export default function StudentDashboard() {
     const archiveReason = student.archive_reason?.trim() || "";
     const reasonLower = archiveReason.toLowerCase();
     const isSuspended = reasonLower.includes("suspend");
+    const isGraduated = reasonLower.includes("graduate");
     // Build a reason-aware message: suspended accounts should not be congratulated.
     let statusTitle;
     let statusMessage;
@@ -161,7 +162,7 @@ export default function StudentDashboard() {
                   Graduation Year
                 </p>
                 <p className="font-semibold text-gray-900">
-                  {student.graduation_year || "N/A"}
+                  {isGraduated ? student.graduation_year || "N/A" : "N/A"}
                 </p>
               </div>
             </div>
