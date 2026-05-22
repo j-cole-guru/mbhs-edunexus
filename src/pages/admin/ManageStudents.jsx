@@ -53,10 +53,6 @@ const ManageStudents = () => {
   const [loading, setLoading] = useState(true);
   const [filterLevel, setFilterLevel] = useState("");
   const [filterClass, setFilterClass] = useState("");
-  const [selectedStudentIds, setSelectedStudentIds] = useState([]);
-  const [graduationYear, setGraduationYear] = useState("");
-  const [archiveReason, setArchiveReason] = useState("");
-  const [archiveModalStudent, setArchiveModalStudent] = useState(null);
   const [formData, setFormData] = useState({
     full_name: "",
     level_id: "",
@@ -316,13 +312,13 @@ const ManageStudents = () => {
 
   const handleArchiveStudent = async () => {
     setError(
-      "Archiving is no longer available here. Please use the Archive Students page.",
+      "Archiving is not available here. Please go to the Archive Students page.",
     );
   };
 
   const handleRestoreStudent = async (studentId) => {
     setError(
-      "Restoring is no longer available here. Please use the Archive Students page.",
+      "Restoring is not available here. Please go to the Archive Students page.",
     );
   };
 
@@ -345,35 +341,6 @@ const ManageStudents = () => {
   const availableClasses = filterLevel
     ? classes.filter((cls) => cls.level_id === filterLevel)
     : [];
-
-  // Toggle student selection
-  const toggleStudentSelection = (studentId) => {
-    setSelectedStudentIds((prev) =>
-      prev.includes(studentId)
-        ? prev.filter((id) => id !== studentId)
-        : [...prev, studentId],
-    );
-  };
-
-  // Select all visible students
-  const selectAllStudents = () => {
-    const allIds = filteredStudents.map((s) => s.id);
-    setSelectedStudentIds((prev) => {
-      const newSet = new Set([...prev, ...allIds]);
-      return Array.from(newSet);
-    });
-  };
-
-  // Deselect all visible students
-  const deselectAllStudents = () => {
-    const visibleIds = new Set(filteredStudents.map((s) => s.id));
-    setSelectedStudentIds((prev) => prev.filter((id) => !visibleIds.has(id)));
-  };
-
-  // Check if all visible students are selected
-  const allVisibleSelected =
-    filteredStudents.length > 0 &&
-    filteredStudents.every((s) => selectedStudentIds.includes(s.id));
 
   return (
     <div>
@@ -558,12 +525,60 @@ const ManageStudents = () => {
           <h2 className="section-title mb-4">All Students</h2>
         </div>
 
-        {/* Removed redundant archive UI and modal */}
-        <div className="px-6 py-8 text-center text-gray-500">
-          <Users className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-          <p className="text-sm font-medium">
-            Use the Archive Students page to manage and archive student records.
-          </p>
+        {/* Students Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="table-header">Student Number</th>
+                <th className="table-header">Name</th>
+                <th className="table-header">Class</th>
+                <th className="table-header">Level</th>
+                <th className="table-header">Gender</th>
+                <th className="table-header">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredStudents.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="px-6 py-8 text-center text-gray-500 text-sm"
+                  >
+                    No active students found.
+                  </td>
+                </tr>
+              ) : (
+                filteredStudents.map((student) => (
+                  <tr key={student.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {student.student_number}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {student.full_name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {student.classes?.name || "N/A"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {student.levels?.name || "N/A"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {student.gender}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <button
+                        onClick={() => handleDeleteStudent(student.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
