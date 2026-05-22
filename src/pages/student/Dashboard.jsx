@@ -100,7 +100,7 @@ export default function StudentDashboard() {
       </div>
     );
 
-  if (student && !student.is_active) {
+  if (student && (!student.is_active || student.archive_reason)) {
     const isSuspended = student.archive_reason
       ?.toLowerCase()
       .includes("suspend");
