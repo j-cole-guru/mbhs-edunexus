@@ -423,51 +423,58 @@ const AdminDashboard = () => {
           ) : allUsers.length === 0 ? (
             <div className="p-8 text-center text-gray-500">No users found.</div>
           ) : (
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
-                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Email</th>
-                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Role</th>
-                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Department</th>
-                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {allUsers.map((user, i) => (
-                  <tr key={user.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="px-4 py-3 font-medium text-gray-900">{user.full_name}</td>
-                    <td className="px-4 py-3 text-gray-600">{user.email}</td>
-                    <td className="px-4 py-3">
-                      <span className={`px-2 py-1 rounded text-xs font-semibold capitalize ${user.role === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'}`}>
-                        {user.role}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={`px-2 py-1 rounded text-xs font-semibold ${user.department === 'JSS' ? 'bg-blue-100 text-blue-700' : user.department === 'SSS' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'}`}>
-                        {user.department || 'N/A'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      {user.department !== 'both' && (
-                        <button
-                          onClick={() => handleDeleteUser(user.id, user.email, user.department)}
-                          className="flex items-center gap-1 text-red-600 hover:text-red-800 text-xs font-medium"
-                        >
-                          <Trash2 size={14} /> Delete
-                        </button>
-                      )}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-[600px]">
+                <thead className="bg-gray-50 border-b">
+                  <tr>
+                    <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
+                    <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Email</th>
+                    <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Role</th>
+                    <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Department</th>
+                    <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {allUsers.map((user, i) => (
+                    <tr key={user.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <td className="px-4 py-3 font-medium text-gray-900">{user.full_name}</td>
+                      <td className="px-4 py-3 text-gray-600">{user.email}</td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 rounded text-xs font-semibold capitalize ${user.role === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'}`}>
+                          {user.role}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 rounded text-xs font-semibold ${user.department === 'JSS' ? 'bg-blue-100 text-blue-700' : user.department === 'SSS' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'}`}>
+                          {user.department || 'N/A'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        {user.department !== 'both' && (
+                          <button
+                            onClick={() => handleDeleteUser(user.id, user.email, user.department)}
+                            className="flex items-center gap-1 text-red-600 hover:text-red-800 text-xs font-medium"
+                          >
+                            <Trash2 size={14} /> Delete
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
 
-        <div className="mt-8 text-center text-sm text-gray-400">
-          © 2026 All Rights Reserved | Developed by Alie Amadu Sesay
-        </div>
+        <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+          <p className="text-xs text-gray-400">
+            © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
+          </p>
+          <p className="text-xs text-gray-400 mt-1">
+            Developed by Alie Amadu Sesay
+          </p>
+        </footer>
       </div>
     )
   }

@@ -52,13 +52,23 @@ const Sidebar = ({ onClose }) => {
         { path: '/teacher/timetable', label: 'Timetable', icon: Clock },
       ]
     } else if (student) {
-      return [
-        { path: '/student', label: 'Dashboard', icon: LayoutDashboard },
-        { path: '/student/results', label: 'My Results', icon: ClipboardList },
-        { path: '/student/attendance', label: 'Attendance', icon: UserCheck },
-        { path: '/student/timetable', label: 'Timetable', icon: Clock },
-        { path: '/student/report', label: 'Submit Report', icon: MessageSquare },
-      ]
+      const isArchived = student.is_active === false
+      
+      if (isArchived) {
+        return [
+          { path: '/student', label: 'Alumni Dashboard', icon: GraduationCap },
+          { path: '/student/results', label: 'My Results', icon: ClipboardList },
+          { path: '/student/attendance', label: 'My Attendance', icon: UserCheck },
+        ]
+      } else {
+        return [
+          { path: '/student', label: 'Dashboard', icon: LayoutDashboard },
+          { path: '/student/results', label: 'My Results', icon: ClipboardList },
+          { path: '/student/attendance', label: 'My Attendance', icon: UserCheck },
+          { path: '/student/timetable', label: 'Timetable', icon: Clock },
+          { path: '/student/report', label: 'Submit Report', icon: MessageSquare },
+        ]
+      }
     }
     return []
   }

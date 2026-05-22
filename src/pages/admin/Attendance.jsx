@@ -333,9 +333,14 @@ export default function AdminAttendance() {
         )}
       </div>
 
-      <div className="mt-8 text-center text-sm text-gray-400">
-        © 2026 All Rights Reserved | Developed by Alie Amadu Sesay
-      </div>
+      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+        <p className="text-xs text-gray-400">
+          © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
+        </p>
+        <p className="text-xs text-gray-400 mt-1">
+          Developed by Alie Amadu Sesay
+        </p>
+      </footer>
     </div>
   )
 }

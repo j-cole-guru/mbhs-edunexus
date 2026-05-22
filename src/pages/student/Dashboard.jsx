@@ -75,6 +75,56 @@ export default function StudentDashboard() {
     </div>
   )
 
+  if (student && !student.is_active) {
+    return (
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-8 text-center">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <GraduationCap size={32} className="text-blue-900" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Alumni Portal</h1>
+          <p className="text-gray-600 mb-6">
+            Welcome back, <span className="font-semibold">{student.full_name}</span>.
+            You have successfully completed your studies at Methodist Boys' High School.
+            Your academic records are preserved and available for your reference.
+          </p>
+          <div className="bg-blue-50 rounded-lg p-4 mb-6 text-left">
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <p className="text-gray-500 text-xs uppercase tracking-wide">Student Number</p>
+                <p className="font-semibold text-gray-900">{student.student_number}</p>
+              </div>
+              <div>
+                <p className="text-gray-500 text-xs uppercase tracking-wide">Graduation Year</p>
+                <p className="font-semibold text-gray-900">{student.graduation_year || 'N/A'}</p>
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-3">
+            <a href="/student/results"
+              className="block bg-blue-900 text-white py-3 rounded-lg text-sm font-medium hover:bg-blue-800">
+              View My Academic Results
+            </a>
+            <a href="/student/attendance"
+              className="block bg-white border border-gray-200 text-gray-700 py-3 rounded-lg text-sm font-medium hover:bg-gray-50">
+              View My Attendance History
+            </a>
+            <button
+              onClick={() => { localStorage.removeItem('mbhs_student'); window.location.href = '/login' }}
+              className="block w-full bg-gray-100 text-gray-600 py-3 rounded-lg text-sm font-medium hover:bg-gray-200"
+            >
+              Sign Out
+            </button>
+          </div>
+          <footer className="mt-8 pt-4 border-t border-gray-200">
+            <p className="text-xs text-gray-400">© 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.</p>
+            <p className="text-xs text-gray-400 mt-1">Developed by Alie Amadu Sesay</p>
+          </footer>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="p-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
@@ -205,9 +255,8 @@ export default function StudentDashboard() {
       </div>
 
       <div className="mt-12 text-center">
-        <p className="text-sm text-gray-400">
-          © 2026 Methodist Boys' High School | EduNexus Portal
-        </p>
+        <p className="text-xs text-gray-400">© 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.</p>
+        <p className="text-xs text-gray-400 mt-1">Developed by Alie Amadu Sesay</p>
       </div>
     </div>
   )
