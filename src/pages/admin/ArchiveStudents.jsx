@@ -86,7 +86,8 @@ const ArchiveStudents = () => {
           ? "/levels?select=*&order=name"
           : `/levels?select=*&department=eq.${dept}&order=name`;
       const data = await apiFetch(endpoint);
-      setLevels(data || []);
+      console.log("Levels response:", data); // Debugging
+      setLevels(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching levels:", error);
     }
@@ -95,7 +96,8 @@ const ArchiveStudents = () => {
   const fetchClasses = async () => {
     try {
       const data = await apiFetch("/classes?select=*&order=name");
-      setClasses(data || []);
+      console.log("Classes response:", data); // Debugging
+      setClasses(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching classes:", error);
     }
@@ -106,7 +108,8 @@ const ArchiveStudents = () => {
       const data = await apiFetch(
         `/students?select=*,classes(name),levels(name)&is_active=eq.false&order=archived_at.desc`,
       );
-      setArchivedStudents(data || []);
+      console.log("Archived students response:", data); // Debugging
+      setArchivedStudents(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching archived students:", error);
     }
