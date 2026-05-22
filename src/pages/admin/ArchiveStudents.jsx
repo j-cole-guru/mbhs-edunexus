@@ -148,7 +148,8 @@ const ArchiveStudents = () => {
       const data = await apiFetch(
         `/students?select=*&class_id=eq.${filterClass}&is_active=eq.true&order=full_name`,
       );
-      setStudents(data || []);
+      console.log("Students fetched for archiving:", data);
+      setStudents(Array.isArray(data) ? data : []);
       setSelectedStudentIds([]);
     } catch (error) {
       console.error("Error fetching students:", error);

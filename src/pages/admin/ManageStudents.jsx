@@ -315,64 +315,12 @@ const ManageStudents = () => {
   };
 
   const handleArchiveStudent = async () => {
-    if (!graduationYear) {
-      alert("Please enter the graduation year.");
-      return;
-    }
-    if (selectedStudentIds.length === 0) {
-      alert("Please select at least one student to archive.");
-      return;
-    }
-    try {
-      // Archive all selected students
-      for (const studentId of selectedStudentIds) {
-        await apiFetch(`/students?id=eq.${studentId}`, {
-          method: "PATCH",
-          body: JSON.stringify({
-            is_active: false,
-            archived_at: new Date().toISOString(),
-            graduation_year: graduationYear,
-            archive_reason: archiveReason || "Graduated",
-          }),
-        });
-      }
-      setSelectedStudentIds([]);
-      setArchiveModalStudent(null);
-      setGraduationYear("");
-      setArchiveReason("");
-      setFilterLevel("");
-      setFilterClass("");
-      setSuccess(
-        `${selectedStudentIds.length} student(s) archived successfully`,
-      );
-      await fetchStudents();
-      await fetchArchivedStudents();
-    } catch (err) {
-      console.error("Archive error:", err);
-      setError("Failed to archive students");
-    }
-  };
+    setError('Archiving is no longer available here. Please use the Archive Students page.')
+  }
 
   const handleRestoreStudent = async (studentId) => {
-    if (!window.confirm("Restore this student to active status?")) return;
-    try {
-      await apiFetch(`/students?id=eq.${studentId}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          is_active: true,
-          archived_at: null,
-          graduation_year: null,
-          archive_reason: null,
-        }),
-      });
-      setSuccess("Student restored successfully");
-      await fetchStudents();
-      await fetchArchivedStudents();
-    } catch (err) {
-      console.error("Restore error:", err);
-      setError("Failed to restore student");
-    }
-  };
+    setError('Restoring is no longer available here. Please use the Archive Students page.')
+  }
 
   if (loading) {
     return (
