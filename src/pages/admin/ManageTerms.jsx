@@ -83,9 +83,16 @@ const ManageTerms = () => {
 
       const result = await safeFetch(`${BASE_URL}/terms`, {
         method: "POST",
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          year: parseInt(formData.year),
+          start_date: formData.start_date,
+          end_date: formData.end_date,
+          is_current: formData.is_current,
+        }),
       });
 
+      console.log("Term creation result:", result); // Add this for debugging
       if (result) {
         setSuccess("Term created successfully.");
         setFormData({
