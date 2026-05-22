@@ -362,6 +362,7 @@ const ArchiveStudents = () => {
                     <option value="Graduated">Graduated</option>
                     <option value="Withdrawn">Withdrawn</option>
                     <option value="Transferred">Transferred</option>
+                    <option value="Suspended">Suspended</option>
                     <option value="Other">Other</option>
                   </select>
                 </div>
