@@ -432,14 +432,16 @@ const ArchiveStudents = () => {
                     <tr
                       key={student.id}
                       className={`hover:bg-blue-50 transition-colors cursor-pointer ${selectedStudentIds.includes(student.id) ? "bg-blue-50" : ""}`}
-                      onClick={() => toggleStudentSelection(student.id)}
                     >
-                      <td className="px-6 py-4">
+                      <td
+                        className="px-6 py-4"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <input
                           type="checkbox"
                           checked={selectedStudentIds.includes(student.id)}
                           onChange={() => toggleStudentSelection(student.id)}
-                          className="rounded border-gray-300 text-blue-900 focus:ring-blue-900"
+                          className="rounded border-gray-300 text-blue-900 focus:ring-blue-900 w-5 h-5 cursor-pointer"
                         />
                       </td>
                       <td className="px-6 py-4 font-medium text-gray-900">
