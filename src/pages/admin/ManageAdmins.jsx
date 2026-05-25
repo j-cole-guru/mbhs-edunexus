@@ -234,7 +234,8 @@ export default function ManageAdmins() {
             <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="w-full overflow-x-auto rounded-lg shadow">
+            <table className="w-full text-sm" style={{ minWidth: '700px' }}>
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">
@@ -287,6 +288,7 @@ export default function ManageAdmins() {
                 </tr>
               ))}
             </tbody>
+          </div>
           </table>
         )}
       </div>

@@ -112,7 +112,9 @@ export default function StudentDashboard() {
         icon: <AlertCircle size={32} className="text-red-600" />,
         iconBg: 'bg-red-100',
         title: 'Account Suspended',
-        message: `Your account has been suspended. Reason: ${student.archive_reason}. Please contact your school administrator for further information.`,
+        message: student.suspension_end_date
+          ? `Your account has been suspended until ${new Date(student.suspension_end_date).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}. Reason: ${student.archive_reason}. Your account will be automatically restored after this date.`
+          : `Your account has been suspended. Reason: ${student.archive_reason}. Please contact your school administrator for further information.`,
         color: 'border-red-200 bg-red-50'
       }
       if (isExpelled) return {
@@ -150,6 +152,17 @@ export default function StudentDashboard() {
           <div className={`border rounded-lg p-4 mb-6 text-sm text-gray-700 text-center ${archiveInfo.color}`}>
             {archiveInfo.message}
           </div>
+          {isSuspended && student.suspension_end_date && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 text-center">
+              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Suspension Ends In</p>
+              <p className="text-2xl font-bold text-red-700">
+                {Math.max(0, Math.ceil((new Date(student.suspension_end_date) - new Date()) / (1000 * 60 * 60 * 24)))} Days
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                {new Date(student.suspension_end_date).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              </p>
+            </div>
+          )}
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div>

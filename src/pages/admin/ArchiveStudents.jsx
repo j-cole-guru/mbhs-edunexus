@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Archive, Users, CheckCircle, AlertCircle, Search } from "lucide-react";
+import { Archive, Users, CheckCircle, AlertCircle, Search, Clock } from "lucide-react";
 import { ANON_KEY, SUPABASE_URL } from "../../lib/config";
 
 const getAuth = () => {
@@ -56,6 +56,29 @@ const apiFetch = async (endpoint, options = {}) => {
 const getAdminDepartment = () =>
   JSON.parse(localStorage.getItem("mbhs_staff") || "{}").department || "both";
 
+const calculateSuspensionEndDate = (duration) => {
+  const today = new Date()
+  switch (duration) {
+    case '3_days':
+      today.setDate(today.getDate() + 3)
+      break
+    case '1_week':
+      today.setDate(today.getDate() + 7)
+      break
+    case '2_weeks':
+      today.setDate(today.getDate() + 14)
+      break
+    case '1_month':
+      today.setMonth(today.getMonth() + 1)
+      break
+    case 'custom':
+      return null
+    default:
+      return null
+  }
+  return today.toISOString().split('T')[0]
+}
+
 const ArchiveStudents = () => {
   const [levels, setLevels] = useState([]);
   const [classes, setClasses] = useState([]);
@@ -68,6 +91,8 @@ const ArchiveStudents = () => {
     new Date().getFullYear().toString(),
   );
   const [archiveReason, setArchiveReason] = useState("Graduated");
+  const [suspensionDuration, setSuspensionDuration] = useState('');
+  const [suspensionEndDate, setSuspensionEndDate] = useState('');
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState("");
@@ -215,6 +240,11 @@ const ArchiveStudents = () => {
       setError("Please select a reason for archiving.");
       return;
     }
+    const isSuspension = archiveReason.includes('Suspend')
+    if (isSuspension && !suspensionEndDate) {
+      setError("Please select a suspension duration.");
+      return;
+    }
     if (archiveReason === "Graduated" && !graduationYear) {
       setError("Please enter a graduation year for graduated students");
       return;
@@ -230,25 +260,24 @@ const ArchiveStudents = () => {
         is_active: false,
         archived_at: new Date().toISOString(),
         archive_reason: archiveReason,
+        graduation_year: archiveReason === "Graduated" ? graduationYear : null,
+        suspension_end_date: isSuspension ? suspensionEndDate : null
       };
-      if (archiveReason === "Graduated") {
-        payload.graduation_year = graduationYear;
-      } else {
-        payload.graduation_year = null;
-      }
       await apiFetch(`/students?id=in.${idsString}`, {
         method: "PATCH",
         body: JSON.stringify(payload),
       });
 
       setSuccess(
-        `${selectedStudentIds.length} student(s) archived successfully`,
+        `${selectedStudentIds.length} student(s) archived successfully${isSuspension ? `. Account will be automatically restored on ${new Date(suspensionEndDate).toLocaleDateString()}.` : ''}`,
       );
       setStudents((prev) =>
         prev.filter((s) => !selectedStudentIds.includes(s.id)),
       );
       setSelectedStudentIds([]);
-      fetchArchivedStudents();
+      setSuspensionDuration('')
+      setSuspensionEndDate('')
+      refetchArchived();
     } catch (err) {
       console.error("Archive error:", err);
       setError("Failed to archive students");
@@ -400,7 +429,11 @@ const ArchiveStudents = () => {
                   </label>
                   <select
                     value={archiveReason}
-                    onChange={(e) => setArchiveReason(e.target.value)}
+                    onChange={(e) => {
+                      setArchiveReason(e.target.value)
+                      setSuspensionDuration('')
+                      setSuspensionEndDate('')
+                    }}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
                   >
                     <option value="">Select Reason</option>
@@ -413,6 +446,61 @@ const ArchiveStudents = () => {
                     <option value="Other">Other</option>
                   </select>
                 </div>
+
+                {/* Show suspension duration only when suspension is selected */}
+                {(archiveReason === 'Suspended - Misconduct' || archiveReason === 'Suspended - Misbehavior') && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-3">
+                    <p className="text-yellow-800 text-sm font-medium flex items-center gap-2">
+                      <Clock size={16} /> Suspension Duration
+                    </p>
+                    <select
+                      value={suspensionDuration}
+                      onChange={e => {
+                        setSuspensionDuration(e.target.value)
+                        if (e.target.value !== 'custom') {
+                          setSuspensionEndDate(calculateSuspensionEndDate(e.target.value) || '')
+                        } else {
+                          setSuspensionEndDate('')
+                        }
+                      }}
+                      className="w-full border border-yellow-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                    >
+                      <option value="">Select Duration</option>
+                      <option value="3_days">3 Days</option>
+                      <option value="1_week">1 Week</option>
+                      <option value="2_weeks">2 Weeks</option>
+                      <option value="1_month">1 Month</option>
+                      <option value="custom">Custom Date</option>
+                    </select>
+
+                    {suspensionDuration === 'custom' && (
+                      <div>
+                        <label className="block text-xs text-gray-600 mb-1">Select End Date</label>
+                        <input
+                          type="date"
+                          value={suspensionEndDate}
+                          onChange={e => setSuspensionEndDate(e.target.value)}
+                          min={new Date().toISOString().split('T')[0]}
+                          className="w-full border border-yellow-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                        />
+                      </div>
+                    )}
+
+                    {suspensionEndDate && (
+                      <div className="bg-white rounded-lg p-3 border border-yellow-200">
+                        <p className="text-xs text-gray-500">Suspension ends on:</p>
+                        <p className="font-bold text-gray-900">
+                          {new Date(suspensionEndDate).toLocaleDateString('en-GB', {
+                            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                          })}
+                        </p>
+                        <p className="text-xs text-green-600 mt-1">
+                          Account will be automatically restored on this date.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div className="pt-4 border-t border-gray-100">
                   <p className="text-xs text-gray-500 mb-4">
@@ -519,6 +607,7 @@ const ArchiveStudents = () => {
                   Year
                 </th>
                 <th className="px-6 py-3 text-left font-medium">Reason</th>
+                <th className="px-6 py-3 text-left font-medium">Suspension Ends</th>
                 <th className="px-6 py-3 text-left font-medium">Archived On</th>
                 <th className="px-6 py-3 text-left font-medium">Actions</th>
               </tr>
@@ -532,6 +621,13 @@ const ArchiveStudents = () => {
                     {s.archive_reason === "Graduated" ? s.graduation_year || "N/A" : "N/A"}
                   </td>
                   <td className="px-6 py-4">{s.archive_reason}</td>
+                  <td className="px-6 py-4 text-gray-600">
+                    {s.suspension_end_date ? (
+                      <span className={`text-xs font-medium ${new Date(s.suspension_end_date) <= new Date() ? 'text-green-600' : 'text-red-600'}`}>
+                        {new Date(s.suspension_end_date) <= new Date() ? 'Ended' : new Date(s.suspension_end_date).toLocaleDateString()}
+                      </span>
+                    ) : 'N/A'}
+                  </td>
                   <td className="px-6 py-4">
                     {new Date(s.archived_at).toLocaleDateString()}
                   </td>

@@ -100,6 +100,25 @@ const AdminDashboard = () => {
     fetchStats()
     fetchAllUsers()
     checkOccupiedDepartments()
+
+    // Auto restore suspended students whose time has ended
+    const autoRestore = async () => {
+      try {
+        await fetch(`${BASE_URL}/rpc/auto_restore_suspended_students`, {
+          method: 'POST',
+          headers: {
+            'apikey': ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({})
+        })
+        console.log('Auto restore check completed')
+      } catch (err) {
+        console.error('Auto restore error:', err)
+      }
+    }
+    autoRestore()
   }, [])
 
   const fetchStats = async () => {

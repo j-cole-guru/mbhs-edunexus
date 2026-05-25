@@ -146,8 +146,8 @@ export default function PromoteStudents() {
         {students.length > 0 && (
           <div className="mt-6">
             <h3 className="font-semibold text-gray-700 mb-3">Students to be Promoted ({students.length})</h3>
-            <div className="border border-gray-200 rounded-lg overflow-hidden">
-              <table className="w-full text-sm">
+            <div className="w-full overflow-x-auto rounded-lg shadow border border-gray-200">
+              <table className="w-full text-sm" style={{ minWidth: '700px' }}>
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Student Number</th>

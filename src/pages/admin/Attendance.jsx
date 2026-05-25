@@ -173,7 +173,7 @@ export default function AdminAttendance() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Attendance Reports</h1>
 
       {/* Filters */}
@@ -304,7 +304,8 @@ export default function AdminAttendance() {
             Select filters above and click View Attendance to see records.
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="w-full overflow-x-auto rounded-lg shadow">
+            <table className="w-full text-sm" style={{ minWidth: '700px' }}>
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Student Number</th>
@@ -330,6 +331,7 @@ export default function AdminAttendance() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

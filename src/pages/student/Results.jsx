@@ -123,7 +123,8 @@ export default function StudentResults() {
 
                       {expandedAssessments[key] && (
                         <div className="p-4">
-                          <table className="w-full text-sm">
+                          <div className="w-full overflow-x-auto rounded-lg shadow">
+                            <table className="w-full text-sm" style={{ minWidth: '700px' }}>
                             <thead>
                               <tr className="text-left text-gray-500 uppercase text-xs tracking-wide border-b">
                                 <th className="pb-2">Subject</th>
@@ -175,4 +176,5 @@ export default function StudentResults() {
       </footer>
     </div>
   )
+}
 }
