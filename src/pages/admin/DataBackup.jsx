@@ -60,7 +60,7 @@ export default function DataBackup() {
   ]
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Data Backup</h1>
 
       <div className="bg-black text-white rounded-lg p-6 mb-6 flex items-center justify-between">

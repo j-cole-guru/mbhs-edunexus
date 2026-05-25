@@ -232,7 +232,7 @@ const AdminResults = () => {
   )
 
   return (
-    <div>
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="mb-8">
         <h1 className="page-title">Upload Results</h1>
         <p className="text-gray-600 mt-2">Upload examination results via Excel file</p>
@@ -303,8 +303,8 @@ const AdminResults = () => {
               <CheckCircle className="h-4 w-4 mr-2" />{saving ? 'Saving...' : 'Save Results'}
             </button>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="w-full overflow-x-auto rounded-lg shadow">
+            <table className="w-full text-sm" style={{ minWidth: '700px' }}>
               <thead className="bg-gray-50">
                 <tr>
                   <th className="table-header">Student Number</th>
@@ -331,6 +331,15 @@ const AdminResults = () => {
           </div>
         </div>
       )}
+
+      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+        <p className="text-xs text-gray-400">
+          © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
+        </p>
+        <p className="text-xs text-gray-400 mt-1">
+          Developed by Alie Amadu Sesay
+        </p>
+      </footer>
     </div>
   )
 }

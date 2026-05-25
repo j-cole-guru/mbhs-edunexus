@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react'
 import { CheckCircle, XCircle, Clock, AlertCircle, Users, Calendar, ArrowRight } from 'lucide-react'
 import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
@@ -306,8 +307,18 @@ const TeacherAttendance = () => {
           </div>
         </div>
       </div>
+
+      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+        <p className="text-xs text-gray-400">
+          © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
+        </p>
+        <p className="text-xs text-gray-400 mt-1">
+          Developed by Alie Amadu Sesay
+        </p>
+      </footer>
     </div>
   )
 }
 
 export default TeacherAttendance
+ C:/Users/user/.windsurf/worktrees/mbhs-edunexus/mbhs-edunexus-89c53d60/src/pages/teacher/Attendance.jsx

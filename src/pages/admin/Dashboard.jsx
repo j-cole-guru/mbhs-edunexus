@@ -100,6 +100,25 @@ const AdminDashboard = () => {
     fetchStats()
     fetchAllUsers()
     checkOccupiedDepartments()
+
+    // Auto restore suspended students whose time has ended
+    const autoRestore = async () => {
+      try {
+        await fetch(`${BASE_URL}/rpc/auto_restore_suspended_students`, {
+          method: 'POST',
+          headers: {
+            'apikey': ANON_KEY,
+            'Authorization': `Bearer ${getToken()}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({})
+        })
+        console.log('Auto restore check completed')
+      } catch (err) {
+        console.error('Auto restore error:', err)
+      }
+    }
+    autoRestore()
   }, [])
 
   const fetchStats = async () => {
@@ -481,7 +500,7 @@ const AdminDashboard = () => {
 
   // Normal Department Dashboard
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="mb-8">
         <h1 className="page-title">{department} Department Dashboard</h1>
         <p className="text-gray-600 mt-2">School Management Overview</p>

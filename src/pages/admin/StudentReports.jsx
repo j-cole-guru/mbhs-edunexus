@@ -82,7 +82,7 @@ export default function StudentReports() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Student Reports</h1>

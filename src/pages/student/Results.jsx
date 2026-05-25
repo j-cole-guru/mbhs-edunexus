@@ -88,7 +88,7 @@ export default function StudentResults() {
   const grouped = groupResults(results, terms)
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Academic Results</h1>
 
       {Object.keys(grouped).length === 0 ? (
@@ -123,7 +123,8 @@ export default function StudentResults() {
 
                       {expandedAssessments[key] && (
                         <div className="p-4">
-                          <table className="w-full text-sm">
+                          <div className="w-full overflow-x-auto rounded-lg shadow">
+                            <table className="w-full text-sm" style={{ minWidth: '700px' }}>
                             <thead>
                               <tr className="text-left text-gray-500 uppercase text-xs tracking-wide border-b">
                                 <th className="pb-2">Subject</th>

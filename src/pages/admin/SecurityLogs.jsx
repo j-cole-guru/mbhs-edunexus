@@ -55,7 +55,7 @@ export default function SecurityLogs() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Security Logs</h1>
@@ -114,7 +114,8 @@ export default function SecurityLogs() {
         ) : filteredLogs.length === 0 ? (
           <div className="p-8 text-center text-gray-500">No security events recorded.</div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="w-full overflow-x-auto rounded-lg shadow">
+            <table className="w-full text-sm" style={{ minWidth: '700px' }}>
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Event</th>
@@ -143,6 +144,7 @@ export default function SecurityLogs() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

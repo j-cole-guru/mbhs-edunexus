@@ -158,7 +158,7 @@ const Login = () => {
         setLoading(false)
         return
       }
-
+      
       localStorage.setItem('mbhs_staff', JSON.stringify({
         id: data.user.id,
         email: data.user.email,
@@ -201,7 +201,7 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <img
