@@ -211,6 +211,10 @@ const ArchiveStudents = () => {
       setError("Please select at least one student to archive");
       return;
     }
+    if (!archiveReason) {
+      setError("Please select a reason for archiving.");
+      return;
+    }
     if (archiveReason === "Graduated" && !graduationYear) {
       setError("Please enter a graduation year for graduated students");
       return;
@@ -399,10 +403,13 @@ const ArchiveStudents = () => {
                     onChange={(e) => setArchiveReason(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
                   >
+                    <option value="">Select Reason</option>
                     <option value="Graduated">Graduated</option>
-                    <option value="Withdrawn">Withdrawn</option>
-                    <option value="Transferred">Transferred</option>
-                    <option value="Suspended">Suspended</option>
+                    <option value="Suspended - Misconduct">Suspended - Misconduct</option>
+                    <option value="Suspended - Misbehavior">Suspended - Misbehavior</option>
+                    <option value="Expelled">Expelled</option>
+                    <option value="Transferred to another school">Transferred to another school</option>
+                    <option value="Withdrew from school">Withdrew from school</option>
                     <option value="Other">Other</option>
                   </select>
                 </div>

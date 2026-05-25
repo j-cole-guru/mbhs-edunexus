@@ -170,7 +170,7 @@ const ManageTerms = () => {
   }
 
   return (
-    <div>
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="mb-8">
         <h1 className="page-title">Term Management</h1>
         <p className="text-gray-600 mt-2">Create and manage academic terms</p>
@@ -290,8 +290,8 @@ const ManageTerms = () => {
             No terms found. Create your first term above.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="w-full overflow-x-auto rounded-lg shadow">
+            <table className="w-full text-sm" style={{ minWidth: '700px' }}>
               <thead className="bg-gray-50">
                 <tr>
                   <th className="table-header">Term Name</th>
@@ -359,3 +359,4 @@ const ManageTerms = () => {
 };
 
 export default ManageTerms;
+

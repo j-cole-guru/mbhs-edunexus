@@ -323,20 +323,43 @@ const ManageTeachers = () => {
     }
   };
 
-  const handleDeleteTeacher = async (id) => {
-    if (!confirm("Are you sure you want to delete this teacher?")) return;
+  const handleDeleteTeacher = async (teacher) => {
+    if (!window.confirm(`Are you sure you want to permanently delete ${teacher.full_name || 'this teacher'}? This cannot be undone.`)) return
+
+    const SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
+    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+    const token = getToken();
 
     try {
-      const token = getToken();
-      await fetch(`${BASE_URL}/teachers?id=eq.${id}`, {
-        method: "DELETE",
-        headers: { apikey: ANON_KEY, Authorization: `Bearer ${token}` },
-      });
-      setSuccess("Teacher deleted successfully");
-      await fetchTeachers();
-    } catch (error) {
-      console.error("Error deleting teacher:", error);
-      setError("Failed to delete teacher");
+      await fetch(`${BASE_URL}/teacher_subjects?teacher_id=eq.${teacher.id}`, {
+        method: 'DELETE',
+        headers: { apikey: ANON_KEY, Authorization: `Bearer ${token}` }
+      })
+
+      await fetch(`${BASE_URL}/teachers?id=eq.${teacher.id}`, {
+        method: 'DELETE',
+        headers: { apikey: ANON_KEY, Authorization: `Bearer ${token}` }
+      })
+
+      if (teacher.profile_id) {
+        await fetch(`${BASE_URL}/profiles?id=eq.${teacher.profile_id}`, {
+          method: 'DELETE',
+          headers: { apikey: ANON_KEY, Authorization: `Bearer ${token}` }
+        })
+
+        await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${teacher.profile_id}`, {
+          method: 'DELETE',
+          headers: {
+            'apikey': SERVICE_KEY,
+            'Authorization': `Bearer ${SERVICE_KEY}`
+          }
+        })
+      }
+
+      setSuccess('Teacher deleted successfully.')
+      await fetchTeachers()
+    } catch (err) {
+      setError('Failed to delete teacher: ' + err.message)
     }
   };
 
@@ -349,7 +372,7 @@ const ManageTeachers = () => {
   }
 
   return (
-    <div>
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="mb-8">
         <h1 className="page-title">Teacher Management</h1>
         <p className="text-gray-600 mt-2">Create and manage teaching staff</p>
@@ -520,8 +543,8 @@ const ManageTeachers = () => {
             <p>No teachers found. Create your first teacher above.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="w-full overflow-x-auto rounded-lg shadow">
+            <table className="w-full text-sm" style={{ minWidth: '700px' }}>
               <thead className="bg-gray-50">
                 <tr>
                   <th className="table-header">Employee Number</th>
@@ -560,11 +583,10 @@ const ManageTeachers = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
-                        onClick={() => handleDeleteTeacher(teacher.id)}
-                        className="text-red-600 hover:text-red-900 flex items-center"
+                        onClick={() => handleDeleteTeacher(teacher)}
+                        className="flex items-center gap-1 text-red-600 hover:text-red-800 text-xs font-medium"
                       >
-                        <Trash2 className="h-4 w-4 mr-1" />
-                        Delete
+                        <Trash2 size={14} /> Delete
                       </button>
                     </td>
                   </tr>

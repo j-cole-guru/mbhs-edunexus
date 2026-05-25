@@ -303,8 +303,8 @@ const AdminResults = () => {
               <CheckCircle className="h-4 w-4 mr-2" />{saving ? 'Saving...' : 'Save Results'}
             </button>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="w-full overflow-x-auto rounded-lg shadow">
+            <table className="w-full text-sm" style={{ minWidth: '700px' }}>
               <thead className="bg-gray-50">
                 <tr>
                   <th className="table-header">Student Number</th>

@@ -65,6 +65,14 @@ const ManageStudents = () => {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [bulkLevelId, setBulkLevelId] = useState('')
+  const [bulkClassId, setBulkClassId] = useState('')
+  const [bulkGraduationYear, setBulkGraduationYear] = useState('')
+  const [bulkStudents, setBulkStudents] = useState([])
+  const [bulkLoading, setBulkLoading] = useState(false)
+  const [bulkSuccess, setBulkSuccess] = useState('')
+  const [bulkError, setBulkError] = useState('')
+  const [showBulkConfirm, setShowBulkConfirm] = useState(false)
 
   const getAdminDepartment = () => {
     const staff = JSON.parse(localStorage.getItem("mbhs_staff") || "{}");
@@ -322,6 +330,54 @@ const ManageStudents = () => {
     );
   };
 
+  const fetchBulkPreview = async () => {
+    if (!bulkClassId) { setBulkError('Please select a class.'); return }
+    setBulkError('')
+    const data = await apiFetch(
+      `/students?class_id=eq.${bulkClassId}&is_active=eq.true&select=*`
+    )
+    setBulkStudents(Array.isArray(data) ? data : [])
+    if (data && data.length === 0) setBulkError('No active students found in this class.')
+  }
+
+  const handleBulkArchive = async () => {
+    if (!bulkClassId || !bulkGraduationYear) {
+      setBulkError('Please select a class and enter graduation year.')
+      return
+    }
+    if (bulkStudents.length === 0) {
+      setBulkError('No students to archive. Click Preview first.')
+      return
+    }
+    setBulkLoading(true)
+    setBulkError('')
+    setBulkSuccess('')
+    try {
+      const idsString = `(${bulkStudents.map(s => s.id).join(",")})`
+      await apiFetch(`/students?id=in.${idsString}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          is_active: false,
+          archived_at: new Date().toISOString(),
+          graduation_year: bulkGraduationYear,
+          archive_reason: 'Graduated'
+        })
+      })
+      setBulkSuccess(`${bulkStudents.length} students archived successfully as Class of ${bulkGraduationYear}.`)
+      setBulkStudents([])
+      setBulkClassId('')
+      setBulkLevelId('')
+      setBulkGraduationYear('')
+      setShowBulkConfirm(false)
+      await fetchStudents()
+      await fetchArchivedStudents()
+    } catch (err) {
+      setBulkError('Bulk archive failed: ' + err.message)
+    } finally {
+      setBulkLoading(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -343,7 +399,7 @@ const ManageStudents = () => {
     : [];
 
   return (
-    <div>
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="mb-8">
         <h1 className="page-title">Student Management</h1>
         <p className="text-gray-600 mt-2">Create and manage student records</p>
@@ -519,6 +575,138 @@ const ManageStudents = () => {
         </form>
       </div>
 
+      {/* Bulk Class Archive Section */}
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 className="text-lg font-bold text-gray-900 mb-1">Bulk Class Archive</h2>
+        <p className="text-sm text-gray-500 mb-4">
+          Use this for graduating classes (JSS3 and SSS3) to archive the entire class at once.
+          All students in the selected class will be archived as graduated.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">Select Level</label>
+            <select
+              value={bulkLevelId}
+              onChange={e => { setBulkLevelId(e.target.value); setBulkClassId(''); setBulkStudents([]) }}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+            >
+              <option value="">Select Level</option>
+              {levels
+                .filter(l => l.name?.toUpperCase().includes('3'))
+                .map(l => (
+                  <option key={l.id} value={l.id}>{l.name}</option>
+                ))
+              }
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">Select Class</label>
+            <select
+              value={bulkClassId}
+              onChange={e => { setBulkClassId(e.target.value); setBulkStudents([]) }}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+            >
+              <option value="">Select Class</option>
+              {classes
+                .filter(c => c.level_id === bulkLevelId)
+                .map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))
+              }
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">Graduation Year</label>
+            <input
+              type="text"
+              value={bulkGraduationYear}
+              onChange={e => setBulkGraduationYear(e.target.value)}
+              placeholder="e.g. 2026"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+            />
+          </div>
+        </div>
+
+        <button
+          onClick={fetchBulkPreview}
+          className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 mb-4"
+        >
+          <Users size={16} /> Preview Students
+        </button>
+
+        {bulkError && <p className="text-red-600 text-sm mb-3">{bulkError}</p>}
+        {bulkSuccess && <p className="text-green-600 text-sm mb-3">{bulkSuccess}</p>}
+
+        {bulkStudents.length > 0 && (
+          <div className="mb-4">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3 flex items-center gap-2">
+              <AlertCircle size={16} className="text-yellow-600" />
+              <p className="text-yellow-800 text-sm font-medium">
+                {bulkStudents.length} students will be archived as Class of {bulkGraduationYear}. This cannot be undone easily.
+              </p>
+            </div>
+            <div className="overflow-x-auto rounded-lg border border-gray-200">
+              <table className="w-full text-sm" style={{ minWidth: '500px' }}>
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Student Number</th>
+                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
+                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Gender</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bulkStudents.map((s, i) => (
+                    <tr key={s.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <td className="px-4 py-2 text-gray-600">{s.student_number}</td>
+                      <td className="px-4 py-2 font-medium text-gray-900">{s.full_name}</td>
+                      <td className="px-4 py-2 text-gray-600 capitalize">{s.gender}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {!showBulkConfirm ? (
+              <button
+                onClick={() => setShowBulkConfirm(true)}
+                className="mt-4 flex items-center gap-2 bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-red-700"
+              >
+                <Archive size={16} /> Archive Entire Class
+              </button>
+            ) : (
+              <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                <p className="text-red-800 font-semibold text-sm mb-3">
+                  Are you absolutely sure? This will archive all {bulkStudents.length} students in this class as graduated. They will no longer appear as active students.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleBulkArchive}
+                    disabled={bulkLoading}
+                    className="flex items-center gap-2 bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
+                  >
+                    {bulkLoading ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <Archive size={16} />
+                    )}
+                    Yes, Archive All
+                  </button>
+                  <button
+                    onClick={() => setShowBulkConfirm(false)}
+                    className="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-200"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* Students Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
@@ -526,8 +714,8 @@ const ManageStudents = () => {
         </div>
 
         {/* Students Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div className="w-full overflow-x-auto rounded-lg shadow">
+          <table className="w-full text-sm" style={{ minWidth: '700px' }}>
             <thead className="bg-gray-50">
               <tr>
                 <th className="table-header">Student Number</th>

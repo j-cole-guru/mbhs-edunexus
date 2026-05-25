@@ -158,7 +158,7 @@ const Login = () => {
         setLoading(false)
         return
       }
-
+      
       localStorage.setItem('mbhs_staff', JSON.stringify({
         id: data.user.id,
         email: data.user.email,
