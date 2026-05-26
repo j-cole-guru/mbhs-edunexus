@@ -58,7 +58,8 @@ export default function AdminAttendance() {
 
   const loadInitialData = async () => {
     try {
-      const levelsData = await getDepartmentLevels()
+      const levelsDataRaw = await getDepartmentLevels()
+      const levelsData = Array.isArray(levelsDataRaw) ? levelsDataRaw : []
       const levelIds = levelsData.map(l => l.id)
       
       const classesUrl = levelIds.length > 0 
@@ -69,9 +70,11 @@ export default function AdminAttendance() {
         fetch(classesUrl, { headers }),
         fetch(`${BASE_URL}/terms?select=*&order=created_at.asc`, { headers })
       ])
+      const classesData = await classesRes.json()
+      const termsData = await termsRes.json()
       setLevels(levelsData)
-      setClasses(await classesRes.json())
-      setTerms(await termsRes.json())
+      setClasses(Array.isArray(classesData) ? classesData : [])
+      setTerms(Array.isArray(termsData) ? termsData : [])
     } catch (err) {
       console.error('Error loading data:', err)
     }

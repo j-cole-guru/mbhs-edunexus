@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react'
 import { MessageSquare, CheckCircle, Eye, RefreshCw } from 'lucide-react'
 import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from '../../lib/config'
 
-const getToken = () => safeParseStaff() || {}.access_token || ANON_KEY
+const getToken = () => {
+  const staff = safeParseStaff() || {}
+  return staff.access_token || ANON_KEY
+}
 
 export default function StudentReports() {
   const [reports, setReports] = useState([])
@@ -26,8 +29,10 @@ export default function StudentReports() {
       fetch(`${BASE_URL}/levels?select=*&order=name${deptFilter}`, { headers }),
       fetch(`${BASE_URL}/classes?select=*&order=name`, { headers })
     ])
-    setLevels(await levelsRes.json())
-    setClasses(await classesRes.json())
+    const levelsData = await levelsRes.json()
+    const classesData = await classesRes.json()
+    setLevels(Array.isArray(levelsData) ? levelsData : [])
+    setClasses(Array.isArray(classesData) ? classesData : [])
   }
 
   const fetchReports = async () => {

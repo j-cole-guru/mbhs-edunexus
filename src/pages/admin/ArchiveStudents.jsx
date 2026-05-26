@@ -52,8 +52,10 @@ const apiFetch = async (endpoint, options = {}) => {
   }
 }
 
-const getAdminDepartment = () =>
-  safeParseStaff() || {}.department || "both"
+const getAdminDepartment = () => {
+  const staff = safeParseStaff() || {}
+  return staff.department || "both"
+}
 
 const calculateSuspensionEndDate = (duration) => {
   const today = new Date()

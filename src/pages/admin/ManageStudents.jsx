@@ -92,7 +92,7 @@ const ManageStudents = () => {
         ? "/levels?select=*&order=name"
         : `/levels?select=*&department=eq.${dept}&order=name`;
     const res = await apiFetch(url);
-    return res;
+    return Array.isArray(res) ? res : [];
   };
 
   useEffect(() => {
@@ -117,7 +117,7 @@ const ManageStudents = () => {
         `/students?select=*,classes(name),levels(name)&level_id=in.(${levelIds.join(",")})&is_active=eq.true&order=created_at.desc`,
       );
       console.log("Students fetched:", data);
-      setStudents(data || []);
+      setStudents(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching students:", error);
       setError("Failed to fetch students");
@@ -140,7 +140,7 @@ const ManageStudents = () => {
         `/students?select=*,classes(name),levels(name)&level_id=in.(${levelIds.join(",")})&is_active=eq.false&order=archived_at.desc`,
       );
       console.log("Archived students fetched:", data);
-      setArchivedStudents(data || []);
+      setArchivedStudents(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching archived students:", error);
     }
@@ -218,7 +218,7 @@ const ManageStudents = () => {
   const fetchLevels = async () => {
     try {
       const data = await getDepartmentLevels();
-      setLevels(data);
+      setLevels(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching levels:", error);
     }
@@ -237,7 +237,7 @@ const ManageStudents = () => {
       const data = await apiFetch(
         `/classes?select=*&level_id=in.(${levelIds.join(",")})`,
       );
-      setClasses(data);
+      setClasses(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching classes:", error);
     }

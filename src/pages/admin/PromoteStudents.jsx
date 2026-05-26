@@ -2,10 +2,16 @@ import { useState, useEffect } from 'react'
 import { Users, ArrowRight } from 'lucide-react'
 import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from '../../lib/config'
 
-const getToken = () => safeParseStaff() || {}.access_token || ANON_KEY
-const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+const getToken = () => {
+  const staff = safeParseStaff() || {}
+  return staff.access_token || ANON_KEY
+}
+const getHeaders = () => ({ 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` })
 
-const getAdminDepartment = () => safeParseStaff() || {}.department || 'both'
+const getAdminDepartment = () => {
+  const staff = safeParseStaff() || {}
+  return staff.department || 'both'
+}
 
 export default function PromoteStudents() {
   const [levels, setLevels] = useState([])
@@ -30,17 +36,20 @@ export default function PromoteStudents() {
       ? `${BASE_URL}/levels?select=*&order=name`
       : `${BASE_URL}/levels?select=*&department=eq.${dept}&order=name`
     const [levelsRes, classesRes] = await Promise.all([
-      fetch(levelsUrl, { headers }),
-      fetch(`${BASE_URL}/classes?select=*&order=name`, { headers })
+      fetch(levelsUrl, { headers: getHeaders() }),
+      fetch(`${BASE_URL}/classes?select=*&order=name`, { headers: getHeaders() })
     ])
     const levelsData = await levelsRes.json()
     const classesData = await classesRes.json()
     
-    // Filter classes by department levels
-    const levelIds = levelsData.map(l => l.id)
-    const filteredClasses = classesData.filter(c => levelIds.includes(c.level_id))
+    const safeLevels = Array.isArray(levelsData) ? levelsData : []
+    const safeClasses = Array.isArray(classesData) ? classesData : []
     
-    setLevels(levelsData)
+    // Filter classes by department levels
+    const levelIds = safeLevels.map(l => l.id)
+    const filteredClasses = safeClasses.filter(c => levelIds.includes(c.level_id))
+    
+    setLevels(safeLevels)
     setClasses(filteredClasses)
   }
 
@@ -48,7 +57,7 @@ export default function PromoteStudents() {
     if (!fromClassId) return
     const res = await fetch(
       `${BASE_URL}/students?class_id=eq.${fromClassId}&select=*`,
-      { headers }
+      { headers: getHeaders() }
     )
     const data = await res.json()
     setStudents(Array.isArray(data) ? data : [])

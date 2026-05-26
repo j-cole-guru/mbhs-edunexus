@@ -33,6 +33,28 @@ const safeFetch = async (url, options = {}) => {
   }
 };
 
+const getTermStatus = (term) => {
+  const now = new Date();
+  const startDate = term.start_date ? new Date(term.start_date) : null;
+  const endDate = term.end_date ? new Date(term.end_date) : null;
+
+  if (term.is_current) {
+    return { label: "Current", color: "bg-green-100 text-green-800" };
+  }
+
+  if (startDate && endDate) {
+    if (now < startDate) {
+      return { label: "Upcoming", color: "bg-blue-100 text-blue-800" };
+    }
+    if (now > endDate) {
+      return { label: "Completed", color: "bg-gray-100 text-gray-800" };
+    }
+    return { label: "In Progress", color: "bg-yellow-100 text-yellow-800" };
+  }
+
+  return { label: "Unknown", color: "bg-gray-100 text-gray-800" };
+};
+
 const ManageTerms = () => {
   const [terms, setTerms] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -86,7 +86,7 @@ const ManageClasses = () => {
         `/classes?select=*,levels(name)&level_id=in.(${levelIds.join(",")})&order=created_at.desc`,
       );
       console.log("Classes fetched:", data);
-      setClasses(data);
+      setClasses(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching classes:", error);
       setError("Failed to fetch classes");
