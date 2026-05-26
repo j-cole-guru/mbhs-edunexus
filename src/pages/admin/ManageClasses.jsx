@@ -128,6 +128,18 @@ const ManageClasses = () => {
       return;
     }
 
+    // Pre‑check: ensure no active students are linked to this class
+    try {
+      const dependent = await apiFetch(`/students?class_id=eq.${id}&select=id`);
+      if (Array.isArray(dependent) && dependent.length > 0) {
+        alert('Cannot delete this class because it has enrolled students. Reassign or archive them first.');
+        return;
+      }
+    } catch (preErr) {
+      console.warn('Failed to verify dependent students:', preErr);
+      // Proceed with deletion attempt anyway
+    }
+
     try {
       console.log("Deleting class:", id);
       await apiFetch(`/classes?id=eq.${id}`, {
@@ -139,7 +151,11 @@ const ManageClasses = () => {
       await fetchClasses();
     } catch (error) {
       console.error("Error deleting class:", error);
-      setError("Failed to delete class");
+      // Handle conflict (e.g., foreign key constraint) with a friendly message
+      const msg = error?.message?.includes('409') ?
+        'Unable to delete class: it may still be referenced by students or other records.' :
+        'Failed to delete class';
+      setError(msg);
     }
   };
 
