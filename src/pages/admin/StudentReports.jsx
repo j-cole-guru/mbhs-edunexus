@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { MessageSquare, CheckCircle, Eye, RefreshCw } from 'lucide-react'
-import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from '../../lib/config'
 
-const getToken = () => JSON.parse(localStorage.getItem('mbhs_staff') || '{}').access_token || ANON_KEY
+const getToken = () => safeParseStaff() || {}.access_token || ANON_KEY
 
 export default function StudentReports() {
   const [reports, setReports] = useState([])
@@ -14,7 +14,7 @@ export default function StudentReports() {
   const [filterLevel, setFilterLevel] = useState('')
   const [filterClass, setFilterClass] = useState('')
 
-  const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
+  const staff = safeParseStaff() || {}
   const department = staff.department || 'both'
 
   useEffect(() => { fetchReports(); fetchFilters() }, [])

@@ -8,21 +8,20 @@ import {
   Archive,
   RotateCcw,
 } from "lucide-react";
-import {
-  ANON_KEY,
-  SERVICE_KEY,
-  BASE_URL,
-  AUTH_URL,
-  SUPABASE_URL,
-} from "../../lib/config";
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from "../../lib/config";
 
 const getAuth = () => {
-  const staff = JSON.parse(localStorage.getItem("mbhs_staff"));
+  const staff = safeParseStaff() || {};
   return {
     token: staff?.access_token,
     apikey: ANON_KEY,
     baseUrl: `${SUPABASE_URL}/rest/v1`,
   };
+};
+
+const getToken = () => {
+  const { token } = getAuth();
+  return token || ANON_KEY;
 };
 
 const apiFetch = async (endpoint, options = {}) => {
@@ -50,6 +49,7 @@ const ManageStudents = () => {
   const [students, setStudents] = useState([]);
   const [levels, setLevels] = useState([]);
   const [classes, setClasses] = useState([]);
+  const [archivedStudents, setArchivedStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterLevel, setFilterLevel] = useState("");
   const [filterClass, setFilterClass] = useState("");
@@ -65,6 +65,12 @@ const ManageStudents = () => {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showArchived, setShowArchived] = useState(false)
+  const [archiveModalStudent, setArchiveModalStudent] = useState(null)
+  const [archiveReason, setArchiveReason] = useState('')
+  const [graduationYear, setGraduationYear] = useState('')
+  const [suspensionDuration, setSuspensionDuration] = useState('')
+  const [suspensionEndDate, setSuspensionEndDate] = useState('')
   const [bulkLevelId, setBulkLevelId] = useState('')
   const [bulkClassId, setBulkClassId] = useState('')
   const [bulkGraduationYear, setBulkGraduationYear] = useState('')
@@ -75,7 +81,7 @@ const ManageStudents = () => {
   const [showBulkConfirm, setShowBulkConfirm] = useState(false)
 
   const getAdminDepartment = () => {
-    const staff = JSON.parse(localStorage.getItem("mbhs_staff") || "{}");
+    const staff = safeParseStaff() || {};
     return staff.department || "both";
   };
 
@@ -91,6 +97,7 @@ const ManageStudents = () => {
 
   useEffect(() => {
     fetchStudents();
+    fetchArchivedStudents();
     fetchLevels();
     fetchClasses();
   }, []);
@@ -139,6 +146,75 @@ const ManageStudents = () => {
     }
   };
 
+  const calculateSuspensionEndDate = (duration) => {
+    const today = new Date()
+    switch (duration) {
+      case '3_days': today.setDate(today.getDate() + 3); break
+      case '1_week': today.setDate(today.getDate() + 7); break
+      case '2_weeks': today.setDate(today.getDate() + 14); break
+      case '1_month': today.setMonth(today.getMonth() + 1); break
+      default: return ''
+    }
+    return today.toISOString().split('T')[0]
+  }
+
+  const handleArchiveStudent = async () => {
+    if (!archiveModalStudent) return
+    if (!archiveReason) { alert('Please select a reason.'); return }
+
+    const isSuspension = archiveReason.toLowerCase().includes('suspend')
+    if (isSuspension && !suspensionEndDate) { alert('Please select suspension duration.'); return }
+    if (archiveReason === 'Graduated' && !graduationYear) { alert('Please enter graduation year.'); return }
+
+    try {
+      await fetch(`${BASE_URL}/students?id=eq.${archiveModalStudent.id}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': ANON_KEY,
+          'Authorization': `Bearer ${getToken()}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          is_active: false,
+          archived_at: new Date().toISOString(),
+          archive_reason: archiveReason,
+          graduation_year: archiveReason === 'Graduated' ? graduationYear : null,
+          suspension_end_date: isSuspension ? suspensionEndDate : null
+        })
+      })
+      setArchiveModalStudent(null)
+      setArchiveReason('')
+      setGraduationYear('')
+      setSuspensionDuration('')
+      setSuspensionEndDate('')
+      await fetchStudents()
+      await fetchArchivedStudents()
+    } catch (err) { alert('Archive failed: ' + err.message) }
+  }
+
+  const handleRestoreStudent = async (studentId) => {
+    if (!window.confirm('Restore this student to active status?')) return
+    try {
+      await fetch(`${BASE_URL}/students?id=eq.${studentId}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': ANON_KEY,
+          'Authorization': `Bearer ${getToken()}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          is_active: true,
+          archived_at: null,
+          archive_reason: null,
+          graduation_year: null,
+          suspension_end_date: null
+        })
+      })
+      await fetchStudents()
+      await fetchArchivedStudents()
+    } catch (err) { alert('Restore failed: ' + err.message) }
+  }
+
   const fetchLevels = async () => {
     try {
       const data = await getDepartmentLevels();
@@ -176,7 +252,7 @@ const ManageStudents = () => {
       console.log("Creating student with data:", formData);
 
       // Step 1 - Check if PIN already exists
-      const staff = JSON.parse(localStorage.getItem("mbhs_staff"));
+      const staff = safeParseStaff() || {};
       const token = staff?.access_token;
       const apikey = ANON_KEY;
 
@@ -593,200 +669,304 @@ const ManageStudents = () => {
         </form>
       </div>
 
-      {/* Bulk Class Archive Section */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 className="text-lg font-bold text-gray-900 mb-1">Bulk Class Archive</h2>
-        <p className="text-sm text-gray-500 mb-4">
-          Use this for graduating classes (JSS3 and SSS3) to archive the entire class at once.
-          All students in the selected class will be archived as graduated.
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Select Level (JSS3 / SSS3)</label>
-            <select
-              value={bulkLevelId}
-              onChange={e => { setBulkLevelId(e.target.value); setBulkClassId(''); setBulkStudents([]) }}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
-            >
-              <option value="">Select Level</option>
-              {levels
-                .filter(l => /^(JSS\s*3|SSS\s*3)$/i.test(l.name || ''))
-                .map(l => (
-                  <option key={l.id} value={l.id}>{l.name}</option>
-                ))
-              }
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Select Class</label>
-            <select
-              value={bulkClassId}
-              onChange={e => { setBulkClassId(e.target.value); setBulkStudents([]) }}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
-            >
-              <option value="">Select Class</option>
-              {classes
-                .filter(c => c.level_id === bulkLevelId)
-                .map(c => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))
-              }
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Graduation Year</label>
-            <input
-              type="text"
-              value={bulkGraduationYear}
-              onChange={e => setBulkGraduationYear(e.target.value)}
-              placeholder="e.g. 2026"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
-            />
-          </div>
-        </div>
-
+      {/* Toggle Active / Archived */}
+      <div className="flex gap-2 mb-4 flex-wrap">
         <button
-          onClick={fetchBulkPreview}
-          className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 mb-4"
+          onClick={() => setShowArchived(false)}
+          className={`px-4 py-2 rounded-lg text-sm font-medium ${!showArchived ? 'bg-blue-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
         >
-          <Users size={16} /> Preview Students
+          Active Students ({students.length})
         </button>
-
-        {bulkError && <p className="text-red-600 text-sm mb-3">{bulkError}</p>}
-        {bulkSuccess && <p className="text-green-600 text-sm mb-3">{bulkSuccess}</p>}
-
-        {bulkStudents.length > 0 && (
-          <div className="mb-4">
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3 flex items-center gap-2">
-              <AlertCircle size={16} className="text-yellow-600" />
-              <p className="text-yellow-800 text-sm font-medium">
-                {bulkStudents.length} students will be archived as Class of {bulkGraduationYear}. This cannot be undone easily.
-              </p>
-            </div>
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
-              <table className="w-full text-sm" style={{ minWidth: '500px' }}>
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Student Number</th>
-                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
-                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Gender</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {bulkStudents.map((s, i) => (
-                    <tr key={s.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-4 py-2 text-gray-600">{s.student_number}</td>
-                      <td className="px-4 py-2 font-medium text-gray-900">{s.full_name}</td>
-                      <td className="px-4 py-2 text-gray-600 capitalize">{s.gender}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {!showBulkConfirm ? (
-              <button
-                onClick={() => setShowBulkConfirm(true)}
-                className="mt-4 flex items-center gap-2 bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-red-700"
-              >
-                <Archive size={16} /> Archive Entire Class
-              </button>
-            ) : (
-              <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
-                <p className="text-red-800 font-semibold text-sm mb-3">
-                  Are you absolutely sure? This will archive all {bulkStudents.length} students in this class as graduated. They will no longer appear as active students.
-                </p>
-                <div className="flex gap-3">
-                  <button
-                    onClick={handleBulkArchive}
-                    disabled={bulkLoading}
-                    className="flex items-center gap-2 bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
-                  >
-                    {bulkLoading ? (
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    ) : (
-                      <Archive size={16} />
-                    )}
-                    Yes, Archive All
-                  </button>
-                  <button
-                    onClick={() => setShowBulkConfirm(false)}
-                    className="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-200"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+        <button
+          onClick={() => setShowArchived(true)}
+          className={`px-4 py-2 rounded-lg text-sm font-medium ${showArchived ? 'bg-blue-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+        >
+          Archived Students ({archivedStudents.length})
+        </button>
       </div>
 
-      {/* Students Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="section-title mb-4">All Students</h2>
-        </div>
-
-        {/* Students Table */}
-        <div className="w-full overflow-x-auto rounded-lg shadow">
-          <table className="w-full text-sm" style={{ minWidth: '700px' }}>
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="table-header">Student Number</th>
-                <th className="table-header">Name</th>
-                <th className="table-header">Class</th>
-                <th className="table-header">Level</th>
-                <th className="table-header">Gender</th>
-                <th className="table-header">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredStudents.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan="6"
-                    className="px-6 py-8 text-center text-gray-500 text-sm"
-                  >
-                    No active students found.
-                  </td>
-                </tr>
+      {/* Bulk Archive Section */}
+      {!showArchived && (
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <h2 className="text-lg font-bold text-gray-900 mb-1">Bulk Class Archive</h2>
+          <p className="text-sm text-gray-500 mb-4">For graduating classes (JSS3 and SSS3) — archive the entire class at once.</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">Level (JSS3 or SSS3)</label>
+              <select value={bulkLevelId} onChange={e => { setBulkLevelId(e.target.value); setBulkClassId(''); setBulkStudents([]) }}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900">
+                <option value="">Select Level</option>
+                {levels.filter(l => l.name?.toUpperCase().includes('3')).map(l => (
+                  <option key={l.id} value={l.id}>{l.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">Class</label>
+              <select value={bulkClassId} onChange={e => { setBulkClassId(e.target.value); setBulkStudents([]) }}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900">
+                <option value="">Select Class</option>
+                {classes.filter(c => c.level_id === bulkLevelId).map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">Graduation Year</label>
+              <input type="text" value={bulkGraduationYear} onChange={e => setBulkGraduationYear(e.target.value)}
+                placeholder="e.g. 2026"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900" />
+            </div>
+          </div>
+          <button onClick={fetchBulkPreview}
+            className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 mb-4">
+            <Users size={16} /> Preview Students
+          </button>
+          {bulkError && <p className="text-red-600 text-sm mb-3">{bulkError}</p>}
+          {bulkSuccess && <p className="text-green-600 text-sm mb-3">{bulkSuccess}</p>}
+          {bulkStudents.length > 0 && (
+            <div className="mb-4">
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3 flex items-center gap-2">
+                <AlertCircle size={16} className="text-yellow-600" />
+                <p className="text-yellow-800 text-sm font-medium">
+                  {bulkStudents.length} students will be archived as Class of {bulkGraduationYear}.
+                </p>
+              </div>
+              <div className="overflow-x-auto rounded-lg border border-gray-200">
+                <table className="w-full text-sm" style={{ minWidth: '400px' }}>
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Student Number</th>
+                      <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
+                      <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Gender</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bulkStudents.map((s, i) => (
+                      <tr key={s.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                        <td className="px-4 py-2 text-gray-600">{s.student_number}</td>
+                        <td className="px-4 py-2 font-medium text-gray-900">{s.full_name}</td>
+                        <td className="px-4 py-2 text-gray-600 capitalize">{s.gender}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {!showBulkConfirm ? (
+                <button onClick={() => setShowBulkConfirm(true)}
+                  className="mt-4 flex items-center gap-2 bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-red-700">
+                  <Archive size={16} /> Archive Entire Class
+                </button>
               ) : (
-                filteredStudents.map((student) => (
-                  <tr key={student.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {student.student_number}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {student.full_name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {student.classes?.name || "N/A"}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {student.levels?.name || "N/A"}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {student.gender}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-red-800 font-semibold text-sm mb-3">
+                    Are you absolutely sure? This will archive all {bulkStudents.length} students. They will no longer appear as active.
+                  </p>
+                  <div className="flex gap-3">
+                    <button onClick={handleBulkArchive} disabled={bulkLoading}
+                      className="flex items-center gap-2 bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50">
+                      {bulkLoading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <Archive size={16} />}
+                      Yes Archive All
+                    </button>
+                    <button onClick={() => setShowBulkConfirm(false)}
+                      className="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Active Students Table */}
+      {!showArchived && (
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="px-6 py-4 border-b">
+            <h2 className="font-semibold text-gray-800">Active Students ({students.length})</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm" style={{ minWidth: '700px' }}>
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Student Number</th>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Gender</th>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {students.length === 0 ? (
+                  <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-500">No active students found.</td></tr>
+                ) : students.map((student, i) => (
+                  <tr key={student.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <td className="px-4 py-3 text-gray-600">{student.student_number}</td>
+                    <td className="px-4 py-3 font-medium text-gray-900">{student.full_name}</td>
+                    <td className="px-4 py-3 text-gray-600 capitalize">{student.gender}</td>
+                    <td className="px-4 py-3">
                       <button
-                        onClick={() => handleDeleteStudent(student.id)}
-                        className="text-red-600 hover:text-red-900"
+                        onClick={() => setArchiveModalStudent(student)}
+                        className="flex items-center gap-1 text-yellow-600 hover:text-yellow-800 text-xs font-medium"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Archive size={14} /> Archive
                       </button>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Archived Students Table */}
+      {showArchived && (
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="px-6 py-4 border-b">
+            <h2 className="font-semibold text-gray-800">Archived Students ({archivedStudents.length})</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm" style={{ minWidth: '800px' }}>
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Student Number</th>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Reason</th>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Graduation Year</th>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Suspension Ends</th>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Archived On</th>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {archivedStudents.length === 0 ? (
+                  <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-500">No archived students.</td></tr>
+                ) : archivedStudents.map((student, i) => (
+                  <tr key={student.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <td className="px-4 py-3 text-gray-600">{student.student_number}</td>
+                    <td className="px-4 py-3 font-medium text-gray-900">{student.full_name}</td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                        student.archive_reason?.includes('Suspend') ? 'bg-yellow-100 text-yellow-700' :
+                        student.archive_reason?.includes('Expel') ? 'bg-red-100 text-red-700' :
+                        student.archive_reason === 'Graduated' ? 'bg-green-100 text-green-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {student.archive_reason || 'N/A'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">{student.graduation_year || 'N/A'}</td>
+                    <td className="px-4 py-3">
+                      {student.suspension_end_date ? (
+                        <span className={`text-xs font-medium ${new Date(student.suspension_end_date) <= new Date() ? 'text-green-600' : 'text-red-600'}`}>
+                          {new Date(student.suspension_end_date) <= new Date() ? 'Ended' : new Date(student.suspension_end_date).toLocaleDateString()}
+                        </span>
+                      ) : 'N/A'}
+                    </td>
+                    <td className="px-4 py-3 text-gray-500 text-xs">
+                      {student.archived_at ? new Date(student.archived_at).toLocaleDateString() : 'N/A'}
+                    </td>
+                    <td className="px-4 py-3">
+                      <button onClick={() => handleRestoreStudent(student.id)}
+                        className="flex items-center gap-1 text-green-600 hover:text-green-800 text-xs font-medium">
+                        <RotateCcw size={14} /> Restore
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Archive Modal */}
+      {archiveModalStudent && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-2">Archive Student</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Archiving <span className="font-semibold">{archiveModalStudent.full_name}</span>
+            </p>
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Reason</label>
+                <select value={archiveReason}
+                  onChange={e => { setArchiveReason(e.target.value); setSuspensionDuration(''); setSuspensionEndDate(''); setGraduationYear('') }}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900">
+                  <option value="">Select Reason</option>
+                  <option value="Graduated">Graduated</option>
+                  <option value="Suspended - Misconduct">Suspended - Misconduct</option>
+                  <option value="Suspended - Misbehavior">Suspended - Misbehavior</option>
+                  <option value="Expelled">Expelled</option>
+                  <option value="Transferred to another school">Transferred to another school</option>
+                  <option value="Withdrew from school">Withdrew from school</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              {archiveReason === 'Graduated' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Graduation Year</label>
+                  <input type="text" value={graduationYear} onChange={e => setGraduationYear(e.target.value)}
+                    placeholder="e.g. 2026"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900" />
+                </div>
+              )}
+
+              {(archiveReason === 'Suspended - Misconduct' || archiveReason === 'Suspended - Misbehavior') && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-3">
+                  <p className="text-yellow-800 text-sm font-semibold">Suspension Duration</p>
+                  <select value={suspensionDuration}
+                    onChange={e => {
+                      setSuspensionDuration(e.target.value)
+                      if (e.target.value !== 'custom') {
+                        setSuspensionEndDate(calculateSuspensionEndDate(e.target.value))
+                      } else {
+                        setSuspensionEndDate('')
+                      }
+                    }}
+                    className="w-full border border-yellow-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                    <option value="">Select Duration</option>
+                    <option value="3_days">3 Days</option>
+                    <option value="1_week">1 Week</option>
+                    <option value="2_weeks">2 Weeks</option>
+                    <option value="1_month">1 Month</option>
+                    <option value="custom">Custom Date</option>
+                  </select>
+                  {suspensionDuration === 'custom' && (
+                    <input type="date" value={suspensionEndDate}
+                      onChange={e => setSuspensionEndDate(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                      className="w-full border border-yellow-300 rounded-lg px-3 py-2 text-sm" />
+                  )}
+                  {suspensionEndDate && (
+                    <div className="bg-white rounded-lg p-3 border border-yellow-200">
+                      <p className="text-xs text-gray-500">Suspension ends on:</p>
+                      <p className="font-bold text-gray-900 text-sm">
+                        {new Date(suspensionEndDate).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                      </p>
+                      <p className="text-xs text-green-600 mt-1">Account will be automatically restored on this date.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="flex gap-3">
+              <button onClick={handleArchiveStudent}
+                className="flex-1 bg-blue-900 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-800">
+                Confirm Archive
+              </button>
+              <button onClick={() => { setArchiveModalStudent(null); setArchiveReason(''); setGraduationYear(''); setSuspensionDuration(''); setSuspensionEndDate('') }}
+                className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <footer className="mt-8 py-4 border-t border-gray-200 text-center">
         <p className="text-xs text-gray-400">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.

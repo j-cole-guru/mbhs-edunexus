@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Clock } from 'lucide-react'
-import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff, safeParseStudent} from '../../lib/config'
 
 const getToken = () => {
-  const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
+  const staff = safeParseStaff() || {}
   return staff.access_token || ANON_KEY
 }
 
@@ -21,7 +21,7 @@ const StudentTimetable = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const student = JSON.parse(localStorage.getItem('mbhs_student') || '{}')
+        const student = safeParseStudent() || {}
         if (!student.class_id) { setLoading(false); return }
         const res = await fetch(`${BASE_URL}/timetable?class_id=eq.${student.class_id}&select=*&order=day`, {
           headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }

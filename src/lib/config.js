@@ -10,7 +10,27 @@ export const SERVICE_KEY =
 export const BASE_URL = `${SUPABASE_URL}/rest/v1`;
 export const AUTH_URL = `${SUPABASE_URL}/auth/v1`;
 
+export const safeParseStudent = () => {
+  try {
+    const raw = localStorage.getItem('mbhs_student')
+    if (!raw || raw === 'undefined' || raw === 'null') return null
+    return JSON.parse(raw)
+  } catch { return null }
+}
+
+export const safeParseStaff = () => {
+  try {
+    const raw = localStorage.getItem('mbhs_staff')
+    if (!raw || raw === 'undefined' || raw === 'null') return null
+    return JSON.parse(raw)
+  } catch { return null }
+}
+
 export const getToken = () => {
-  const staff = JSON.parse(localStorage.getItem("mbhs_staff") || "{}");
-  return staff.access_token || ANON_KEY;
+  try {
+    const raw = localStorage.getItem('mbhs_staff')
+    if (!raw || raw === 'undefined' || raw === 'null') return ANON_KEY
+    const staff = JSON.parse(raw)
+    return staff?.access_token || ANON_KEY
+  } catch { return ANON_KEY }
 };

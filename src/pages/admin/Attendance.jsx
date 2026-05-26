@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Search, CheckCircle, XCircle, Clock } from 'lucide-react'
-import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from '../../lib/config'
 
 const getToken = () => {
-  const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
+  const staff = safeParseStaff() || {}
   return staff.access_token || ANON_KEY
 }
 const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
@@ -32,7 +32,7 @@ export default function AdminAttendance() {
   const [selectedDate, setSelectedDate] = useState('')
 
   const getAdminDepartment = () => {
-    const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
+    const staff = safeParseStaff() || {}
     return staff.department || 'both'
   }
 

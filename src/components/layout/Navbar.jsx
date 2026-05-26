@@ -2,12 +2,13 @@ import React from 'react'
 import { useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { User, Menu } from 'lucide-react'
+import { safeParseStaff, safeParseStudent } from "../../lib/config"
 
 const Navbar = ({ onMenuClick }) => {
   const location = useLocation()
   const { profile } = useAuth()
   const studentData = localStorage.getItem('mbhs_student')
-  const student = studentData ? JSON.parse(studentData) : null
+  const student = safeParseStudent()
 
   const getPageTitle = () => {
     const path = location.pathname
@@ -31,7 +32,7 @@ const Navbar = ({ onMenuClick }) => {
     const staffData = localStorage.getItem('mbhs_staff')
     if (staffData) {
       try {
-        const staff = JSON.parse(staffData)
+        const staff = safeParseStaff() || {}
         if (staff.full_name) return staff.full_name
       } catch (err) {}
     }

@@ -7,6 +7,7 @@ import {
   BASE_URL,
   AUTH_URL,
   SUPABASE_URL,
+  safeParseStudent,
 } from "../../lib/config";
 
 const headers = {
@@ -28,19 +29,13 @@ export default function StudentDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem("mbhs_student");
-      if (!raw) {
-        window.location.href = "/login";
-        return;
-      }
-      const s = JSON.parse(raw);
-      setStudent(s);
-      loadData(s);
-    } catch (err) {
-      console.error("Error loading student:", err);
+    const s = safeParseStudent();
+    if (!s) {
       window.location.href = "/login";
+      return;
     }
+    setStudent(s);
+    loadData(s);
   }, []);
 
   const loadData = async (s) => {
@@ -102,64 +97,92 @@ export default function StudentDashboard() {
     );
 
   if (student && student.is_active === false) {
-    const reason = student.archive_reason?.toLowerCase() || 'graduated'
+    const reason = (student.archive_reason || '').toLowerCase()
     const isSuspended = reason.includes('suspend') || reason.includes('misconduct') || reason.includes('misbehav')
     const isExpelled = reason.includes('expel')
-    const isGraduated = reason.includes('graduat') || reason.includes('complet') || reason.includes('finish')
-    const isLeft = reason.includes('left') || reason.includes('transfer') || reason.includes('withdraw')
+    const isTransferred = reason.includes('transfer') || reason.includes('withdrew') || reason.includes('left')
+    const isGraduated = reason.includes('graduat') || reason.includes('complet')
 
-    const getArchiveMessage = () => {
+    const daysLeft = student.suspension_end_date
+      ? Math.max(0, Math.ceil((new Date(student.suspension_end_date) - new Date()) / (1000 * 60 * 60 * 24)))
+      : 0
+
+    const getConfig = () => {
       if (isSuspended) return {
-        icon: <AlertCircle size={32} className="text-red-600" />,
+        icon: <AlertCircle size={36} className="text-red-600" />,
         iconBg: 'bg-red-100',
         title: 'Account Suspended',
-        message: `Your account has been suspended. Reason: ${student.archive_reason}. Please contact your school administrator for further information.`,
-        color: 'border-red-200 bg-red-50'
+        bgColor: 'bg-red-50 border-red-200',
+        message: student.suspension_end_date
+          ? `Your account has been suspended until ${new Date(student.suspension_end_date).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}. Reason: ${student.archive_reason}. Your account will be automatically restored after your suspension period ends.`
+          : `Your account has been suspended. Reason: ${student.archive_reason}. Please contact your school administrator.`,
+        canViewRecords: false
       }
       if (isExpelled) return {
-        icon: <XCircle size={32} className="text-red-700" />,
+        icon: <XCircle size={36} className="text-red-700" />,
         iconBg: 'bg-red-100',
         title: 'Account Deactivated',
-        message: `Your account has been deactivated. Reason: ${student.archive_reason}. Please contact your school administrator for further information.`,
-        color: 'border-red-200 bg-red-50'
+        bgColor: 'bg-red-50 border-red-200',
+        message: `Your account has been permanently deactivated. Reason: ${student.archive_reason}. Please contact your school administrator for further information.`,
+        canViewRecords: false
       }
-      if (isLeft) return {
-        icon: <LogOut size={32} className="text-yellow-600" />,
+      if (isTransferred) return {
+        icon: <LogOut size={36} className="text-yellow-600" />,
         iconBg: 'bg-yellow-100',
         title: 'No Longer Enrolled',
+        bgColor: 'bg-yellow-50 border-yellow-200',
         message: `You are no longer enrolled at Methodist Boys' High School. Reason: ${student.archive_reason}. Your academic records are preserved for your reference.`,
-        color: 'border-yellow-200 bg-yellow-50'
+        canViewRecords: true
       }
       return {
-        icon: <GraduationCap size={32} className="text-blue-900" />,
+        icon: <GraduationCap size={36} className="text-blue-900" />,
         iconBg: 'bg-blue-100',
         title: 'Alumni Portal',
-        message: `Congratulations on completing your studies at Methodist Boys' High School. Your academic records are preserved for your reference.`,
-        color: 'border-blue-200 bg-blue-50'
+        bgColor: 'bg-blue-50 border-blue-200',
+        message: `Congratulations on completing your studies at Methodist Boys' High School. Your academic records are preserved and available for your reference at any time.`,
+        canViewRecords: true
       }
     }
 
-    const archiveInfo = getArchiveMessage()
+    const config = getConfig()
 
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-8">
-          <div className={`w-16 h-16 ${archiveInfo.iconBg} rounded-full flex items-center justify-center mx-auto mb-4`}>
-            {archiveInfo.icon}
+        <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-6 md:p-8">
+
+          <div className={`w-16 h-16 ${config.iconBg} rounded-full flex items-center justify-center mx-auto mb-4`}>
+            {config.icon}
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">{archiveInfo.title}</h1>
-          <div className={`border rounded-lg p-4 mb-6 text-sm text-gray-700 text-center ${archiveInfo.color}`}>
-            {archiveInfo.message}
+
+          <h1 className="text-2xl font-bold text-gray-900 text-center mb-3">{config.title}</h1>
+
+          <div className={`border rounded-lg p-4 mb-4 text-sm text-gray-700 text-center ${config.bgColor}`}>
+            {config.message}
           </div>
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+
+          {isSuspended && student.suspension_end_date && daysLeft > 0 && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 text-center">
+              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Days Remaining</p>
+              <p className="text-4xl font-bold text-red-700">{daysLeft}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Returns on {new Date(student.suspension_end_date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+              </p>
+            </div>
+          )}
+
+          <div className="bg-gray-50 rounded-lg p-4 mb-4">
             <div className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <p className="text-gray-500 text-xs uppercase tracking-wide">Student Name</p>
+                <p className="font-semibold text-gray-900">{student.full_name}</p>
+              </div>
               <div>
                 <p className="text-gray-500 text-xs uppercase tracking-wide">Student Number</p>
                 <p className="font-semibold text-gray-900">{student.student_number}</p>
               </div>
               <div>
                 <p className="text-gray-500 text-xs uppercase tracking-wide">Status</p>
-                <p className="font-semibold text-gray-900 capitalize">{student.archive_reason || 'Archived'}</p>
+                <p className="font-semibold text-gray-900">{student.archive_reason || 'Archived'}</p>
               </div>
               {student.graduation_year && (
                 <div>
@@ -167,16 +190,11 @@ export default function StudentDashboard() {
                   <p className="font-semibold text-gray-900">{student.graduation_year}</p>
                 </div>
               )}
-              {student.archived_at && (
-                <div>
-                  <p className="text-gray-500 text-xs uppercase tracking-wide">Date</p>
-                  <p className="font-semibold text-gray-900">{new Date(student.archived_at).toLocaleDateString()}</p>
-                </div>
-              )}
             </div>
           </div>
-          {!isSuspended && !isExpelled && (
-            <div className="space-y-3 mb-6">
+
+          {config.canViewRecords && (
+            <div className="space-y-3 mb-4">
               <a href="/student/results"
                 className="block bg-blue-900 text-white py-3 rounded-lg text-sm font-medium hover:bg-blue-800 text-center">
                 View My Academic Results
@@ -187,13 +205,15 @@ export default function StudentDashboard() {
               </a>
             </div>
           )}
+
           <button
             onClick={() => { localStorage.removeItem('mbhs_student'); window.location.href = '/login' }}
             className="w-full bg-gray-100 text-gray-600 py-3 rounded-lg text-sm font-medium hover:bg-gray-200"
           >
             Sign Out
           </button>
-          <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+
+          <footer className="mt-6 pt-4 border-t border-gray-200 text-center">
             <p className="text-xs text-gray-400">© 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.</p>
             <p className="text-xs text-gray-400 mt-1">Developed by Alie Amadu Sesay</p>
           </footer>

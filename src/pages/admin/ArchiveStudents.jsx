@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { Archive, Users, CheckCircle, AlertCircle, Search, Clock } from "lucide-react"
-import { ANON_KEY, SUPABASE_URL } from "../../lib/config"
+import {ANON_KEY, SUPABASE_URL, safeParseStaff} from "../../lib/config"
 
 const getAuth = () => {
   const staffData = localStorage.getItem("mbhs_staff")
@@ -12,7 +12,7 @@ const getAuth = () => {
     }
   }
 
-  const staff = JSON.parse(staffData)
+  const staff = safeParseStaff() || {}
   return {
     token: staff?.access_token,
     apikey: ANON_KEY,
@@ -53,7 +53,7 @@ const apiFetch = async (endpoint, options = {}) => {
 }
 
 const getAdminDepartment = () =>
-  JSON.parse(localStorage.getItem("mbhs_staff") || "{}").department || "both"
+  safeParseStaff() || {}.department || "both"
 
 const calculateSuspensionEndDate = (duration) => {
   const today = new Date()

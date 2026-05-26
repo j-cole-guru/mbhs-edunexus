@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Users, BookOpen, Clock } from 'lucide-react'
-import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from '../../lib/config'
 
 const getToken = () => {
-  const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
+  const staff = safeParseStaff() || {}
   return staff.access_token || ANON_KEY
 }
 
@@ -17,7 +17,7 @@ const TeacherDashboard = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
+        const staff = safeParseStaff() || {}
         if (!staff.id) {
           setLoading(false)
           return

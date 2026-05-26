@@ -23,23 +23,24 @@ import {
   Archive,
 } from "lucide-react";
 import logo from "../../assets/logo.png";
+import { safeParseStaff, safeParseStudent } from "../../lib/config"
 
 const Sidebar = ({ onClose }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { profile, signOut } = useAuth();
   const studentData = localStorage.getItem("mbhs_student");
-  const student = studentData ? JSON.parse(studentData) : null;
+  const student = safeParseStudent();
 
   const staffData = localStorage.getItem("mbhs_staff");
-  const staff = staffData ? JSON.parse(staffData) : null;
+  const staff = safeParseStaff();
 
   const currentProfile =
     profile ||
     (staff ? { role: staff.role, full_name: staff.full_name } : null);
 
   const getNavLinks = () => {
-    const staff = JSON.parse(localStorage.getItem("mbhs_staff") || "{}");
+    const staff = safeParseStaff() || {};
     const department = staff.department || "both";
 
     if (currentProfile?.role === "admin") {

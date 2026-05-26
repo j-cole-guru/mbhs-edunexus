@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Users, ArrowRight } from 'lucide-react'
-import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from '../../lib/config'
 
-const getToken = () => JSON.parse(localStorage.getItem('mbhs_staff') || '{}').access_token || ANON_KEY
+const getToken = () => safeParseStaff() || {}.access_token || ANON_KEY
 const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
 
-const getAdminDepartment = () => JSON.parse(localStorage.getItem('mbhs_staff') || '{}').department || 'both'
+const getAdminDepartment = () => safeParseStaff() || {}.department || 'both'
 
 export default function PromoteStudents() {
   const [levels, setLevels] = useState([])

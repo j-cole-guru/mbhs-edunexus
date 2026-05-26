@@ -1,16 +1,10 @@
 
 import React, { useState, useEffect } from "react";
 import { Plus, Trash2, BookOpen, CheckCircle, AlertCircle } from "lucide-react";
-import {
-  ANON_KEY,
-  SERVICE_KEY,
-  BASE_URL,
-  AUTH_URL,
-  SUPABASE_URL,
-} from "../../lib/config";
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from "../../lib/config";
 
 const getAuth = () => {
-  const staff = JSON.parse(localStorage.getItem("mbhs_staff"));
+  const staff = safeParseStaff() || {};
   return {
     token: staff?.access_token,
     apikey: ANON_KEY,
@@ -51,7 +45,7 @@ const ManageClasses = () => {
   const [success, setSuccess] = useState("");
 
   const getAdminDepartment = () => {
-    const staff = JSON.parse(localStorage.getItem("mbhs_staff") || "{}");
+    const staff = safeParseStaff() || {};
     return staff.department || "both";
   };
 

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { safeParseStaff } from '../lib/config'
 
 const AuthContext = createContext({})
 
@@ -6,9 +7,9 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    const staff = localStorage.getItem('mbhs_staff')
+    const staff = safeParseStaff()
     if (staff) {
-      setUser(JSON.parse(staff))
+      setUser(staff)
     }
   }, [])
 

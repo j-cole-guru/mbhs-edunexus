@@ -7,16 +7,10 @@ import {
   AlertCircle,
   ArrowRight,
 } from "lucide-react";
-import {
-  ANON_KEY,
-  SERVICE_KEY,
-  BASE_URL,
-  AUTH_URL,
-  SUPABASE_URL,
-} from "../../lib/config";
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from "../../lib/config";
 
 const getToken = () => {
-  const staff = JSON.parse(localStorage.getItem("mbhs_staff") || "{}");
+  const staff = safeParseStaff() || {};
   return staff.access_token || ANON_KEY;
 };
 
@@ -38,7 +32,7 @@ const ManageTeachers = () => {
   const [success, setSuccess] = useState("");
 
   const getAdminDepartment = () => {
-    const staff = JSON.parse(localStorage.getItem("mbhs_staff") || "{}");
+    const staff = safeParseStaff() || {};
     return staff.department || "both";
   };
 

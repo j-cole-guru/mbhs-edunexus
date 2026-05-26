@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { CheckCircle, XCircle, Clock, Calendar, ChevronDown, ChevronRight, UserCheck } from 'lucide-react'
-import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStudent} from '../../lib/config'
 
 const StudentAttendance = () => {
   const [student, setStudent] = useState(null)
@@ -16,7 +16,7 @@ const StudentAttendance = () => {
   useEffect(() => {
     const init = async () => {
       try {
-        const s = JSON.parse(localStorage.getItem('mbhs_student') || '{}')
+        const s = safeParseStudent() || {}
         if (!s.id) { setLoading(false); return }
         setStudent(s)
 
