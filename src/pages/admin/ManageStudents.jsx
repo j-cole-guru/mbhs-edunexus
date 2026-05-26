@@ -926,8 +926,7 @@ const ManageStudents = () => {
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900">
                   <option value="">Select Reason</option>
                   <option value="Graduated">Graduated</option>
-                  <option value="Suspended - Misconduct">Suspended - Misconduct</option>
-                  <option value="Suspended - Misbehavior">Suspended - Misbehavior</option>
+                  <option value="Suspended">Suspended</option>
                   <option value="Expelled">Expelled</option>
                   <option value="Transferred to another school">Transferred to another school</option>
                   <option value="Withdrew from school">Withdrew from school</option>
@@ -944,7 +943,7 @@ const ManageStudents = () => {
                 </div>
               )}
 
-              {(archiveReason === 'Suspended - Misconduct' || archiveReason === 'Suspended - Misbehavior') && (
+              {archiveReason === 'Suspended' && (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-3">
                   <p className="text-yellow-800 text-sm font-semibold">Suspension Duration</p>
                   <select value={suspensionDuration}
