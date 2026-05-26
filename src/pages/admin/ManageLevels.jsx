@@ -115,6 +115,23 @@ const ManageLevels = () => {
       return;
     }
 
+    // Pre‑check: ensure no classes or students reference this level
+    try {
+      const classDeps = await apiFetch(`/classes?level_id=eq.${id}&select=id`, { method: "GET" });
+      if (Array.isArray(classDeps) && classDeps.length > 0) {
+        alert('Cannot delete this level because it has associated classes. Delete or reassign them first.');
+        return;
+      }
+      const studentDeps = await apiFetch(`/students?level_id=eq.${id}&select=id`, { method: "GET" });
+      if (Array.isArray(studentDeps) && studentDeps.length > 0) {
+        alert('Cannot delete this level because it has associated students. Delete or reassign them first.');
+        return;
+      }
+    } catch (preErr) {
+      console.warn('Dependency check failed:', preErr);
+      // Continue with deletion attempt if check failed
+    }
+
     try {
       console.log("Deleting level:", id);
       await apiFetch(`/levels?id=eq.${id}`, {
@@ -126,7 +143,7 @@ const ManageLevels = () => {
       await fetchLevels();
     } catch (error) {
       console.error("Error deleting level:", error);
-      setError("Failed to delete level");
+      setError("Failed to delete level: " + (error?.message || "unknown error"));
     }
   };
 

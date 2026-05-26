@@ -834,6 +834,12 @@ const ManageStudents = () => {
                       >
                         <Archive size={14} /> Archive
                       </button>
+                      <button
+                        onClick={() => handleDeleteStudent(student.id)}
+                        className="flex items-center gap-1 text-red-600 hover:text-red-800 text-xs font-medium ml-2"
+                      >
+                        <Trash2 size={14} /> Delete
+                      </button>
                     </td>
                   </tr>
                 ))}
