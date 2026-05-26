@@ -159,12 +159,21 @@ const ManageStudents = () => {
   }
 
   const handleArchiveStudent = async () => {
-    if (!archiveModalStudent) return
+    if (!archiveModalStudent) return;
     if (!archiveReason) { alert('Please select a reason.'); return }
 
-    const isSuspension = archiveReason.toLowerCase().includes('suspend')
+    const isSuspension = archiveReason.toLowerCase().includes('suspend');
     if (isSuspension && !suspensionEndDate) { alert('Please select suspension duration.'); return }
     if (archiveReason === 'Graduated' && !graduationYear) { alert('Please enter graduation year.'); return }
+
+    // Optimistically move student to archived list
+    const originalStudents = [...students];
+    const originalArchived = [...archivedStudents];
+    const student = students.find(s => s.id === archiveModalStudent.id);
+    if (student) {
+      setStudents(students.filter(s => s.id !== archiveModalStudent.id));
+      setArchivedStudents([student, ...archivedStudents]);
+    }
 
     try {
       await fetch(`${BASE_URL}/students?id=eq.${archiveModalStudent.id}`, {
@@ -178,22 +187,35 @@ const ManageStudents = () => {
           is_active: false,
           archived_at: new Date().toISOString(),
           archive_reason: archiveReason,
-          graduation_year: archiveReason === 'Graduated' ? graduationYear : null,
-          suspension_end_date: isSuspension ? suspensionEndDate : null
+          graduation_year: archiveReason === 'Graduated' ? graduationYear : null
         })
       })
-      setArchiveModalStudent(null)
-      setArchiveReason('')
-      setGraduationYear('')
-      setSuspensionDuration('')
-      setSuspensionEndDate('')
-      await fetchStudents()
-      await fetchArchivedStudents()
-    } catch (err) { alert('Archive failed: ' + err.message) }
+      setArchiveModalStudent(null);
+      setArchiveReason('');
+      setGraduationYear('');
+      setSuspensionDuration('');
+      setSuspensionEndDate('');
+      // Refresh from server to ensure consistency
+      await fetchStudents();
+      await fetchArchivedStudents();
+    } catch (err) {
+      alert('Archive failed: ' + err.message);
+      // Revert UI on failure
+      setStudents(originalStudents);
+      setArchivedStudents(originalArchived);
+    }
   }
 
   const handleRestoreStudent = async (studentId) => {
     if (!window.confirm('Restore this student to active status?')) return
+    // Optimistically move student back to active list
+    const restoredStudent = archivedStudents.find(s => s.id === studentId);
+    const originalStudents = [...students];
+    const originalArchived = [...archivedStudents];
+    if (restoredStudent) {
+      setArchivedStudents(archivedStudents.filter(s => s.id !== studentId));
+      setStudents([restoredStudent, ...students]);
+    }
     try {
       await fetch(`${BASE_URL}/students?id=eq.${studentId}`, {
         method: 'PATCH',
@@ -210,9 +232,15 @@ const ManageStudents = () => {
           suspension_end_date: null
         })
       })
+      // Refresh from server to ensure consistency
       await fetchStudents()
       await fetchArchivedStudents()
-    } catch (err) { alert('Restore failed: ' + err.message) }
+    } catch (err) {
+      alert('Restore failed: ' + err.message);
+      // Revert UI on failure
+      setStudents(originalStudents);
+      setArchivedStudents(originalArchived);
+    }
   }
 
   const fetchLevels = async () => {
@@ -351,9 +379,12 @@ const ManageStudents = () => {
 
       const newStudent = JSON.parse(responseText);
       console.log("Student created:", newStudent);
+      // Optimistically add to UI
+      setStudents(prev => [newStudent, ...prev]);
       setSuccess(
         `Student created successfully! Name: ${formData.full_name} | PIN: ${formData.pin}`,
       );
+      // Refresh list to sync with server
       await fetchStudents();
       // Clear form
       setFormData({
@@ -378,7 +409,9 @@ const ManageStudents = () => {
     if (!confirm("Are you sure you want to delete this student?")) {
       return;
     }
-
+    // Optimistically remove from UI
+    const originalStudents = [...students];
+    setStudents(students.filter(s => s.id !== id));
     try {
       console.log("Deleting student:", id);
       await apiFetch(`/students?id=eq.${id}`, {
@@ -386,11 +419,13 @@ const ManageStudents = () => {
       });
       console.log("Student deleted successfully");
       setSuccess("Student deleted successfully");
-      // Refresh the list
+      // Confirm deletion with fresh fetch in case of discrepancy
       await fetchStudents();
     } catch (error) {
       console.error("Error deleting student:", error);
       setError("Failed to delete student");
+      // Revert UI on failure
+      setStudents(originalStudents);
     }
   };
 

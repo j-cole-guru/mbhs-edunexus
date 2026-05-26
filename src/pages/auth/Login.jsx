@@ -45,7 +45,7 @@ const Login = () => {
       const data = await res.json()
       console.log('Student login result:', data)
 
-      if (!data || data.length === 0) {
+      if (!res.ok || data.error || !Array.isArray(data) || data.length === 0) {
         // Log failed student login attempt
         await fetch(`${SUPABASE_URL}/rest/v1/security_logs`, {
           method: 'POST',

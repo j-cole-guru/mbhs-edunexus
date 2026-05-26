@@ -44,6 +44,16 @@ const apiFetch = async (endpoint, options = {}) => {
   }
 
   const text = await res.text()
+  if (!res.ok) {
+    let errMsg = `API Error: ${res.status}`
+    try {
+      const errData = JSON.parse(text)
+      errMsg = errData.message || errData.error || errMsg
+    } catch {
+      // Ignore parse error
+    }
+    throw new Error(errMsg)
+  }
   if (!text || text.trim() === "") return null
   try {
     return JSON.parse(text)
@@ -205,7 +215,6 @@ const ArchiveStudents = () => {
         archived_at: new Date().toISOString(),
         archive_reason: archiveReason,
         graduation_year: archiveReason === "Graduated" ? graduationYear : null,
-        suspension_end_date: isSuspension ? suspensionEndDate : null,
       }
       await apiFetch(`/students?id=in.${idsString}`, {
         method: "PATCH",
@@ -235,9 +244,8 @@ const ArchiveStudents = () => {
         body: JSON.stringify({
           is_active: true,
           archived_at: null,
-          graduation_year: null,
           archive_reason: null,
-          suspension_end_date: null,
+          graduation_year: null,
         }),
       })
       setSuccess("Student restored successfully")
