@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Trash2, Layers, CheckCircle, AlertCircle } from "lucide-react";
-import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from "../../lib/config";
-
-import {ANON_KEY, BASE_URL, getToken, safeParseStaff} from "../../lib/config";
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, getToken, safeParseStaff} from "../../lib/config";
 
 const apiFetch = async (endpoint, options = {}) => {
   const token = getToken();

@@ -394,18 +394,6 @@ const ManageStudents = () => {
     }
   };
 
-  const handleArchiveStudent = async () => {
-    setError(
-      "Archiving is not available here. Please go to the Archive Students page.",
-    );
-  };
-
-  const handleRestoreStudent = async (studentId) => {
-    setError(
-      "Restoring is not available here. Please go to the Archive Students page.",
-    );
-  };
-
   const fetchBulkPreview = async () => {
     if (!bulkClassId) { setBulkError('Please select a class.'); return }
     setBulkError('')

@@ -70,8 +70,8 @@ export default function AuditTrail() {
                 </tr>
               ))}
             </tbody>
+            </table>
           </div>
-          </table>
         )}
       </div>
 

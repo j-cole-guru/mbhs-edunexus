@@ -288,8 +288,8 @@ export default function ManageAdmins() {
                 </tr>
               ))}
             </tbody>
+            </table>
           </div>
-          </table>
         )}
       </div>
 

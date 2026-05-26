@@ -2064,9 +2064,9 @@ var __iconNode5 = [
 var Trash2 = createLucideIcon("trash-2", __iconNode5);
 
 // src/lib/config.js
-var SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://tvitevnovhiimpdukebm.supabase.co";
-var ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDc5NDksImV4cCI6MjA5MzcyMzk0OX0.ppLsEGZqXAE9YurmXCUqto7Mi3p6ZEVDHS4ODLwJo6Y";
-var SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aXRldm5vdmhpaW1wZHVrZWJtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODE0Nzk0OSwiZXhwIjoyMDkzNzIzOTQ5fQ.39YaOjLVvB6CIKg--T2-97B-F-62t8n-8ZYrhKUQokk";
+var SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+var ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+var SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY;
 var BASE_URL = `${SUPABASE_URL}/rest/v1`;
 var AUTH_URL = `${SUPABASE_URL}/auth/v1`;
 

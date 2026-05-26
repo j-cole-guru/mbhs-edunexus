@@ -16,6 +16,13 @@ const getGrade = (score) => {
   return 'F9'
 }
 
+const getGradeClass = (grade) => {
+  if (grade === 'A1') return 'bg-green-100 text-green-700'
+  if (grade === 'B2' || grade === 'B3') return 'bg-blue-100 text-blue-700'
+  if (grade === 'C4' || grade === 'C5' || grade === 'C6') return 'bg-yellow-100 text-yellow-700'
+  return 'bg-red-100 text-red-700'
+}
+
 const calcGPA = (records) => {
   if (!records || !records.length) return '0.0'
   const avg = records.reduce((sum, r) => sum + parseFloat(r.score || 0), 0) / records.length
@@ -96,74 +103,76 @@ export default function StudentResults() {
           No results available.
         </div>
       ) : (
-        Object.entries(grouped).map(([termName, assessments]) => (
-          <div key={termName} className="bg-white rounded-lg shadow mb-4 overflow-hidden">
-            <button
-              onClick={() => toggleTerm(termName)}
-              className="w-full flex items-center justify-between px-6 py-4 bg-blue-900 text-white font-semibold text-left"
-            >
-              <span>{termName}</span>
-              {expandedTerms[termName] ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
-            </button>
+        <>
+          {Object.entries(grouped).map(([termName, assessments]) => {
+            const isTermExpanded = expandedTerms[termName]
+            return (
+              <div key={termName} className="bg-white rounded-lg shadow mb-4 overflow-hidden">
+                <button
+                  onClick={() => toggleTerm(termName)}
+                  className="w-full flex items-center justify-between px-6 py-4 bg-blue-900 text-white font-semibold text-left"
+                >
+                  <span>{termName}</span>
+                  {isTermExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+                </button>
 
-            {expandedTerms[termName] && (
-              <div className="p-4 space-y-4">
-                {Object.entries(assessments).map(([assessmentType, records]) => {
-                  const key = `${termName}-${assessmentType}`
-                  const gpa = calcGPA(records)
-                  return (
-                    <div key={key} className="border border-gray-200 rounded-lg overflow-hidden">
-                      <button
-                        onClick={() => toggleAssessment(key)}
-                        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 text-gray-800 font-medium text-left"
-                      >
-                        <span>{assessmentType}</span>
-                        {expandedAssessments[key] ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-                      </button>
+                {isTermExpanded && (
+                  <div className="p-4 space-y-4">
+                    {Object.entries(assessments).map(([assessmentType, records]) => {
+                      const key = `${termName}-${assessmentType}`
+                      const gpa = calcGPA(records)
+                      const isAssessmentExpanded = expandedAssessments[key]
+                      return (
+                        <div key={key} className="border border-gray-200 rounded-lg overflow-hidden">
+                          <button
+                            onClick={() => toggleAssessment(key)}
+                            className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 text-gray-800 font-medium text-left"
+                          >
+                            <span>{assessmentType}</span>
+                            {isAssessmentExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+                          </button>
 
-                      {expandedAssessments[key] && (
-                        <div className="p-4">
-                          <div className="w-full overflow-x-auto rounded-lg shadow">
-                            <table className="w-full text-sm" style={{ minWidth: '700px' }}>
-                            <thead>
-                              <tr className="text-left text-gray-500 uppercase text-xs tracking-wide border-b">
-                                <th className="pb-2">Subject</th>
-                                <th className="pb-2">Score</th>
-                                <th className="pb-2">Grade</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {records.map((r, i) => (
-                                <tr key={i} className="border-b last:border-0">
-                                  <td className="py-2 text-gray-800">{r.subject}</td>
-                                  <td className="py-2 text-gray-800">{r.score}</td>
-                                  <td className="py-2">
-                                    <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                                      r.grade === 'A1' ? 'bg-green-100 text-green-700' :
-                                      r.grade === 'B2' || r.grade === 'B3' ? 'bg-blue-100 text-blue-700' :
-                                      r.grade === 'C4' || r.grade === 'C5' || r.grade === 'C6' ? 'bg-yellow-100 text-yellow-700' :
-                                      'bg-red-100 text-red-700'
-                                    }`}>
-                                      {r.grade}
-                                    </span>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                          <div className="mt-3 pt-3 border-t flex items-center justify-between">
-                            <span className="text-sm text-gray-500">Assessment Average</span>
-                            <span className="font-bold text-blue-900">{gpa} — {getGrade(parseFloat(gpa))}</span>
-                          </div>
+                          {isAssessmentExpanded && (
+                            <div className="p-4">
+                              <div className="w-full overflow-x-auto rounded-lg shadow">
+                                <table className="w-full text-sm" style={{ minWidth: '700px' }}>
+                                  <thead>
+                                    <tr className="text-left text-gray-500 uppercase text-xs tracking-wide border-b">
+                                      <th className="pb-2">Subject</th>
+                                      <th className="pb-2">Score</th>
+                                      <th className="pb-2">Grade</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {records.map((r, i) => (
+                                      <tr key={i} className="border-b last:border-0">
+                                        <td className="py-2 text-gray-800">{r.subject}</td>
+                                        <td className="py-2 text-gray-800">{r.score}</td>
+                                        <td className="py-2">
+                                          <span className={'px-2 py-1 rounded text-xs font-semibold ' + getGradeClass(r.grade)}>
+                                            {r.grade}
+                                          </span>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                              <div className="mt-3 pt-3 border-t flex items-center justify-between">
+                                <span className="text-sm text-gray-500">Assessment Average</span>
+                                <span className="font-bold text-blue-900">{gpa} — {getGrade(parseFloat(gpa))}</span>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  )
-                })}
+                      )
+                    })}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        ))
+            )
+          })}
+        </>
       )}
 
       <footer className="mt-8 py-4 border-t border-gray-200 text-center">
