@@ -104,7 +104,7 @@ const AdminDashboard = () => {
     // Auto restore suspended students whose time has ended
     const autoRestore = async () => {
       try {
-        await fetch(`${BASE_URL}/rpc/auto_restore_suspended_students`, {
+        const response = await fetch(`${BASE_URL}/rpc/auto_restore_suspended_students`, {
           method: 'POST',
           headers: {
             'apikey': ANON_KEY,
@@ -113,7 +113,11 @@ const AdminDashboard = () => {
           },
           body: JSON.stringify({})
         })
-        console.log('Auto restore check completed')
+        if (response.ok) {
+          console.log('Auto restore check completed')
+        } else {
+          console.warn('Auto restore RPC returned status:', response.status)
+        }
       } catch (err) {
         console.error('Auto restore error:', err)
       }

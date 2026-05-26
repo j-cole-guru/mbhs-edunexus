@@ -82,7 +82,8 @@ const Login = () => {
           severity: 'low'
         })
       })
-      window.location.href = '/student'
+      // Use navigate with timeout to ensure localStorage is flushed
+      setTimeout(() => navigate('/student'), 100)
     } catch (err) {
       console.error('Student login error:', err)
       setError('Login failed. Please try again.')
