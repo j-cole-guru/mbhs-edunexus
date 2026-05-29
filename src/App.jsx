@@ -49,23 +49,30 @@ function App() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [installMessage, setInstallMessage] = useState(
+    "Add MBHS EduNexus to your home screen for quick access."
+  );
 
   useEffect(() => {
     const displayModeQuery = window.matchMedia("(display-mode: standalone)");
     const standalone = displayModeQuery.matches;
     const navigatorStandalone = Boolean(window.navigator.standalone);
-    setIsInstalled(standalone || navigatorStandalone);
+    const installed = standalone || navigatorStandalone;
+    setIsInstalled(installed);
+    setShowInstallPrompt(!installed);
 
     const handleDisplayModeChange = (event) => {
-      setIsInstalled(event.matches || Boolean(window.navigator.standalone));
-      if (event.matches) {
-        setShowInstallPrompt(false);
-      }
+      const nowInstalled = event.matches || Boolean(window.navigator.standalone);
+      setIsInstalled(nowInstalled);
+      setShowInstallPrompt(!nowInstalled);
     };
 
     const handleBeforeInstallPrompt = (event) => {
       event.preventDefault();
       setDeferredPrompt(event);
+      setInstallMessage(
+        "Install MBHS EduNexus to launch it from your home screen."
+      );
       setShowInstallPrompt(true);
     };
 
@@ -73,6 +80,7 @@ function App() {
       setDeferredPrompt(null);
       setShowInstallPrompt(false);
       setIsInstalled(true);
+      setInstallMessage("MBHS EduNexus is installed.");
     };
 
     displayModeQuery.addEventListener("change", handleDisplayModeChange);
@@ -87,12 +95,17 @@ function App() {
   }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) return;
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      setDeferredPrompt(null);
+      setShowInstallPrompt(false);
+      return;
+    }
 
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    setDeferredPrompt(null);
-    setShowInstallPrompt(false);
+    setInstallMessage(
+      "Use your browser's menu (⋮) and choose 'Install app' or 'Add to Home screen'."
+    );
   };
 
   return (
@@ -112,7 +125,7 @@ function App() {
                 <div className="flex-1">
                   <p className="text-base font-semibold">Install MBHS EduNexus</p>
                   <p className="mt-1 text-sm text-slate-300">
-                    Add it to your home screen for quick access and offline use.
+                    {installMessage}
                   </p>
                 </div>
               </div>
