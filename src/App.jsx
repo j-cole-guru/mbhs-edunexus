@@ -50,7 +50,7 @@ function App() {
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
   const [installMessage, setInstallMessage] = useState(
-    "Add MBHS EduNexus to your home screen for quick access."
+    "On supported browsers, this will show the native install prompt near the address bar. Open the hosted HTTPS version on Android Chrome/Edge to see it."
   );
 
   useEffect(() => {
@@ -104,7 +104,7 @@ function App() {
     }
 
     setInstallMessage(
-      "Use your browser's menu (⋮) and choose 'Install app' or 'Add to Home screen'."
+      "If your browser does not show the native install prompt, use the browser menu (⋮) and choose 'Install app' or 'Add to Home screen'."
     );
   };
 
