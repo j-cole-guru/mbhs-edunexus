@@ -1,0 +1,19 @@
+{
+  "name": "MBHS EduNexus",
+  "short_name": "EduNexus",
+  "description": "Methodist Boys' High School EduNexus Portal",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "193x261",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

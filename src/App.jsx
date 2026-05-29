@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -46,12 +46,94 @@ import MakeReport from "./pages/student/MakeReport";
 const queryClient = new QueryClient();
 
 function App() {
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
+
+  useEffect(() => {
+    const displayModeQuery = window.matchMedia("(display-mode: standalone)");
+    const standalone = displayModeQuery.matches;
+    const navigatorStandalone = Boolean(window.navigator.standalone);
+    setIsInstalled(standalone || navigatorStandalone);
+
+    const handleDisplayModeChange = (event) => {
+      setIsInstalled(event.matches || Boolean(window.navigator.standalone));
+      if (event.matches) {
+        setShowInstallPrompt(false);
+      }
+    };
+
+    const handleBeforeInstallPrompt = (event) => {
+      event.preventDefault();
+      setDeferredPrompt(event);
+      setShowInstallPrompt(true);
+    };
+
+    const handleAppInstalled = () => {
+      setDeferredPrompt(null);
+      setShowInstallPrompt(false);
+      setIsInstalled(true);
+    };
+
+    displayModeQuery.addEventListener("change", handleDisplayModeChange);
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
+
+    return () => {
+      displayModeQuery.removeEventListener("change", handleDisplayModeChange);
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    setDeferredPrompt(null);
+    setShowInstallPrompt(false);
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Router
           future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
         >
+          {showInstallPrompt && !isInstalled && (
+            <div className="fixed bottom-4 right-4 z-50 w-full max-w-sm rounded-2xl border border-slate-700 bg-slate-900 p-4 text-white shadow-2xl">
+              <div className="flex items-start gap-3">
+                <img
+                  src="/favicon.png"
+                  alt="MBHS EduNexus"
+                  className="h-10 w-10 rounded-lg"
+                />
+                <div className="flex-1">
+                  <p className="text-base font-semibold">Install MBHS EduNexus</p>
+                  <p className="mt-1 text-sm text-slate-300">
+                    Add it to your home screen for quick access and offline use.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowInstallPrompt(false)}
+                  className="rounded-lg border border-slate-600 px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-800"
+                >
+                  Not now
+                </button>
+                <button
+                  type="button"
+                  onClick={handleInstall}
+                  className="rounded-lg bg-cyan-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-cyan-500"
+                >
+                  Install
+                </button>
+              </div>
+            </div>
+          )}
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Navigate to="/login" replace />} />
