@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/favicon.png" />
-    <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0f172a" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -18,17 +17,17 @@
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script>
+      // Unregister any existing service workers and remove manifest to disable PWA install prompts
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/sw.js')
-            .then(function(registration) {
-              console.log('ServiceWorker registered:', registration.scope)
-            })
-            .catch(function(error) {
-              console.log('ServiceWorker registration failed:', error)
-            })
-        })
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          regs.forEach(r => r.unregister())
+        }).catch(()=>{})
       }
+      // Remove manifest link if present
+      try {
+        const links = document.querySelectorAll('link[rel="manifest"]')
+        links.forEach(l => l.parentNode && l.parentNode.removeChild(l))
+      } catch(e) {}
     </script>
   </body>
 </html>
