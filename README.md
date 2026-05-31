@@ -57,39 +57,7 @@ A comprehensive school management system for Methodist Boys' High School in Sier
 
 ## Getting Started
 
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd mbhs-edunexus
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Set up environment variables:
-Create a `.env` file in the root directory:
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-4. Start the development server:
-```bash
-npm run dev
-```
-
-5. Build for production:
-```bash
-npm run build
-```
+This project is built with React, Vite, Tailwind CSS, and Supabase.
 
 ## Database Schema
 

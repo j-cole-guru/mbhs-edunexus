@@ -52,8 +52,18 @@ function App() {
   const [installMessage, setInstallMessage] = useState(
     "On supported browsers, this will show the native install prompt near the address bar. Open the hosted HTTPS version on Android Chrome/Edge to see it."
   );
+  const [isIos, setIsIos] = useState(false);
 
   useEffect(() => {
+    const iOS = /iPad|iPhone|iPod/.test(window.navigator.userAgent);
+    setIsIos(iOS);
+
+    if (iOS) {
+      setInstallMessage(
+        "To install on iPhone or iPad, tap Share and then Add to Home Screen in Safari."
+      );
+    }
+
     const displayModeQuery = window.matchMedia("(display-mode: standalone)");
     const standalone = displayModeQuery.matches;
     const navigatorStandalone = Boolean(window.navigator.standalone);
@@ -95,6 +105,13 @@ function App() {
   }, []);
 
   const handleInstall = async () => {
+    if (isIos) {
+      setInstallMessage(
+        "On iPhone and iPad, use Safari's Share button and choose Add to Home Screen."
+      );
+      return;
+    }
+
     if (deferredPrompt) {
       deferredPrompt.prompt();
       await deferredPrompt.userChoice;
