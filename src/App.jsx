@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -10,6 +9,7 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Login from "./pages/auth/Login";
 import Layout from "./components/layout/Layout";
+import InstallPrompt from "./components/InstallPrompt";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -46,124 +46,13 @@ import MakeReport from "./pages/student/MakeReport";
 const queryClient = new QueryClient();
 
 function App() {
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
-  const [isInstalled, setIsInstalled] = useState(false);
-  const [installMessage, setInstallMessage] = useState(
-    "On supported browsers, this will show the native install prompt near the address bar. Open the hosted HTTPS version on Android Chrome/Edge to see it."
-  );
-  const [isIos, setIsIos] = useState(false);
-
-  useEffect(() => {
-    const iOS = /iPad|iPhone|iPod/.test(window.navigator.userAgent);
-    setIsIos(iOS);
-
-    if (iOS) {
-      setInstallMessage(
-        "To install on iPhone or iPad, tap Share and then Add to Home Screen in Safari."
-      );
-    }
-
-    const displayModeQuery = window.matchMedia("(display-mode: standalone)");
-    const standalone = displayModeQuery.matches;
-    const navigatorStandalone = Boolean(window.navigator.standalone);
-    const installed = standalone || navigatorStandalone;
-    setIsInstalled(installed);
-    setShowInstallPrompt(!installed);
-
-    const handleDisplayModeChange = (event) => {
-      const nowInstalled = event.matches || Boolean(window.navigator.standalone);
-      setIsInstalled(nowInstalled);
-      setShowInstallPrompt(!nowInstalled);
-    };
-
-    const handleBeforeInstallPrompt = (event) => {
-      event.preventDefault();
-      setDeferredPrompt(event);
-      setInstallMessage(
-        "Install MBHS EduNexus to launch it from your home screen."
-      );
-      setShowInstallPrompt(true);
-    };
-
-    const handleAppInstalled = () => {
-      setDeferredPrompt(null);
-      setShowInstallPrompt(false);
-      setIsInstalled(true);
-      setInstallMessage("MBHS EduNexus is installed.");
-    };
-
-    displayModeQuery.addEventListener("change", handleDisplayModeChange);
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-    window.addEventListener("appinstalled", handleAppInstalled);
-
-    return () => {
-      displayModeQuery.removeEventListener("change", handleDisplayModeChange);
-      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-      window.removeEventListener("appinstalled", handleAppInstalled);
-    };
-  }, []);
-
-  const handleInstall = async () => {
-    if (isIos) {
-      setInstallMessage(
-        "On iPhone and iPad, use Safari's Share button and choose Add to Home Screen."
-      );
-      return;
-    }
-
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
-      setDeferredPrompt(null);
-      setShowInstallPrompt(false);
-      return;
-    }
-
-    setInstallMessage(
-      "If your browser does not show the native install prompt, use the browser menu (⋮) and choose 'Install app' or 'Add to Home screen'."
-    );
-  };
-
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Router
           future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
         >
-          {showInstallPrompt && !isInstalled && (
-            <div className="fixed bottom-4 right-4 z-50 w-full max-w-sm rounded-2xl border border-slate-700 bg-slate-900 p-4 text-white shadow-2xl">
-              <div className="flex items-start gap-3">
-                <img
-                  src="/favicon.png"
-                  alt="MBHS EduNexus"
-                  className="h-10 w-10 rounded-lg"
-                />
-                <div className="flex-1">
-                  <p className="text-base font-semibold">Install MBHS EduNexus</p>
-                  <p className="mt-1 text-sm text-slate-300">
-                    {installMessage}
-                  </p>
-                </div>
-              </div>
-              <div className="mt-3 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowInstallPrompt(false)}
-                  className="rounded-lg border border-slate-600 px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-800"
-                >
-                  Not now
-                </button>
-                <button
-                  type="button"
-                  onClick={handleInstall}
-                  className="rounded-lg bg-cyan-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-cyan-500"
-                >
-                  Install
-                </button>
-              </div>
-            </div>
-          )}
+          <InstallPrompt />
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Navigate to="/login" replace />} />

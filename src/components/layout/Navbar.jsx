@@ -8,23 +8,34 @@ export default function Navbar({ onMenuClick }) {
   useEffect(() => {
     const handler = (e) => {
       e.preventDefault()
-      console.log('Install prompt captured!')
+      window.deferredPwaPrompt = e
       setInstallPrompt(e)
       setShowInstall(true)
     }
 
     window.addEventListener('beforeinstallprompt', handler)
+
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true
+    if (isStandalone) {
+      setShowInstall(false)
+    }
+
     return () => window.removeEventListener('beforeinstallprompt', handler)
   }, [])
 
   const handleInstall = async () => {
-    if (!installPrompt) return
-    await installPrompt.prompt()
-    const result = await installPrompt.userChoice
+    const promptEvent = installPrompt || window.deferredPwaPrompt
+    if (!promptEvent) return
+
+    await promptEvent.prompt()
+    const result = await promptEvent.userChoice
     console.log('Install result:', result.outcome)
     if (result.outcome === 'accepted') {
       setShowInstall(false)
       setInstallPrompt(null)
+      delete window.deferredPwaPrompt
     }
   }
 

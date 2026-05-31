@@ -2,32 +2,25 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="apple-touch-icon" href="/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0f172a" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="Methodist Boys' High School official portal for students, teachers and administrators." />
+    <meta name="theme-color" content="#000000" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="MBHS EduNexus" />
     <meta name="application-name" content="MBHS EduNexus" />
-    <title>MBHS EduNexus</title>
-    <meta name="description" content="Methodist Boys' High School EduNexus Portal - Comprehensive School Management System" />
-    <meta name="google-site-verification" content="BsGgftS8H7n72LBB23dYwg6lSHQ-dZkDHPfvJhL9tXU" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
+    <meta name="msapplication-TileColor" content="#000000" />
+    <meta name="msapplication-TileImage" content="/favicon.png" />
+    <title>MBHS EduNexus - School Management System</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <script>
-      // Unregister any existing service workers and remove manifest to disable PWA install prompts
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(regs => {
-          regs.forEach(r => r.unregister())
-        }).catch(()=>{})
-      }
-      // Remove manifest link if present
-      try {
-        const links = document.querySelectorAll('link[rel="manifest"]')
-        links.forEach(l => l.parentNode && l.parentNode.removeChild(l))
-      } catch(e) {}
-    </script>
   </body>
 </html>
