@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { User, Menu } from 'lucide-react'
+import { User, Menu, Download } from 'lucide-react'
 import { safeParseStaff, safeParseStudent } from "../../lib/config"
 
 const Navbar = ({ onMenuClick }) => {
@@ -9,6 +9,32 @@ const Navbar = ({ onMenuClick }) => {
   const { profile } = useAuth()
   const studentData = localStorage.getItem('mbhs_student')
   const student = safeParseStudent()
+  const [installPrompt, setInstallPrompt] = useState(null)
+  const [showInstall, setShowInstall] = useState(false)
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault()
+      setInstallPrompt(e)
+      setShowInstall(true)
+    }
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    }
+  }, [])
+
+  const handleInstall = async () => {
+    if (!installPrompt) return
+    installPrompt.prompt()
+    const result = await installPrompt.userChoice
+    if (result.outcome === 'accepted') {
+      setShowInstall(false)
+      setInstallPrompt(null)
+    }
+  }
 
   const getPageTitle = () => {
     const path = location.pathname
@@ -70,6 +96,15 @@ const Navbar = ({ onMenuClick }) => {
                 {getUserName()}
               </span>
             </div>
+            {showInstall && (
+              <button
+                onClick={handleInstall}
+                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Install App
+              </button>
+            )}
           </div>
         </div>
       </div>
