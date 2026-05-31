@@ -1,101 +1,71 @@
-import React, { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
-import { User, Menu, Download } from 'lucide-react'
-import { safeParseStaff, safeParseStudent } from "../../lib/config"
+import { useState, useEffect } from 'react'
+import { Menu, Download } from 'lucide-react'
 
-const Navbar = ({ onMenuClick }) => {
-  const location = useLocation()
-  const { profile } = useAuth()
-  const studentData = localStorage.getItem('mbhs_student')
-  const student = safeParseStudent()
+export default function Navbar({ onMenuClick }) {
   const [installPrompt, setInstallPrompt] = useState(null)
   const [showInstall, setShowInstall] = useState(false)
 
   useEffect(() => {
-    const handleBeforeInstallPrompt = (e) => {
+    const handler = (e) => {
       e.preventDefault()
+      console.log('Install prompt captured!')
       setInstallPrompt(e)
       setShowInstall(true)
     }
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-    }
+    window.addEventListener('beforeinstallprompt', handler)
+    return () => window.removeEventListener('beforeinstallprompt', handler)
   }, [])
 
   const handleInstall = async () => {
     if (!installPrompt) return
-    installPrompt.prompt()
+    await installPrompt.prompt()
     const result = await installPrompt.userChoice
+    console.log('Install result:', result.outcome)
     if (result.outcome === 'accepted') {
       setShowInstall(false)
       setInstallPrompt(null)
     }
   }
 
-  const getPageTitle = () => {
-    const path = location.pathname
-    
-    if (path === '/admin' || path === '/teacher' || path === '/student') {
-      return 'Dashboard'
-    }
-    
-    const pathSegments = path.split('/')
-    const lastSegment = pathSegments[pathSegments.length - 1]
-    
-    return lastSegment
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
+  const safeParseStaff = () => {
+    try {
+      const raw = localStorage.getItem('mbhs_staff')
+      if (!raw || raw === 'undefined' || raw === 'null') return null
+      return JSON.parse(raw)
+    } catch { return null }
   }
 
-  const getUserName = () => {
-    if (profile?.full_name) return profile.full_name
-    
-    const staffData = localStorage.getItem('mbhs_staff')
-    if (staffData) {
-      try {
-        const staff = safeParseStaff() || {}
-        if (staff.full_name) return staff.full_name
-      } catch (err) {}
-    }
-    
-    if (student?.full_name) return student.full_name
-    return 'User'
+  const safeParseStudent = () => {
+    try {
+      const raw = localStorage.getItem('mbhs_student')
+      if (!raw || raw === 'undefined' || raw === 'null') return null
+      return JSON.parse(raw)
+    } catch { return null }
   }
+
+  const staff = safeParseStaff()
+  const student = safeParseStudent()
+  const userName = staff?.full_name || student?.full_name || 'User'
 
   return (
     <div className="bg-white shadow-sm border-b border-gray-200 z-10">
       <div className="px-4 sm:px-6">
         <div className="flex justify-between items-center h-16">
-          {/* Menu Toggle (Mobile Only) */}
-          <button 
+          <button
             onClick={onMenuClick}
             className="p-2 -ml-2 text-gray-500 lg:hidden hover:text-gray-900 transition-colors"
           >
             <Menu className="h-6 w-6" />
           </button>
 
-          {/* Page Title */}
           <div className="flex-1 ml-4 lg:ml-0">
             <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
-              {getPageTitle()}
+              MBHS EduNexus
             </h1>
           </div>
 
-          {/* User Info */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              <div className="w-8 h-8 bg-blue-900 rounded-full flex items-center justify-center shrink-0">
-                <User className="h-4 w-4 text-white" />
-              </div>
-              <span className="hidden xs:block text-xs sm:text-sm font-medium text-gray-700 truncate max-w-[100px] sm:max-w-none">
-                {getUserName()}
-              </span>
-            </div>
+          <div className="flex items-center space-x-3">
             {showInstall && (
               <button
                 onClick={handleInstall}
@@ -105,11 +75,20 @@ const Navbar = ({ onMenuClick }) => {
                 Install App
               </button>
             )}
+
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-blue-900 rounded-full flex items-center justify-center shrink-0">
+                <span className="text-white text-xs font-semibold">
+                  {userName.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <span className="hidden xs:block text-xs sm:text-sm font-medium text-gray-700 truncate max-w-[100px] sm:max-w-none">
+                {userName}
+              </span>
+            </div>
           </div>
         </div>
       </div>
     </div>
   )
 }
-
-export default Navbar

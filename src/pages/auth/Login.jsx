@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
-import { Users, GraduationCap, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react'
+import { Users, GraduationCap, AlertCircle, Loader2, Eye, EyeOff, Download } from 'lucide-react'
 import logo from '../../assets/logo.png'
 import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
 
@@ -16,6 +16,29 @@ const Login = () => {
   const [pin, setPin] = useState('')
   const [fullName, setFullName] = useState('')
   const [showPin, setShowPin] = useState(false)
+
+  const [installPrompt, setInstallPrompt] = useState(null)
+  const [showInstall, setShowInstall] = useState(false)
+
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault()
+      setInstallPrompt(e)
+      setShowInstall(true)
+    }
+    window.addEventListener('beforeinstallprompt', handler)
+    return () => window.removeEventListener('beforeinstallprompt', handler)
+  }, [])
+
+  const handleInstall = async () => {
+    if (!installPrompt) return
+    await installPrompt.prompt()
+    const result = await installPrompt.userChoice
+    if (result.outcome === 'accepted') {
+      setShowInstall(false)
+      setInstallPrompt(null)
+    }
+  }
 
   // Staff login state
   const [staffEmail, setStaffEmail] = useState('')
@@ -384,6 +407,20 @@ const Login = () => {
                   </div>
       </div>
 
+      {showInstall && (
+        <div className="mt-6 rounded-lg border border-blue-100 bg-blue-50 p-4 text-center">
+          <button
+            onClick={handleInstall}
+            className="mb-3 inline-flex items-center rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Install MBHS EduNexus App
+          </button>
+          <p className="text-xs text-blue-700">
+            Install for quick access on your device
+          </p>
+        </div>
+      )}
       <footer className="mt-8 py-4 border-t border-gray-200 text-center">
         <p className="text-xs text-gray-400">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
