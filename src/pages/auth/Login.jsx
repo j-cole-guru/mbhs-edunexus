@@ -95,20 +95,36 @@ const Login = () => {
       console.log('RPC student ID:', rpcStudent.id)
       
       const studentId = rpcStudent.id
-      const fullRecordRes = await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${studentId}&select=*`, {
-        method: 'GET',
-        headers: {
-          'apikey': ANON_KEY,
-          'Authorization': `Bearer ${ANON_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      })
-      const fullRecordData = await fullRecordRes.json()
-      console.log('Full record fetch status:', fullRecordRes.status)
-      console.log('Full record data:', fullRecordData)
       
-      const completeStudent = Array.isArray(fullRecordData) && fullRecordData.length > 0 ? fullRecordData[0] : rpcStudent
-      console.log('Complete student to store:', completeStudent)
+      // Try multiple fetch strategies to get complete record
+      let completeStudent = rpcStudent
+      
+      // Strategy 1: Direct fetch by ID with all fields
+      try {
+        const fullRecordRes = await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${studentId}`, {
+          method: 'GET',
+          headers: {
+            'apikey': ANON_KEY,
+            'Authorization': `Bearer ${ANON_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        })
+        if (fullRecordRes.ok) {
+          const fullRecordData = await fullRecordRes.json()
+          console.log('Full record fetch response:', fullRecordData)
+          if (Array.isArray(fullRecordData) && fullRecordData.length > 0) {
+            completeStudent = fullRecordData[0]
+            console.log('Successfully fetched complete student record')
+          }
+        } else {
+          console.log('Full record fetch failed with status:', fullRecordRes.status)
+        }
+      } catch (err) {
+        console.error('Error fetching full record:', err)
+      }
+      
+      console.log('Final student data to store:', completeStudent)
+      console.log('Fields in stored data:', Object.keys(completeStudent))
       
       localStorage.setItem('mbhs_student', JSON.stringify(completeStudent))
       // Log successful student login
