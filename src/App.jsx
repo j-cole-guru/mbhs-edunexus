@@ -58,6 +58,8 @@ function App() {
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            {/* Fallback: show Home for unknown paths */}
+            <Route path="*" element={<Home />} />
 
             {/* Admin Routes */}
             <Route
