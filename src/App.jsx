@@ -43,6 +43,7 @@ import StudentResults from "./pages/student/Results";
 import StudentAttendance from "./pages/student/Attendance";
 import StudentTimetable from "./pages/student/Timetable";
 import MakeReport from "./pages/student/MakeReport";
+import IDCard from "./pages/student/IDCard";
 
 const queryClient = new QueryClient();
 
@@ -322,6 +323,16 @@ function App() {
                 <ProtectedRoute role="student">
                   <Layout role="student">
                     <MakeReport />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/id-card"
+              element={
+                <ProtectedRoute role="student">
+                  <Layout role="student">
+                    <IDCard />
                   </Layout>
                 </ProtectedRoute>
               }

@@ -21,6 +21,7 @@ import {
   Database,
   MessageSquare,
   Archive,
+  CreditCard,
 } from "lucide-react";
 import logo from "../../assets/logo.png";
 import { safeParseStaff, safeParseStudent } from "../../lib/config"
@@ -126,6 +127,7 @@ const Sidebar = ({ onClose }) => {
             icon: UserCheck,
           },
           { path: "/student/timetable", label: "Timetable", icon: Clock },
+          { path: "/student/id-card", label: "My ID Card", icon: CreditCard },
           {
             path: "/student/report",
             label: "Submit Report",
