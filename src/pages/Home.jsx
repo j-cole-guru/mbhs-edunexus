@@ -20,6 +20,8 @@ import schoolCompound3 from '../assets/galleries/school_compound/school-compound
 import eventCeremony1 from '../assets/galleries/events_ceremonies/event-ceremony-1.jfif'
 import eventCeremony2 from '../assets/galleries/events_ceremonies/event-ceremony-2.jfif'
 import eventCeremony3 from '../assets/galleries/events_ceremonies/event-ceremony-3.jfif'
+import studentLearning1 from '../assets/galleries/students_learning/student-learning-1.jfif'
+import studentLearning2 from '../assets/galleries/students_learning/student-learning-2.jfif'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -27,7 +29,7 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [scrolled, setScrolled] = useState(false)
 
-  // Gallery images — featuring school compound and events & ceremonies
+  // Gallery images — featuring school compound, events & ceremonies, and students learning
   const gallery = [
     {
       url: schoolCompound1,
@@ -52,6 +54,14 @@ export default function Home() {
     {
       url: eventCeremony3,
       caption: 'Events & Ceremonies — Celebration',
+    },
+    {
+      url: studentLearning1,
+      caption: 'Students Learning — Classroom Experience',
+    },
+    {
+      url: studentLearning2,
+      caption: 'Students Learning — Academic Engagement',
     },
   ]
 
