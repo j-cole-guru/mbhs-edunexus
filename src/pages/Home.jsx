@@ -25,6 +25,7 @@ import eventCeremony2 from '../assets/galleries/events_ceremonies/event-ceremony
 import eventCeremony3 from '../assets/galleries/events_ceremonies/event-ceremony-3.jfif'
 import studentLearning1 from '../assets/galleries/students_learning/student-learning-1.jfif'
 import studentLearning2 from '../assets/galleries/students_learning/student-learning-2.jfif'
+import studentLearning3 from '../assets/galleries/students_learning/student-learning-3.jfif'
 import sportsRecreation1 from '../assets/galleries/sports_recreation/sports-recreation-1.jfif'
 import sportsRecreation2 from '../assets/galleries/sports_recreation/sports-recreation-2.jfif'
 
@@ -218,7 +219,7 @@ export default function Home() {
               </div>
 
               <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/70 shadow-2xl shadow-black/40">
-                <img src={galleryData[activeSlide].url} alt={galleryData[activeSlide].caption} className="h-full w-full min-h-[420px] object-cover" />
+                <img src={galleryData[activeSlide].url} alt={galleryData[activeSlide].caption} className="h-full w-full min-h-[420px] object-cover object-center will-change-auto" style={{imageRendering: 'crisp-edges'}} />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 to-transparent p-6">
                   <p className="text-sm uppercase tracking-[0.24em] text-blue-300">Featured school moment</p>
                   <h2 className="mt-3 text-2xl font-bold text-white">{galleryData[activeSlide].caption}</h2>
@@ -283,14 +284,14 @@ export default function Home() {
 
               <div className="grid gap-6">
                 <div className="rounded-[2rem] overflow-hidden border border-white/10 bg-slate-900/70 shadow-2xl shadow-black/30">
-                  <img src={schoolCompound3} alt="School compound" className="h-80 w-full object-cover" />
+                  <img src={schoolCompound3} alt="School compound" className="h-80 w-full object-cover object-center will-change-auto" style={{imageRendering: 'crisp-edges'}} />
                   <div className="p-6">
                     <p className="text-sm uppercase tracking-[0.24em] text-blue-400">Campus Life</p>
                     <h3 className="mt-3 text-2xl font-bold text-white">A thriving academic community.</h3>
                   </div>
                 </div>
                 <div className="rounded-[2rem] overflow-hidden border border-white/10 bg-slate-900/70 shadow-2xl shadow-black/30">
-                  <img src={sportsRecreation2} alt="Sports recreation" className="h-80 w-full object-cover" />
+                  <img src={sportsRecreation2} alt="Sports recreation" className="h-80 w-full object-cover object-center will-change-auto" style={{imageRendering: 'crisp-edges'}} />
                   <div className="p-6">
                     <p className="text-sm uppercase tracking-[0.24em] text-blue-400">Sports & Clubs</p>
                     <h3 className="mt-3 text-2xl font-bold text-white">Success inside and outside the classroom.</h3>
@@ -317,7 +318,7 @@ export default function Home() {
                     index === activeSlide ? 'ring-2 ring-blue-500/70' : 'opacity-80'
                   }`}
                 >
-                  <img src={item.url} alt={item.caption} className="h-48 w-full object-cover transition duration-500 group-hover:scale-105" />
+                  <img src={item.url} alt={item.caption} className="h-48 w-full object-cover object-center will-change-auto transition duration-500 group-hover:scale-105" style={{imageRendering: 'crisp-edges'}} />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4 text-left text-sm text-white">{item.caption}</div>
                 </button>
@@ -327,7 +328,7 @@ export default function Home() {
             <div className="mt-10 rounded-[2rem] border border-white/10 bg-slate-900/90 p-6 shadow-2xl shadow-black/30">
               <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
                 <div className="relative overflow-hidden rounded-[1.75rem]">
-                  <img src={galleryData[activeSlide].url} alt={galleryData[activeSlide].caption} className="h-full w-full min-h-[320px] object-cover" />
+                  <img src={galleryData[activeSlide].url} alt={galleryData[activeSlide].caption} className="h-full w-full min-h-[320px] object-cover object-center will-change-auto" style={{imageRendering: 'crisp-edges'}} />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
                 </div>
                 <div className="flex flex-col justify-between rounded-[1.75rem] bg-slate-950/95 p-8">
@@ -426,17 +427,13 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="border-t border-slate-900/80 bg-slate-950 py-10 px-4 text-slate-500">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <img src="/favicon.png" alt="MBHS" className="h-10 w-10 rounded-2xl bg-white/5 p-2" />
-            <div>
-              <p className="font-semibold text-white">MBHS EduNexus</p>
-              <p className="text-sm text-slate-500">Premium student and staff portal.</p>
-            </div>
-          </div>
-          <p className="text-sm">© 2026 Methodist Boys' High School. All rights reserved.</p>
-        </div>
+      <footer className="border-t border-slate-800 bg-slate-950 py-6 px-4 text-slate-400 text-center">
+        <p className="text-xs text-slate-400">
+          © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
+        </p>
+        <p className="text-xs text-slate-400 mt-2">
+          Developed by Alie Amadu Sesay
+        </p>
       </footer>
     </div>
   )
