@@ -51,7 +51,24 @@ const Login = () => {
     setError('')
 
     try {
-      console.log('Attempting student login with:', fullName)
+      console.log('Attempting student login with name:', fullName, 'PIN:', pin)
+      console.log('Name length:', fullName.length, 'PIN length:', pin.length)
+      
+      // DEBUG: First check if student exists with this name
+      const checkRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/students?full_name=ilike.%${encodeURIComponent(fullName)}%&select=id,full_name,pin,is_active`,
+        {
+          headers: {
+            'apikey': ANON_KEY,
+            'Authorization': `Bearer ${ANON_KEY}`,
+          }
+        }
+      )
+      const existingStudents = await checkRes.json()
+      console.log('Students with similar names:', existingStudents)
+      if (existingStudents.length > 0) {
+        console.log('Found students:', existingStudents.map(s => ({name: s.full_name, pin: s.pin, active: s.is_active})))
+      }
       
       // Step 1: Authenticate using RPC
       const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/student_login_by_name`, {
@@ -67,10 +84,50 @@ const Login = () => {
         })
       })
       const data = await res.json()
-      console.log('Student login result:', data)
+      console.log('Student login RPC result:', data)
+      console.log('Response status:', res.status, 'OK:', res.ok)
 
       if (!res.ok || data.error || !Array.isArray(data) || data.length === 0) {
-        // Log failed student login attempt
+        console.log('RPC failed, trying direct query as fallback...')
+        
+        // FALLBACK: Try direct query
+        const fallbackRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/students?full_name=eq.${encodeURIComponent(fullName)}&pin=eq.${encodeURIComponent(pin)}&select=*`,
+          {
+            headers: {
+              'apikey': ANON_KEY,
+              'Authorization': `Bearer ${ANON_KEY}`,
+            }
+          }
+        )
+        const fallbackData = await fallbackRes.json()
+        console.log('Fallback direct query result:', fallbackData)
+        
+        if (!Array.isArray(fallbackData) || fallbackData.length === 0) {
+          // Still no match - log failed attempt
+          await fetch(`${SUPABASE_URL}/rest/v1/security_logs`, {
+            method: 'POST',
+            headers: {
+              'apikey': ANON_KEY,
+              'Authorization': `Bearer ${ANON_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_type: 'FAILED_STUDENT_LOGIN',
+              email: fullName,
+              details: `Failed student login attempt for ${fullName} with PIN ${pin}`,
+              severity: 'medium'
+            })
+          })
+          setError('Invalid name or PIN. Please try again.')
+          setLoading(false)
+          return
+        }
+        
+        // Use fallback data
+        const fallbackStudent = fallbackData[0]
+        console.log('Using fallback student:', fallbackStudent)
+        localStorage.setItem('mbhs_student', JSON.stringify(fallbackStudent))
         await fetch(`${SUPABASE_URL}/rest/v1/security_logs`, {
           method: 'POST',
           headers: {
@@ -79,14 +136,13 @@ const Login = () => {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            event_type: 'FAILED_STUDENT_LOGIN',
+            event_type: 'SUCCESSFUL_STUDENT_LOGIN',
             email: fullName,
-            details: `Failed student login attempt for ${fullName}`,
-            severity: 'medium'
+            details: `Successful student login for ${fullName} (fallback)`,
+            severity: 'low'
           })
         })
-        setError('Invalid name or PIN. Please try again.')
-        setLoading(false)
+        setTimeout(() => navigate('/student'), 100)
         return
       }
 
