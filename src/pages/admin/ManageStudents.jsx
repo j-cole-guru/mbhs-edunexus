@@ -7,8 +7,11 @@ import {
   AlertCircle,
   Archive,
   RotateCcw,
+  RefreshCw,
+  Copy,
 } from "lucide-react";
 import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from "../../lib/config";
+import { generatePin } from "../../lib/pinGenerator";
 
 const getAuth = () => {
   const staff = safeParseStaff() || {};
@@ -61,8 +64,9 @@ const ManageStudents = () => {
     gender: "",
     guardian_name: "",
     guardian_phone: "",
-    pin: "",
   });
+  const [generatedPin, setGeneratedPin] = useState("");
+  const [showPinModal, setShowPinModal] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showArchived, setShowArchived] = useState(false)
@@ -279,13 +283,14 @@ const ManageStudents = () => {
     try {
       console.log("Creating student with data:", formData);
 
-      // Step 1 - Check if PIN already exists
       const staff = safeParseStaff() || {};
       const token = staff?.access_token;
       const apikey = ANON_KEY;
 
-      const pinCheck = await fetch(
-        `${SUPABASE_URL}/rest/v1/students?pin=eq.${formData.pin}&select=id`,
+      // Step 1 - Generate unique PIN
+      let pin = generatePin();
+      let pinCheckRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/students?pin=eq.${pin}&select=id`,
         {
           headers: {
             apikey: apikey,
@@ -293,14 +298,26 @@ const ManageStudents = () => {
           },
         },
       );
-      const pinExists = await pinCheck.json();
-      if (pinExists && pinExists.length > 0) {
-        setError(
-          "This PIN is already assigned to another student. Please use a different PIN.",
+      let pinExists = await pinCheckRes.json();
+      
+      // Retry if PIN already exists (very rare but possible)
+      let retries = 0;
+      while (pinExists && pinExists.length > 0 && retries < 10) {
+        pin = generatePin();
+        pinCheckRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/students?pin=eq.${pin}&select=id`,
+          {
+            headers: {
+              apikey: apikey,
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
-        setLoading(false);
-        return;
+        pinExists = await pinCheckRes.json();
+        retries++;
       }
+
+      console.log("Generated unique PIN:", pin);
 
       // Step 2 - Get auto generated student number
       let studentNumber = null;
@@ -319,7 +336,6 @@ const ManageStudents = () => {
         );
         const numData = await numRes.json();
         console.log("RPC generate_student_number result:", numData);
-        // Only use result if it's a valid string
         if (typeof numData === "string" && numData.startsWith("MBHS")) {
           studentNumber = numData;
         }
@@ -347,7 +363,7 @@ const ManageStudents = () => {
         gender: formData.gender.toLowerCase(),
         guardian_name: formData.guardian_name,
         guardian_phone: formData.guardian_phone,
-        pin: formData.pin,
+        pin: pin,
         is_active: true,
       };
       console.log("Sending student data:", JSON.stringify(studentData));
@@ -379,13 +395,20 @@ const ManageStudents = () => {
 
       const newStudent = JSON.parse(responseText);
       console.log("Student created:", newStudent);
+      
+      // Show PIN modal
+      setGeneratedPin(pin);
+      setShowPinModal(true);
+      
       // Optimistically add to UI
       setStudents(prev => [newStudent, ...prev]);
       setSuccess(
-        `Student created successfully! Name: ${formData.full_name} | PIN: ${formData.pin}`,
+        `Student created successfully! Name: ${formData.full_name}`,
       );
+      
       // Refresh list to sync with server
       await fetchStudents();
+      
       // Clear form
       setFormData({
         full_name: "",
@@ -395,7 +418,6 @@ const ManageStudents = () => {
         gender: "",
         guardian_name: "",
         guardian_phone: "",
-        pin: "",
       });
       setLoading(false);
     } catch (error) {
@@ -426,6 +448,61 @@ const ManageStudents = () => {
       setError("Failed to delete student");
       // Revert UI on failure
       setStudents(originalStudents);
+    }
+  };
+
+  const handleResetPin = async (student) => {
+    if (!confirm(`Generate a new PIN for ${student.full_name}?`)) {
+      return;
+    }
+    try {
+      // Generate new unique PIN
+      let newPin = generatePin();
+      let pinCheckRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/students?pin=eq.${newPin}&select=id`,
+        {
+          headers: {
+            apikey: ANON_KEY,
+            Authorization: `Bearer ${getToken()}`,
+          },
+        },
+      );
+      let pinExists = await pinCheckRes.json();
+      
+      // Retry if PIN already exists
+      let retries = 0;
+      while (pinExists && pinExists.length > 0 && retries < 10) {
+        newPin = generatePin();
+        pinCheckRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/students?pin=eq.${newPin}&select=id`,
+          {
+            headers: {
+              apikey: ANON_KEY,
+              Authorization: `Bearer ${getToken()}`,
+            },
+          },
+        );
+        pinExists = await pinCheckRes.json();
+        retries++;
+      }
+
+      // Update student PIN
+      const updateRes = await apiFetch(`/students?id=eq.${student.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ pin: newPin }),
+      });
+
+      if (updateRes) {
+        setGeneratedPin(newPin);
+        setShowPinModal(true);
+        setSuccess(`PIN reset successfully for ${student.full_name}`);
+        await fetchStudents();
+      } else {
+        setError("Failed to reset PIN");
+      }
+    } catch (error) {
+      console.error("Error resetting PIN:", error);
+      setError("Failed to reset student PIN");
     }
   };
 
@@ -665,21 +742,6 @@ const ManageStudents = () => {
                 required
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                4-digit PIN *
-              </label>
-              <input
-                type="text"
-                value={formData.pin}
-                onChange={(e) =>
-                  setFormData({ ...formData, pin: e.target.value })
-                }
-                placeholder="Enter 4-digit PIN"
-                className="w-full form-input"
-                required
-              />
-            </div>
           </div>
 
           <button
@@ -833,6 +895,13 @@ const ManageStudents = () => {
                         className="flex items-center gap-1 text-yellow-600 hover:text-yellow-800 text-xs font-medium"
                       >
                         <Archive size={14} /> Archive
+                      </button>
+                      <button
+                        onClick={() => handleResetPin(student)}
+                        className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-xs font-medium ml-2"
+                        title="Generate new PIN for this student"
+                      >
+                        <RefreshCw size={14} /> Reset PIN
                       </button>
                       <button
                         onClick={() => handleDeleteStudent(student.id)}
@@ -991,6 +1060,39 @@ const ManageStudents = () => {
                 Cancel
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* PIN Display Modal */}
+      {showPinModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Student PIN</h2>
+            <p className="text-gray-600 text-sm mb-6">
+              A new PIN has been generated. Share this PIN with the student. They can use it to log in.
+            </p>
+            <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-6 mb-6 border-2 border-blue-900">
+              <p className="text-sm text-gray-600 mb-2 text-center">PIN:</p>
+              <p className="text-4xl font-bold text-blue-900 text-center tracking-widest">
+                {generatedPin}
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(generatedPin);
+                alert('PIN copied to clipboard!');
+              }}
+              className="w-full flex items-center justify-center gap-2 bg-blue-900 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-800 mb-3"
+            >
+              <Copy size={16} /> Copy PIN
+            </button>
+            <button
+              onClick={() => setShowPinModal(false)}
+              className="w-full bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-200"
+            >
+              Done
+            </button>
           </div>
         </div>
       )}
