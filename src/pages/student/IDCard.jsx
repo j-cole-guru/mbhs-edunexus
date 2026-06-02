@@ -28,6 +28,7 @@ export default function IDCard() {
 
   useEffect(() => {
     const s = safeParseStudent()
+    console.log('IDCard loaded with student data:', s)
     if (!s) { window.location.href = '/login'; return }
     setStudent(s)
     if (s.photo_url) setPhotoUrl(s.photo_url)
@@ -37,12 +38,18 @@ export default function IDCard() {
   const loadDetails = async (s) => {
     try {
       const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
+      console.log('Loading class_id:', s.class_id, 'level_id:', s.level_id)
+      
       const [classRes, levelRes] = await Promise.all([
         fetch(`${BASE_URL}/classes?id=eq.${s.class_id}&select=name`, { headers }),
         fetch(`${BASE_URL}/levels?id=eq.${s.level_id}&select=name`, { headers })
       ])
       const classData = await classRes.json()
       const levelData = await levelRes.json()
+      
+      console.log('Class response:', classData)
+      console.log('Level response:', levelData)
+      
       setClassName(classData[0]?.name || 'N/A')
       setLevelName(levelData[0]?.name || 'N/A')
     } catch (err) {

@@ -90,7 +90,11 @@ const Login = () => {
       }
 
       // Fetch complete student record to ensure all fields are present
-      const studentId = data[0].id
+      const rpcStudent = data[0]
+      console.log('RPC student data:', rpcStudent)
+      console.log('RPC student ID:', rpcStudent.id)
+      
+      const studentId = rpcStudent.id
       const fullRecordRes = await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${studentId}&select=*`, {
         method: 'GET',
         headers: {
@@ -100,7 +104,11 @@ const Login = () => {
         }
       })
       const fullRecordData = await fullRecordRes.json()
-      const completeStudent = Array.isArray(fullRecordData) && fullRecordData.length > 0 ? fullRecordData[0] : data[0]
+      console.log('Full record fetch status:', fullRecordRes.status)
+      console.log('Full record data:', fullRecordData)
+      
+      const completeStudent = Array.isArray(fullRecordData) && fullRecordData.length > 0 ? fullRecordData[0] : rpcStudent
+      console.log('Complete student to store:', completeStudent)
       
       localStorage.setItem('mbhs_student', JSON.stringify(completeStudent))
       // Log successful student login
