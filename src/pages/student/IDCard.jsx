@@ -3,6 +3,7 @@ import { Download, Camera, CheckCircle } from 'lucide-react'
 import html2canvas from 'html2canvas'
 
 const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+const SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
 const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 
@@ -37,7 +38,8 @@ export default function IDCard() {
 
   const loadDetails = async (s) => {
     try {
-      const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
+      // Use SERVICE_KEY to bypass RLS policies
+      const headers = { 'apikey': SERVICE_KEY, 'Authorization': `Bearer ${SERVICE_KEY}` }
       console.log('Loading class_id:', s.class_id, 'level_id:', s.level_id)
       
       const [classRes, levelRes] = await Promise.all([
