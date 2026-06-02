@@ -22,6 +22,8 @@ import eventCeremony2 from '../assets/galleries/events_ceremonies/event-ceremony
 import eventCeremony3 from '../assets/galleries/events_ceremonies/event-ceremony-3.jfif'
 import studentLearning1 from '../assets/galleries/students_learning/student-learning-1.jfif'
 import studentLearning2 from '../assets/galleries/students_learning/student-learning-2.jfif'
+import sportsRecreation1 from '../assets/galleries/sports_recreation/sports-recreation-1.jfif'
+import sportsRecreation2 from '../assets/galleries/sports_recreation/sports-recreation-2.jfif'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -29,7 +31,7 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [scrolled, setScrolled] = useState(false)
 
-  // Gallery images — featuring school compound, events & ceremonies, and students learning
+  // Gallery images — featuring school compound, events & ceremonies, students learning, and sports recreation
   const gallery = [
     {
       url: schoolCompound1,
@@ -62,6 +64,14 @@ export default function Home() {
     {
       url: studentLearning2,
       caption: 'Students Learning — Academic Engagement',
+    },
+    {
+      url: sportsRecreation1,
+      caption: 'Sports & Recreation — Athletic Activities',
+    },
+    {
+      url: sportsRecreation2,
+      caption: 'Sports & Recreation — Team Spirit',
     },
   ]
 
