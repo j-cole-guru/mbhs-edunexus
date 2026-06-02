@@ -14,6 +14,9 @@ import {
   Mail,
   Star,
 } from 'lucide-react'
+import schoolCompound1 from '../assets/galleries/school_compound/school-compound-1.jfif'
+import schoolCompound2 from '../assets/galleries/school_compound/school-compound-2.jfif'
+import schoolCompound3 from '../assets/galleries/school_compound/school-compound-3.jfif'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -21,19 +24,19 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [scrolled, setScrolled] = useState(false)
 
-  // Gallery images — using school placeholder images
+  // Gallery images — using school compound images and placeholder slides
   const gallery = [
     {
-      url: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1200&q=80',
-      caption: "Methodist Boys' High School Main Building",
+      url: schoolCompound1,
+      caption: "Methodist Boys' High School Compound — Entrance View",
     },
     {
-      url: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80',
-      caption: 'Students in the School Compound',
+      url: schoolCompound2,
+      caption: "Methodist Boys' High School Compound — Student Life",
     },
     {
-      url: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1200&q=80',
-      caption: 'Academic Excellence at MBHS',
+      url: schoolCompound3,
+      caption: "Methodist Boys' High School Compound — Campus Activity",
     },
     {
       url: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200&q=80',
