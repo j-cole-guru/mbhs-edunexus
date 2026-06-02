@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Login from "./pages/auth/Login";
+import Home from "./pages/Home";
 import Layout from "./components/layout/Layout";
 import InstallPrompt from "./components/InstallPrompt";
 
@@ -55,7 +56,7 @@ function App() {
           <InstallPrompt />
           <Routes>
             {/* Public Routes */}
-            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
 
             {/* Admin Routes */}
