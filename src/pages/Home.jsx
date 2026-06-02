@@ -17,6 +17,9 @@ import {
 import schoolCompound1 from '../assets/galleries/school_compound/school-compound-1.jfif'
 import schoolCompound2 from '../assets/galleries/school_compound/school-compound-2.jfif'
 import schoolCompound3 from '../assets/galleries/school_compound/school-compound-3.jfif'
+import eventCeremony1 from '../assets/galleries/events_ceremonies/event-ceremony-1.jfif'
+import eventCeremony2 from '../assets/galleries/events_ceremonies/event-ceremony-2.jfif'
+import eventCeremony3 from '../assets/galleries/events_ceremonies/event-ceremony-3.jfif'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -24,7 +27,7 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [scrolled, setScrolled] = useState(false)
 
-  // Gallery images — using school compound images and placeholder slides
+  // Gallery images — featuring school compound and events & ceremonies
   const gallery = [
     {
       url: schoolCompound1,
@@ -39,12 +42,16 @@ export default function Home() {
       caption: "Methodist Boys' High School Compound — Campus Activity",
     },
     {
-      url: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200&q=80',
-      caption: 'Our Students — The Future of Sierra Leone',
+      url: eventCeremony1,
+      caption: 'Events & Ceremonies — School Gathering',
     },
     {
-      url: 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=1200&q=80',
-      caption: 'Learning and Growing Together',
+      url: eventCeremony2,
+      caption: 'Events & Ceremonies — Special Moments',
+    },
+    {
+      url: eventCeremony3,
+      caption: 'Events & Ceremonies — Celebration',
     },
   ]
 
