@@ -1,283 +1,487 @@
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, MapPin, Users, BookOpen, Award, Heart } from 'lucide-react'
-import logo from '../assets/logo.png'
+import {
+  GraduationCap,
+  Users,
+  BookOpen,
+  Award,
+  ChevronRight,
+  ChevronLeft,
+  Menu,
+  X,
+  MapPin,
+  Phone,
+  Mail,
+  Star,
+} from 'lucide-react'
 
-const Home = () => {
+export default function Home() {
   const navigate = useNavigate()
-  const [currentGalleryIndices, setCurrentGalleryIndices] = useState({
-    gallery1: 0,
-    gallery2: 0,
-    gallery3: 0,
-    gallery4: 0,
-    gallery5: 0
-  })
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [scrolled, setScrolled] = useState(false)
 
-  // Gallery data - Add your images to src/assets/galleries folders
-  const galleries = {
-    gallery1: {
-      title: 'School Compound',
-      description: 'Beautiful views of our school premises',
-      images: [
-        '/src/assets/galleries/school_compound/image1.jpg',
-        '/src/assets/galleries/school_compound/image2.jpg',
-        '/src/assets/galleries/school_compound/image3.jpg'
-      ],
-      fallbackImage: 'https://images.unsplash.com/photo-1427504494785-cdaa41d52470?w=500&h=400&fit=crop'
+  // Gallery images — using school placeholder images
+  const gallery = [
+    {
+      url: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1200&q=80',
+      caption: "Methodist Boys' High School Main Building",
     },
-    gallery2: {
-      title: 'Students Learning',
-      description: 'Engaging classroom experiences',
-      images: [
-        '/src/assets/galleries/students_learning/image1.jpg',
-        '/src/assets/galleries/students_learning/image2.jpg',
-        '/src/assets/galleries/students_learning/image3.jpg'
-      ],
-      fallbackImage: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&h=400&fit=crop'
+    {
+      url: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80',
+      caption: 'Students in the School Compound',
     },
-    gallery3: {
-      title: 'Sports & Recreation',
-      description: 'Athletic activities and outdoor fun',
-      images: [
-        '/src/assets/galleries/sports_recreation/image1.jpg',
-        '/src/assets/galleries/sports_recreation/image2.jpg',
-        '/src/assets/galleries/sports_recreation/image3.jpg'
-      ],
-      fallbackImage: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&h=400&fit=crop'
+    {
+      url: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1200&q=80',
+      caption: 'Academic Excellence at MBHS',
     },
-    gallery4: {
-      title: 'Events & Ceremonies',
-      description: 'Special moments and celebrations',
-      images: [
-        '/src/assets/galleries/events_ceremonies/image1.jpg',
-        '/src/assets/galleries/events_ceremonies/image2.jpg',
-        '/src/assets/galleries/events_ceremonies/image3.jpg'
-      ],
-      fallbackImage: 'https://images.unsplash.com/photo-1540575467063-178f50002c4b?w=500&h=400&fit=crop'
+    {
+      url: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200&q=80',
+      caption: 'Our Students — The Future of Sierra Leone',
     },
-    gallery5: {
-      title: 'Student Life',
-      description: 'Daily moments and friendships',
-      images: [
-        '/src/assets/galleries/student_life/image1.jpg',
-        '/src/assets/galleries/student_life/image2.jpg',
-        '/src/assets/galleries/student_life/image3.jpg'
-      ],
-      fallbackImage: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=500&h=400&fit=crop'
-    }
-  }
+    {
+      url: 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=1200&q=80',
+      caption: 'Learning and Growing Together',
+    },
+  ]
 
-  const handlePrevImage = (galleryKey) => {
-    setCurrentGalleryIndices(prev => ({
-      ...prev,
-      [galleryKey]: (prev[galleryKey] - 1 + galleries[galleryKey].images.length) % galleries[galleryKey].images.length
-    }))
-  }
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % gallery.length)
+    }, 4000)
+    return () => clearInterval(timer)
+  }, [])
 
-  const handleNextImage = (galleryKey) => {
-    setCurrentGalleryIndices(prev => ({
-      ...prev,
-      [galleryKey]: (prev[galleryKey] + 1) % galleries[galleryKey].images.length
-    }))
-  }
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
-  const GalleryCard = ({ galleryKey, galleryData }) => {
-    const currentIndex = currentGalleryIndices[galleryKey]
-    const imageSource = galleryData.images[currentIndex] || galleryData.fallbackImage
-    return (
-      <div className="card overflow-hidden hover:shadow-lg transition-shadow">
-        <div className="relative h-64 bg-gray-200 overflow-hidden group">
-          <img
-            src={imageSource}
-            alt={galleryData.title}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              e.target.src = galleryData.fallbackImage
-            }}
-          />
-          <button
-            onClick={() => handlePrevImage(galleryKey)}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <button
-            onClick={() => handleNextImage(galleryKey)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <ChevronRight size={20} />
-          </button>
-          <div className="absolute bottom-2 right-2 bg-black/60 text-white px-2 py-1 rounded text-xs">
-            {currentIndex + 1} / {galleryData.images.length}
-          </div>
-        </div>
-        <div className="p-4">
-          <h3 className="section-title mb-1">{galleryData.title}</h3>
-          <p className="body-text text-gray-600">{galleryData.description}</p>
-        </div>
-      </div>
-    )
-  }
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % gallery.length)
+  const prevSlide = () =>
+    setCurrentSlide((prev) => (prev - 1 + gallery.length) % gallery.length)
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation Bar */}
-      <nav className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <img src={logo} alt="School Logo" className="h-10 w-10" />
-            <span className="text-lg font-bold text-blue-900">MBHS EduNexus</span>
+    <div className="min-h-screen bg-white font-sans">
+      {/* Navbar */}
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled ? 'bg-black shadow-lg' : 'bg-transparent'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src="/favicon.png" alt="MBHS Logo" className="w-10 h-10 object-contain" />
+            <div>
+              <p className="text-white font-bold text-sm leading-tight">MBHS EduNexus</p>
+              <p className="text-gray-400 text-xs hidden sm:block">Methodist Boys' High School</p>
+            </div>
           </div>
-          <button
-            onClick={() => navigate('/login')}
-            className="btn-primary"
-          >
-            Login
+
+          {/* Desktop Nav */}
+          <div className="hidden md:flex items-center gap-8">
+            <a href="#home" className="text-white text-sm hover:text-blue-400 transition">
+              Home
+            </a>
+            <a href="#about" className="text-white text-sm hover:text-blue-400 transition">
+              About
+            </a>
+            <a href="#gallery" className="text-white text-sm hover:text-blue-400 transition">
+              Gallery
+            </a>
+            <a href="#contact" className="text-white text-sm hover:text-blue-400 transition">
+              Contact
+            </a>
+            <button
+              onClick={() => navigate('/login')}
+              className="bg-white text-black px-6 py-2 rounded-lg text-sm font-bold hover:bg-gray-200 transition"
+            >
+              Student & Staff Portal
+            </button>
+          </div>
+
+          {/* Mobile menu button */}
+          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-white">
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
+
+        {/* Mobile Menu */}
+        {menuOpen && (
+          <div className="md:hidden bg-black border-t border-gray-800 px-4 py-4 space-y-4">
+            <a
+              href="#home"
+              onClick={() => setMenuOpen(false)}
+              className="block text-white text-sm hover:text-blue-400"
+            >
+              Home
+            </a>
+            <a
+              href="#about"
+              onClick={() => setMenuOpen(false)}
+              className="block text-white text-sm hover:text-blue-400"
+            >
+              About
+            </a>
+            <a
+              href="#gallery"
+              onClick={() => setMenuOpen(false)}
+              className="block text-white text-sm hover:text-blue-400"
+            >
+              Gallery
+            </a>
+            <a
+              href="#contact"
+              onClick={() => setMenuOpen(false)}
+              className="block text-white text-sm hover:text-blue-400"
+            >
+              Contact
+            </a>
+            <button
+              onClick={() => {
+                setMenuOpen(false)
+                navigate('/login')
+              }}
+              className="w-full bg-white text-black px-6 py-2 rounded-lg text-sm font-bold hover:bg-gray-200 transition"
+            >
+              Student & Staff Portal
+            </button>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-900 to-blue-800 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div>
-              <h1 className="text-5xl font-bold mb-6">Welcome to MBHS EduNexus</h1>
-              <p className="text-xl text-blue-100 mb-8">
-                Your comprehensive school management and learning platform. Bridging education and technology for a better future.
-              </p>
-              <button
-                onClick={() => navigate('/login')}
-                className="bg-white text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors inline-block"
-              >
-                Get Started - Login Now
-              </button>
-            </div>
-            <div className="hidden md:block">
-              <img src={logo} alt="School" className="w-full max-w-md mx-auto" />
-            </div>
+      <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+          style={{ backgroundImage: `url(${gallery[currentSlide].url})` }}
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-60" />
+
+        {/* Hero Content */}
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+          <img src="/favicon.png" alt="MBHS Logo" className="w-20 h-20 object-contain mx-auto mb-6" />
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">
+            Methodist Boys'<br />High School
+          </h1>
+          <p className="text-lg md:text-xl text-gray-300 mb-3 font-medium">Freetown, Sierra Leone</p>
+          <p className="text-sm md:text-base text-gray-400 mb-8 max-w-2xl mx-auto">
+            Empowering the next generation of Sierra Leone's leaders through quality education, discipline, and excellence since our founding.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => navigate('/login')}
+              className="bg-white text-black px-8 py-3 rounded-lg text-sm font-bold hover:bg-gray-200 transition flex items-center justify-center gap-2"
+            >
+              <GraduationCap size={18} />
+              Access EduNexus Portal
+            </button>
+            <a
+              href="#about"
+              className="border border-white text-white px-8 py-3 rounded-lg text-sm font-bold hover:bg-white hover:text-black transition text-center"
+            >
+              Learn More
+            </a>
           </div>
+        </div>
+
+        {/* Slide indicators */}
+        <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-2 z-10">
+          {gallery.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentSlide(i)}
+              className={`w-2 h-2 rounded-full transition-all ${
+                i === currentSlide ? 'bg-white w-6' : 'bg-gray-500'
+              }`}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="bg-black py-12 px-4">
+        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {[
+            { icon: <GraduationCap size={28} className="text-blue-400" />, number: '100+', label: 'Years of Excellence' },
+            { icon: <Users size={28} className="text-blue-400" />, number: '2000+', label: 'Students Enrolled' },
+            { icon: <BookOpen size={28} className="text-blue-400" />, number: '50+', label: 'Qualified Teachers' },
+            { icon: <Award size={28} className="text-blue-400" />, number: '98%', label: 'Pass Rate' },
+          ].map((stat, i) => (
+            <div key={i}>
+              <div className="flex justify-center mb-2">{stat.icon}</div>
+              <p className="text-3xl font-black text-white">{stat.number}</p>
+              <p className="text-gray-400 text-sm mt-1">{stat.label}</p>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* About Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="page-title mb-4">About Our Institution</h2>
-            <div className="w-12 h-1 bg-blue-900 mx-auto"></div>
+      <section id="about" className="py-20 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-blue-900 font-semibold text-sm uppercase tracking-widest mb-2">About Us</p>
+            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">A Legacy of Academic Excellence</h2>
+            <div className="w-16 h-1 bg-blue-900 mx-auto" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
             <div>
-              <p className="text-lg text-gray-700 mb-4 leading-relaxed">
-                MBHS EduNexus is a modern educational management system designed to streamline school operations and enhance the learning experience. Our platform provides integrated solutions for students, teachers, and administrators.
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Who We Are</h3>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                Methodist Boys' High School is one of Sierra Leone's most prestigious secondary schools, located in the heart of Freetown. Founded by the Methodist Church, the school has been at the forefront of quality education for over a century.
               </p>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                We are committed to excellence in education, combining traditional teaching methods with innovative digital solutions. Our state-of-the-art facilities and dedicated staff ensure every student receives quality education and personal attention.
+              <p className="text-gray-600 leading-relaxed mb-4">
+                We are committed to producing well-rounded graduates who are academically excellent, morally upright, and equipped to contribute meaningfully to the development of Sierra Leone and the world at large.
+              </p>
+              <p className="text-gray-600 leading-relaxed">
+                Our school operates two departments — the Junior Secondary School (JSS) and the Senior Secondary School (SSS) — each with dedicated staff, classes, and academic programmes tailored to the needs of our students.
               </p>
             </div>
-            <img
-              src="https://images.unsplash.com/photo-1427504494785-cdaa41d52470?w=600&h=400&fit=crop"
-              alt="About School"
-              className="rounded-lg shadow-lg"
-            />
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                {
+                  title: 'Our Mission',
+                  text: 'To provide quality education that develops the intellectual, moral, and social potential of every student.',
+                },
+                {
+                  title: 'Our Vision',
+                  text: 'To be the leading secondary school in Sierra Leone, producing leaders who transform communities.',
+                },
+                {
+                  title: 'Our Values',
+                  text: 'Excellence, Integrity, Discipline, Respect, and Service to God and humanity.',
+                },
+                {
+                  title: 'EduNexus',
+                  text: 'Our digital management system connecting principals, teachers, and students in one secure platform.',
+                },
+              ].map((item, i) => (
+                <div key={i} className="bg-slate-50 rounded-xl p-4 border border-gray-100">
+                  <h4 className="font-bold text-gray-900 text-sm mb-2">{item.title}</h4>
+                  <p className="text-gray-600 text-xs leading-relaxed">{item.text}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="card text-center">
-              <BookOpen className="w-12 h-12 text-blue-900 mx-auto mb-4" />
-              <h3 className="section-title mb-2">Quality Education</h3>
-              <p className="body-text">Comprehensive curriculum and expert instructors</p>
-            </div>
-            <div className="card text-center">
-              <Users className="w-12 h-12 text-blue-900 mx-auto mb-4" />
-              <h3 className="section-title mb-2">Community</h3>
-              <p className="body-text">Supportive environment for all students</p>
-            </div>
-            <div className="card text-center">
-              <Award className="w-12 h-12 text-blue-900 mx-auto mb-4" />
-              <h3 className="section-title mb-2">Excellence</h3>
-              <p className="body-text">Outstanding academic and sports achievements</p>
-            </div>
-            <div className="card text-center">
-              <Heart className="w-12 h-12 text-blue-900 mx-auto mb-4" />
-              <h3 className="section-title mb-2">Care & Support</h3>
-              <p className="body-text">Holistic development of every student</p>
+          {/* About EduNexus */}
+          <div className="bg-black rounded-2xl p-8 md:p-12 text-white">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div>
+                <p className="text-blue-400 font-semibold text-sm uppercase tracking-widest mb-3">About EduNexus</p>
+                <h3 className="text-2xl md:text-3xl font-black mb-4">The Digital Hub of MBHS Education</h3>
+                <p className="text-gray-400 leading-relaxed mb-4">
+                  MBHS EduNexus is the official school management portal built specifically for Methodist Boys' High School. The name combines <span className="text-white font-semibold">Edu</span> (Education) and <span className="text-white font-semibold">Nexus</span> (Central Connection Point) — making it the central hub of education at MBHS.
+                </p>
+                <p className="text-gray-400 leading-relaxed">
+                  The system connects principals, teachers, and students in one secure platform — managing results, attendance, timetables, and more, all accessible from any device anywhere in the world.
+                </p>
+              </div>
+              <div className="space-y-4">
+                {[
+                  'Secure student and staff login portal',
+                  'Real-time academic results and GPA tracking',
+                  'Daily attendance management by class teachers',
+                  'Digital timetable for every class',
+                  'Direct student-to-principal reporting system',
+                  'Departmental management for JSS and SSS',
+                  'Accessible on any phone, tablet, or computer',
+                ].map((feature, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full bg-blue-900 flex items-center justify-center flex-shrink-0">
+                      <ChevronRight size={12} className="text-white" />
+                    </div>
+                    <p className="text-gray-300 text-sm">{feature}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Galleries Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Gallery Section */}
+      <section id="gallery" className="py-20 px-4 bg-slate-50">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="page-title mb-4">Gallery</h2>
-            <p className="text-lg text-gray-600">Explore life at MBHS EduNexus</p>
-            <div className="w-12 h-1 bg-blue-900 mx-auto mt-4"></div>
+            <p className="text-blue-900 font-semibold text-sm uppercase tracking-widest mb-2">Gallery</p>
+            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">Life at MBHS</h2>
+            <div className="w-16 h-1 bg-blue-900 mx-auto" />
           </div>
 
-          {/* Gallery Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-            <GalleryCard galleryKey="gallery1" galleryData={galleries.gallery1} />
-            <GalleryCard galleryKey="gallery2" galleryData={galleries.gallery2} />
-            <GalleryCard galleryKey="gallery3" galleryData={galleries.gallery3} />
+          {/* Main Slider */}
+          <div className="relative rounded-2xl overflow-hidden mb-4 h-64 md:h-96 shadow-xl">
+            <img
+              src={gallery[currentSlide].url}
+              alt={gallery[currentSlide].caption}
+              className="w-full h-full object-cover transition-all duration-500"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+            <p className="absolute bottom-4 left-4 right-4 text-white font-semibold text-sm md:text-base">
+              {gallery[currentSlide].caption}
+            </p>
+            <button
+              onClick={prevSlide}
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white hover:bg-opacity-80 transition"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white hover:bg-opacity-80 transition"
+            >
+              <ChevronRight size={20} />
+            </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <GalleryCard galleryKey="gallery4" galleryData={galleries.gallery4} />
-            <GalleryCard galleryKey="gallery5" galleryData={galleries.gallery5} />
+          {/* Thumbnail Strip */}
+          <div className="grid grid-cols-5 gap-2">
+            {gallery.map((img, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentSlide(i)}
+                className={`relative rounded-lg overflow-hidden h-16 md:h-20 transition-all ${
+                  i === currentSlide ? 'ring-2 ring-blue-900 ring-offset-2' : 'opacity-60 hover:opacity-100'
+                }`}
+              >
+                <img src={img.url} alt={img.caption} className="w-full h-full object-cover" />
+              </button>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="bg-blue-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Join Our Community?</h2>
-          <p className="text-xl text-blue-100 mb-8">
-            Access your account now and be part of our educational journey
+      {/* Portal Access Section */}
+      <section className="py-20 px-4 bg-blue-900">
+        <div className="max-w-4xl mx-auto text-center">
+          <GraduationCap size={48} className="text-white mx-auto mb-6" />
+          <h2 className="text-3xl md:text-4xl font-black text-white mb-4">Access the EduNexus Portal</h2>
+          <p className="text-blue-200 text-lg mb-8 max-w-2xl mx-auto">
+            Students log in with their full name and PIN. Staff log in with their email and password. Access your results, attendance, timetable and more.
           </p>
-          <button
-            onClick={() => navigate('/login')}
-            className="bg-white text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors inline-block"
-          >
-            Login to Your Account
-          </button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => navigate('/login')}
+              className="bg-white text-blue-900 px-10 py-4 rounded-xl text-base font-black hover:bg-gray-100 transition flex items-center justify-center gap-2"
+            >
+              <GraduationCap size={20} />
+              Student Login
+            </button>
+            <button
+              onClick={() => navigate('/login')}
+              className="border-2 border-white text-white px-10 py-4 rounded-xl text-base font-black hover:bg-white hover:text-blue-900 transition flex items-center justify-center gap-2"
+            >
+              <Users size={20} />
+              Staff Login
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-20 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="text-blue-900 font-semibold text-sm uppercase tracking-widest mb-2">Contact Us</p>
+            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">Get In Touch</h2>
+            <div className="w-16 h-1 bg-blue-900 mx-auto" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: <MapPin size={24} className="text-blue-900" />, 
+                title: 'Location',
+                lines: ["Methodist Boys' High School", 'Freetown, Sierra Leone'],
+              },
+              {
+                icon: <Phone size={24} className="text-blue-900" />, 
+                title: 'Phone',
+                lines: ['+232 XX XXX XXXX', 'Mon - Fri, 8AM - 4PM'],
+              },
+              {
+                icon: <Mail size={24} className="text-blue-900" />, 
+                title: 'EduNexus Portal',
+                lines: ['mbhs-edunexus.vercel.app', 'Accessible 24/7'],
+              },
+            ].map((item, i) => (
+              <div key={i} className="text-center p-6 bg-slate-50 rounded-xl border border-gray-100">
+                <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  {item.icon}
+                </div>
+                <h3 className="font-bold text-gray-900 mb-2">{item.title}</h3>
+                {item.lines.map((line, j) => (
+                  <p key={j} className="text-gray-600 text-sm">{line}</p>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <footer className="bg-black text-white py-10 px-4">
+        <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
-              <h4 className="text-white font-semibold mb-4">About Us</h4>
-              <p className="text-sm">MBHS EduNexus - Transforming education through technology</p>
+              <div className="flex items-center gap-3 mb-4">
+                <img src="/favicon.png" alt="MBHS" className="w-10 h-10 object-contain" />
+                <div>
+                  <p className="font-bold text-white">MBHS EduNexus</p>
+                  <p className="text-gray-400 text-xs">School Management System</p>
+                </div>
+              </div>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                The official digital management portal of Methodist Boys' High School, Freetown, Sierra Leone.
+              </p>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4">Quick Links</h4>
-              <ul className="text-sm space-y-2">
-                <li><a href="#" className="hover:text-white">Contact Us</a></li>
-                <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white">Terms of Service</a></li>
-              </ul>
+              <h4 className="font-bold text-white mb-4">Quick Links</h4>
+              <div className="space-y-2">
+                <a href="#home" className="block text-gray-400 text-sm hover:text-white transition">
+                  Home
+                </a>
+                <a href="#about" className="block text-gray-400 text-sm hover:text-white transition">
+                  About
+                </a>
+                <a href="#gallery" className="block text-gray-400 text-sm hover:text-white transition">
+                  Gallery
+                </a>
+                <a href="#contact" className="block text-gray-400 text-sm hover:text-white transition">
+                  Contact
+                </a>
+                <button
+                  onClick={() => navigate('/login')}
+                  className="block text-gray-400 text-sm hover:text-white transition text-left"
+                >
+                  EduNexus Portal
+                </button>
+              </div>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4">Contact</h4>
-              <p className="text-sm">Email: info@mbhs.edu</p>
-              <p className="text-sm">Phone: +234-XXX-XXXX-XX</p>
+              <h4 className="font-bold text-white mb-4">EduNexus Portal</h4>
+              <div className="space-y-2">
+                <p className="text-gray-400 text-sm">Student Login — Full Name + PIN</p>
+                <p className="text-gray-400 text-sm">Staff Login — Email + Password</p>
+                <p className="text-gray-400 text-sm">Available 24/7 on any device</p>
+                <button
+                  onClick={() => navigate('/login')}
+                  className="mt-3 bg-white text-black px-4 py-2 rounded-lg text-xs font-bold hover:bg-gray-200 transition"
+                >
+                  Access Portal
+                </button>
+              </div>
             </div>
           </div>
-          <div className="border-t border-gray-700 pt-8 text-center text-sm">
-            <p>&copy; 2024 MBHS EduNexus. All rights reserved.</p>
+          <div className="border-t border-gray-800 pt-6 text-center">
+            <p className="text-gray-400 text-xs">© 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.</p>
+            <p className="text-gray-500 text-xs mt-1">Developed by Alie Amadu Sesay</p>
           </div>
         </div>
       </footer>
     </div>
   )
 }
-
-export default Home
