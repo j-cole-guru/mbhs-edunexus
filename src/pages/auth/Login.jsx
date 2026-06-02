@@ -95,9 +95,10 @@ const Login = () => {
       console.log('RPC student ID:', rpcStudent.id)
       
       const studentId = rpcStudent.id
+      const studentNumber = rpcStudent.student_number
       
       // Try multiple fetch strategies to get complete record
-      let completeStudent = rpcStudent
+      let completeStudent = { ...rpcStudent }
       
       // Strategy 1: Direct fetch by ID with all fields
       try {
@@ -111,20 +112,47 @@ const Login = () => {
         })
         if (fullRecordRes.ok) {
           const fullRecordData = await fullRecordRes.json()
-          console.log('Full record fetch response:', fullRecordData)
+          console.log('Full record fetch by ID response:', fullRecordData)
           if (Array.isArray(fullRecordData) && fullRecordData.length > 0) {
             completeStudent = fullRecordData[0]
-            console.log('Successfully fetched complete student record')
+            console.log('Successfully fetched complete student record by ID')
           }
         } else {
-          console.log('Full record fetch failed with status:', fullRecordRes.status)
+          console.log('Full record fetch by ID failed with status:', fullRecordRes.status)
         }
       } catch (err) {
-        console.error('Error fetching full record:', err)
+        console.error('Error fetching full record by ID:', err)
+      }
+      
+      // Strategy 2: If still missing fields, fetch by student_number
+      if (!completeStudent.gender || !completeStudent.date_of_birth) {
+        try {
+          console.log('Fetching additional fields by student_number:', studentNumber)
+          const additionalRes = await fetch(`${SUPABASE_URL}/rest/v1/students?student_number=eq.${studentNumber}`, {
+            method: 'GET',
+            headers: {
+              'apikey': ANON_KEY,
+              'Authorization': `Bearer ${ANON_KEY}`,
+              'Content-Type': 'application/json'
+            }
+          })
+          if (additionalRes.ok) {
+            const additionalData = await additionalRes.json()
+            console.log('Fetch by student_number response:', additionalData)
+            if (Array.isArray(additionalData) && additionalData.length > 0) {
+              completeStudent = { ...completeStudent, ...additionalData[0] }
+              console.log('Merged additional fields from student_number query')
+            }
+          } else {
+            console.log('Fetch by student_number failed with status:', additionalRes.status)
+          }
+        } catch (err) {
+          console.error('Error fetching by student_number:', err)
+        }
       }
       
       console.log('Final student data to store:', completeStudent)
-      console.log('Fields in stored data:', Object.keys(completeStudent))
+      console.log('Fields in stored data:', Object.keys(completeStudent).sort())
       
       localStorage.setItem('mbhs_student', JSON.stringify(completeStudent))
       // Log successful student login
