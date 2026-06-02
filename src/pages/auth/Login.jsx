@@ -61,13 +61,14 @@ const Login = () => {
       
       try {
         // Create a query body to find students by name
+        // Use SERVICE_KEY to bypass RLS policies
         const queryRes = await fetch(
           `${SUPABASE_URL}/rest/v1/students?full_name=eq.${fullName}&select=*`,
           {
             method: 'GET',
             headers: {
-              'apikey': ANON_KEY,
-              'Authorization': `Bearer ${ANON_KEY}`,
+              'apikey': SERVICE_KEY,
+              'Authorization': `Bearer ${SERVICE_KEY}`,
             }
           }
         )
@@ -96,8 +97,8 @@ const Login = () => {
                 {
                   method: 'GET',
                   headers: {
-                    'apikey': ANON_KEY,
-                    'Authorization': `Bearer ${ANON_KEY}`,
+                    'apikey': SERVICE_KEY,
+                    'Authorization': `Bearer ${SERVICE_KEY}`,
                   }
                 }
               )
