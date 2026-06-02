@@ -53,85 +53,73 @@ const Login = () => {
     try {
       console.log('Attempting student login with name:', fullName, 'PIN:', pin)
       
-      // Step 1: Try RPC first
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/student_login_by_name`, {
-        method: 'POST',
-        headers: {
-          'apikey': ANON_KEY,
-          'Authorization': `Bearer ${ANON_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          p_full_name: fullName,
-          p_pin: pin
-        })
-      })
-      const data = await res.json()
-      console.log('Student login RPC result:', data)
-      console.log('Response status:', res.status)
-
+      // DIRECT APPROACH: Query students table directly and check PIN
+      // This bypasses the RPC which seems to have issues
+      console.log('Querying students table directly...')
+      
       let authenticatedStudent = null
-
-      if (Array.isArray(data) && data.length > 0) {
-        authenticatedStudent = data[0]
-        console.log('RPC succeeded, got student:', authenticatedStudent)
-      } else {
-        console.log('RPC returned empty, trying alternative RPC with different parameter names...')
-        
-        // FALLBACK 1: Try different RPC parameter names
-        try {
-          const altRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/student_login`, {
-            method: 'POST',
+      
+      try {
+        // Create a query body to find students by name
+        const queryRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/students?full_name=eq.${fullName}&select=*`,
+          {
+            method: 'GET',
             headers: {
               'apikey': ANON_KEY,
               'Authorization': `Bearer ${ANON_KEY}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              p_name: fullName,
-              p_pin: pin
-            })
-          })
-          
-          if (altRes.ok) {
-            const altData = await altRes.json()
-            console.log('Alternative RPC result:', altData)
-            if (Array.isArray(altData) && altData.length > 0) {
-              authenticatedStudent = altData[0]
-              console.log('Alternative RPC succeeded')
             }
           }
-        } catch (altErr) {
-          console.error('Alternative RPC error:', altErr)
-        }
-      }
-
-      // If still no match, try converting PIN to integer
-      if (!authenticatedStudent && !isNaN(pin)) {
-        console.log('Trying RPC with PIN as integer...')
-        try {
-          const intRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/student_login_by_name`, {
-            method: 'POST',
-            headers: {
-              'apikey': ANON_KEY,
-              'Authorization': `Bearer ${ANON_KEY}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              p_full_name: fullName,
-              p_pin: parseInt(pin)
-            })
-          })
+        )
+        
+      if (queryRes.ok) {
+          const students = await queryRes.json()
+          console.log('Direct query returned:', students)
           
-          const intData = await intRes.json()
-          console.log('Integer PIN RPC result:', intData)
-          if (Array.isArray(intData) && intData.length > 0) {
-            authenticatedStudent = intData[0]
-            console.log('Integer PIN RPC succeeded')
+          if (Array.isArray(students) && students.length > 0) {
+            // Check if any student matches the PIN
+            const matchedStudent = students.find(s => String(s.pin) === String(pin))
+            if (matchedStudent) {
+              authenticatedStudent = matchedStudent
+              console.log('Found student with matching PIN:', authenticatedStudent)
+            } else {
+              console.log('Found students but PIN does not match')
+              console.log('Students found:', students.map(s => ({name: s.full_name, pin: s.pin})))
+            }
+          } else {
+            // Query succeeded but no students found - try alternative queries
+            console.log('No students found with exact name. Trying case-insensitive search...')
+            
+            try {
+              const iLikeRes = await fetch(
+                `${SUPABASE_URL}/rest/v1/students?full_name=ilike.${fullName}&select=*`,
+                {
+                  method: 'GET',
+                  headers: {
+                    'apikey': ANON_KEY,
+                    'Authorization': `Bearer ${ANON_KEY}`,
+                  }
+                }
+              )
+              
+              if (iLikeRes.ok) {
+                const iLikeStudents = await iLikeRes.json()
+                console.log('Case-insensitive query returned:', iLikeStudents)
+                if (Array.isArray(iLikeStudents) && iLikeStudents.length > 0) {
+                  const matchedStudent = iLikeStudents.find(s => String(s.pin) === String(pin))
+                  if (matchedStudent) {
+                    authenticatedStudent = matchedStudent
+                    console.log('Found student with case-insensitive match:', authenticatedStudent)
+                  }
+                }
+              }
+            } catch (iLikeErr) {
+              console.error('Case-insensitive query error:', iLikeErr)
+            }
           }
-        } catch (intErr) {
-          console.error('Integer PIN RPC error:', intErr)
         }
+      } catch (err) {
+        console.error('Direct query error:', err)
       }
 
       if (!authenticatedStudent) {
