@@ -89,7 +89,20 @@ const Login = () => {
         return
       }
 
-      localStorage.setItem('mbhs_student', JSON.stringify(data[0]))
+      // Fetch complete student record to ensure all fields are present
+      const studentId = data[0].id
+      const fullRecordRes = await fetch(`${SUPABASE_URL}/rest/v1/students?id=eq.${studentId}&select=*`, {
+        method: 'GET',
+        headers: {
+          'apikey': ANON_KEY,
+          'Authorization': `Bearer ${ANON_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      const fullRecordData = await fullRecordRes.json()
+      const completeStudent = Array.isArray(fullRecordData) && fullRecordData.length > 0 ? fullRecordData[0] : data[0]
+      
+      localStorage.setItem('mbhs_student', JSON.stringify(completeStudent))
       // Log successful student login
       await fetch(`${SUPABASE_URL}/rest/v1/security_logs`, {
         method: 'POST',

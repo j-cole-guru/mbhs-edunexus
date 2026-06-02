@@ -31,7 +31,7 @@ export default function IDCard() {
     if (!s) { window.location.href = '/login'; return }
     setStudent(s)
     if (s.photo_url) setPhotoUrl(s.photo_url)
-    loadDetails(s)
+    if (s.class_id || s.level_id) loadDetails(s)
   }, [])
 
   const loadDetails = async (s) => {
@@ -121,9 +121,19 @@ export default function IDCard() {
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A'
-    return new Date(dateString).toLocaleDateString('en-GB', {
-      day: 'numeric', month: 'long', year: 'numeric'
-    })
+    try {
+      return new Date(dateString).toLocaleDateString('en-GB', {
+        day: 'numeric', month: 'long', year: 'numeric'
+      })
+    } catch {
+      return 'N/A'
+    }
+  }
+
+  const getStudentField = (fieldName, fallback = 'N/A') => {
+    if (!student) return fallback
+    const value = student[fieldName]
+    return value || fallback
   }
 
   if (!student) return (
