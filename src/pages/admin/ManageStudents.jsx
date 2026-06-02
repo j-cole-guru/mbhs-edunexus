@@ -877,17 +877,19 @@ const ManageStudents = () => {
                 <tr>
                   <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Student Number</th>
                   <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
+                  <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">PIN</th>
                   <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Gender</th>
                   <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {students.length === 0 ? (
-                  <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-500">No active students found.</td></tr>
+                  <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-500">No active students found.</td></tr>
                 ) : students.map((student, i) => (
                   <tr key={student.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                     <td className="px-4 py-3 text-gray-600">{student.student_number}</td>
                     <td className="px-4 py-3 font-medium text-gray-900">{student.full_name}</td>
+                    <td className="px-4 py-3 font-mono text-gray-600 bg-gray-100 rounded px-2 py-1">{student.pin}</td>
                     <td className="px-4 py-3 text-gray-600 capitalize">{student.gender}</td>
                     <td className="px-4 py-3">
                       <button
