@@ -53,7 +53,7 @@ const Login = () => {
     try {
       console.log('Attempting student login with name:', fullName, 'PIN:', pin)
       
-      // Step 1: Authenticate using RPC
+      // Step 1: Try RPC first
       const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/student_login_by_name`, {
         method: 'POST',
         headers: {
@@ -70,8 +70,72 @@ const Login = () => {
       console.log('Student login RPC result:', data)
       console.log('Response status:', res.status)
 
-      if (!res.ok || !Array.isArray(data) || data.length === 0) {
-        console.log('RPC login failed or returned no data')
+      let authenticatedStudent = null
+
+      if (Array.isArray(data) && data.length > 0) {
+        authenticatedStudent = data[0]
+        console.log('RPC succeeded, got student:', authenticatedStudent)
+      } else {
+        console.log('RPC returned empty, trying alternative RPC with different parameter names...')
+        
+        // FALLBACK 1: Try different RPC parameter names
+        try {
+          const altRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/student_login`, {
+            method: 'POST',
+            headers: {
+              'apikey': ANON_KEY,
+              'Authorization': `Bearer ${ANON_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              p_name: fullName,
+              p_pin: pin
+            })
+          })
+          
+          if (altRes.ok) {
+            const altData = await altRes.json()
+            console.log('Alternative RPC result:', altData)
+            if (Array.isArray(altData) && altData.length > 0) {
+              authenticatedStudent = altData[0]
+              console.log('Alternative RPC succeeded')
+            }
+          }
+        } catch (altErr) {
+          console.error('Alternative RPC error:', altErr)
+        }
+      }
+
+      // If still no match, try converting PIN to integer
+      if (!authenticatedStudent && !isNaN(pin)) {
+        console.log('Trying RPC with PIN as integer...')
+        try {
+          const intRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/student_login_by_name`, {
+            method: 'POST',
+            headers: {
+              'apikey': ANON_KEY,
+              'Authorization': `Bearer ${ANON_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              p_full_name: fullName,
+              p_pin: parseInt(pin)
+            })
+          })
+          
+          const intData = await intRes.json()
+          console.log('Integer PIN RPC result:', intData)
+          if (Array.isArray(intData) && intData.length > 0) {
+            authenticatedStudent = intData[0]
+            console.log('Integer PIN RPC succeeded')
+          }
+        } catch (intErr) {
+          console.error('Integer PIN RPC error:', intErr)
+        }
+      }
+
+      if (!authenticatedStudent) {
+        console.log('No student found with provided credentials')
         
         // Log failed student login attempt
         await fetch(`${SUPABASE_URL}/rest/v1/security_logs`, {
@@ -93,15 +157,14 @@ const Login = () => {
         return
       }
 
-      // Step 2: Get the authenticated student ID and fetch full record
-      const rpcStudent = data[0]
-      const studentId = rpcStudent.id
-      const studentNumber = rpcStudent.student_number
+      // Step 2: Get the authenticated student ID and fetch full record if needed
+      const studentId = authenticatedStudent.id
+      const studentNumber = authenticatedStudent.student_number
       
       console.log('Student authenticated - ID:', studentId, 'Number:', studentNumber)
       
       // Fetch complete student record with all fields using select *
-      let completeStudent = rpcStudent
+      let completeStudent = authenticatedStudent
       try {
         const fullRecordRes = await fetch(
           `${SUPABASE_URL}/rest/v1/students?id=eq.${studentId}&select=*`,
