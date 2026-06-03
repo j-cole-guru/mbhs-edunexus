@@ -215,6 +215,7 @@ const ArchiveStudents = () => {
         archived_at: new Date().toISOString(),
         archive_reason: archiveReason,
         graduation_year: archiveReason === "Graduated" ? graduationYear : null,
+        suspension_end_date: isSuspension ? suspensionEndDate : null,
       }
       await apiFetch(`/students?id=in.${idsString}`, {
         method: "PATCH",
