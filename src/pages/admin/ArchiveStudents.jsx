@@ -140,7 +140,13 @@ const ArchiveStudents = () => {
 
   const fetchClasses = async () => {
     try {
-      const data = await apiFetch("/classes?select=*&order=name")
+      const levelData = await apiFetch(getLevelFilter())
+      const levelIds = (Array.isArray(levelData) ? levelData : []).map((l) => l.id)
+      if (levelIds.length === 0) {
+        setClasses([])
+        return
+      }
+      const data = await apiFetch(`/classes?select=*&level_id=in.(${levelIds.join(",")})&order=name`)
       setClasses(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error("Error fetching classes:", err)
