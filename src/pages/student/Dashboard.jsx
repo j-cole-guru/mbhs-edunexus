@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { UserCheck, Clock, BookOpen, GraduationCap, AlertCircle, XCircle, LogOut } from "lucide-react";
+import { UserCheck, Clock, BookOpen, GraduationCap, AlertCircle, XCircle, LogOut, Info } from "lucide-react";
 import {
   ANON_KEY,
   SERVICE_KEY,
@@ -107,6 +107,8 @@ export default function StudentDashboard() {
       ? Math.max(0, Math.ceil((new Date(student.suspension_end_date) - new Date()) / (1000 * 60 * 60 * 24)))
       : 0
 
+    const formatDate = (d) => new Date(d).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+
     const getConfig = () => {
       if (isSuspended) return {
         icon: <AlertCircle size={36} className="text-red-600" />,
@@ -114,8 +116,8 @@ export default function StudentDashboard() {
         title: 'Account Suspended',
         bgColor: 'bg-red-50 border-red-200',
         message: student.suspension_end_date
-          ? `Your account has been suspended until ${new Date(student.suspension_end_date).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}. Reason: ${student.archive_reason}. Your account will be automatically restored after your suspension period ends.`
-          : `Your account has been suspended. Reason: ${student.archive_reason}. Please contact your school administrator.`,
+          ? `${student.full_name} has been found engaging in an inappropriate conduct and is therefore suspended for a period ending on ${formatDate(student.suspension_end_date)}. The student is expected to resume academic activities on the said date.`
+          : `${student.full_name} has been found engaging in an inappropriate conduct and is therefore suspended indefinitely. Please contact the school administration for further details.`,
         canViewRecords: false
       }
       if (isExpelled) return {
@@ -123,7 +125,7 @@ export default function StudentDashboard() {
         iconBg: 'bg-red-100',
         title: 'Account Deactivated',
         bgColor: 'bg-red-50 border-red-200',
-        message: `Your account has been permanently deactivated. Reason: ${student.archive_reason}. Please contact your school administrator for further information.`,
+        message: `${student.full_name} has been permanently expelled from Methodist Boys' High School. This decision is final. Please contact the school administration for further information.`,
         canViewRecords: false
       }
       if (isTransferred) return {
@@ -131,15 +133,25 @@ export default function StudentDashboard() {
         iconBg: 'bg-yellow-100',
         title: 'No Longer Enrolled',
         bgColor: 'bg-yellow-50 border-yellow-200',
-        message: `You are no longer enrolled at Methodist Boys' High School. Reason: ${student.archive_reason}. Your academic records are preserved for your reference.`,
+        message: reason.includes('withdrew')
+          ? `${student.full_name} has withdrawn from Methodist Boys' High School. The student's academic records are preserved for reference.`
+          : `${student.full_name} is no longer enrolled at Methodist Boys' High School and has been transferred to another academic institution. The student's academic records are preserved for reference.`,
         canViewRecords: true
       }
-      return {
+      if (isGraduated) return {
         icon: <GraduationCap size={36} className="text-blue-900" />,
         iconBg: 'bg-blue-100',
         title: 'Alumni Portal',
         bgColor: 'bg-blue-50 border-blue-200',
-        message: `Congratulations on completing your studies at Methodist Boys' High School. Your academic records are preserved and available for your reference at any time.`,
+        message: `Congratulations ${student.full_name}! You have successfully completed your studies at Methodist Boys' High School. Your academic records are preserved and available for your reference at any time.`,
+        canViewRecords: true
+      }
+      return {
+        icon: <Info size={36} className="text-gray-600" />,
+        iconBg: 'bg-gray-100',
+        title: 'Account Archived',
+        bgColor: 'bg-gray-50 border-gray-200',
+        message: `${student.full_name}'s account has been archived. Reason: ${student.archive_reason}. Please contact the school administration for further information.`,
         canViewRecords: true
       }
     }
