@@ -291,7 +291,7 @@ const TeacherAttendance = () => {
                       </div>
                       <div>
                         <p className="font-black text-gray-900">{s.full_name}</p>
-                        <p className="text-xs text-gray-500 font-bold uppercase tracking-tighter">{s.student_number || 'N/A'}</p>
+                        <p className="text-xs text-gray-500 font-bold uppercase tracking-tighter">{s.student_number || 'Not provided'}</p>
                       </div>
                     </div>
                     <input 

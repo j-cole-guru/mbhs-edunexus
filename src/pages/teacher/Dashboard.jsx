@@ -59,8 +59,8 @@ const TeacherDashboard = () => {
         ])
         const levelData = await levelRes.json()
         const classData = await classRes.json()
-        setLevelName(Array.isArray(levelData) && levelData[0] ? levelData[0].name : 'N/A')
-        setClassName(Array.isArray(classData) && classData[0] ? classData[0].name : 'N/A')
+        setLevelName(Array.isArray(levelData) && levelData[0] ? levelData[0].name : 'Not Assigned')
+        setClassName(Array.isArray(classData) && classData[0] ? classData[0].name : 'Not Assigned')
 
         // Fetch students in teacher's class
         const studentsRes = await fetch(`${BASE_URL}/students?class_id=eq.${teacherInfo.class_id}&select=*&order=full_name.asc`, {
@@ -186,7 +186,7 @@ const TeacherDashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">Employee Number</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{teacher.employee_number || 'N/A'}</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">{teacher.employee_number || 'Not provided'}</p>
             </div>
             <Clock className="h-12 w-12 text-purple-600 opacity-20" />
           </div>
@@ -219,11 +219,11 @@ const TeacherDashboard = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {students.map((student) => (
                   <tr key={student.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{student.student_number || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{student.student_number || 'Not provided'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{student.full_name || 'Unknown'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.gender || 'N/A'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.date_of_birth || 'N/A'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.guardian_name || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.gender || 'Not provided'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.date_of_birth || 'Not provided'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.guardian_name || 'Not provided'}</td>
                   </tr>
                 ))}
               </tbody>

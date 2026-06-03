@@ -182,7 +182,7 @@ const TeacherResults = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {results.map(r => (
                   <tr key={r.student_id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{r.student_number || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{r.student_number || 'Not provided'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{r.full_name || 'Unknown'}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <input type="number" min="0" max="100" value={r.score} onChange={(e) => handleScoreChange(r.student_id, e.target.value)} className="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900" placeholder="0" />

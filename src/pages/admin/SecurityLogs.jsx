@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Shield, AlertCircle, CheckCircle, XCircle, RefreshCw } from 'lucide-react'
-import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
-
-const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
+import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff } from '../../lib/config'
 
 export default function SecurityLogs() {
   const [logs, setLogs] = useState([])
@@ -14,6 +12,9 @@ export default function SecurityLogs() {
   const fetchLogs = async () => {
     setLoading(true)
     try {
+      const staff = safeParseStaff() || {}
+      const token = staff.access_token || ANON_KEY
+      const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${token}` }
       const res = await fetch(
         `${BASE_URL}/security_logs?select=*&order=created_at.desc&limit=100`,
         { headers }
@@ -134,7 +135,7 @@ export default function SecurityLogs() {
                       <span className="text-gray-700 text-xs">{log.event_type?.replace(/_/g, ' ')}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-gray-700">{log.email || 'N/A'}</td>
+                  <td className="px-4 py-3 text-gray-700">{log.email || 'Not provided'}</td>
                   <td className="px-4 py-3 text-gray-600 text-xs">{log.details}</td>
                   <td className="px-4 py-3"><SeverityBadge severity={log.severity} /></td>
                   <td className="px-4 py-3 text-gray-500 text-xs">

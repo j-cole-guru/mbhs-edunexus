@@ -62,11 +62,11 @@ export default function StudentDashboard() {
 
       if (classRes) {
         const d = await classRes.json();
-        setClassName(d[0]?.name || "N/A");
+        setClassName(d[0]?.name || "Not Assigned");
       }
       if (levelRes) {
         const d = await levelRes.json();
-        setLevelName(d[0]?.name || "N/A");
+        setLevelName(d[0]?.name || "Not Assigned");
       }
       const terms = await termRes.json();
       setCurrentTerm(

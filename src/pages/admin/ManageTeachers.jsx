@@ -147,8 +147,8 @@ const ManageTeachers = () => {
               ...teacher,
               full_name: profile[0]?.full_name || "Unknown",
               email: profile[0]?.email || "",
-              class_name: cls[0]?.name || "N/A",
-              level_name: level[0]?.name || "N/A",
+              class_name: cls[0]?.name || "Not Assigned",
+              level_name: level[0]?.name || "Not Assigned",
             };
           } catch (err) {
             console.error("Error enriching teacher:", err);
@@ -156,8 +156,8 @@ const ManageTeachers = () => {
               ...teacher,
               full_name: "Unknown",
               email: "",
-              class_name: "N/A",
-              level_name: "N/A",
+              class_name: "Not Assigned",
+              level_name: "Not Assigned",
             };
           }
         }),
@@ -563,10 +563,10 @@ const ManageTeachers = () => {
                       {teacher.email}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {teacher.phone || "N/A"}
+                      {teacher.phone || "Not provided"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {teacher.gender || "N/A"}
+                      {teacher.gender || "Not provided"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {teacher.level_name}

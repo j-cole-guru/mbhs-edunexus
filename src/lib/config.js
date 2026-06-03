@@ -20,6 +20,40 @@ export const safeParseStudent = () => {
   } catch { return null }
 }
 
+export const getStudentToken = () => {
+  return import.meta.env.VITE_SUPABASE_ANON_KEY
+}
+
+export const adminHeaders = () => ({
+  'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+  'Authorization': `Bearer ${getToken()}`,
+  'Content-Type': 'application/json'
+})
+
+export const studentHeaders = () => ({
+  'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+  'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+  'Content-Type': 'application/json'
+})
+
+export const safeFetch = async (url, options = {}) => {
+  const isStudent = !localStorage.getItem('mbhs_staff') || localStorage.getItem('mbhs_staff') === 'undefined'
+  const token = isStudent ? import.meta.env.VITE_SUPABASE_ANON_KEY : getToken()
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation',
+      ...options.headers
+    }
+  })
+  const text = await res.text()
+  if (!text || text === 'undefined' || text === 'null' || text.trim() === '') return null
+  try { return JSON.parse(text) } catch { return null }
+}
+
 export const safeParseStaff = () => {
   try {
     const raw = localStorage.getItem('mbhs_staff')

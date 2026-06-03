@@ -1,19 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Download, Camera, CheckCircle } from 'lucide-react'
 import html2canvas from 'html2canvas'
-
-const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-const SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
-const BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1`
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
-
-const safeParseStudent = () => {
-  try {
-    const raw = localStorage.getItem('mbhs_student')
-    if (!raw || raw === 'undefined' || raw === 'null') return null
-    return JSON.parse(raw)
-  } catch { return null }
-}
+import { ANON_KEY, BASE_URL, safeParseStudent } from '../../lib/config'
 
 export default function IDCard() {
   const [student, setStudent] = useState(null)
@@ -38,9 +26,7 @@ export default function IDCard() {
 
   const loadDetails = async (s) => {
     try {
-      // Use SERVICE_KEY to bypass RLS policies
-      const headers = { 'apikey': SERVICE_KEY, 'Authorization': `Bearer ${SERVICE_KEY}` }
-      console.log('Loading class_id:', s.class_id, 'level_id:', s.level_id)
+      const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
       
       const [classRes, levelRes] = await Promise.all([
         fetch(`${BASE_URL}/classes?id=eq.${s.class_id}&select=name`, { headers }),
@@ -49,11 +35,8 @@ export default function IDCard() {
       const classData = await classRes.json()
       const levelData = await levelRes.json()
       
-      console.log('Class response:', classData)
-      console.log('Level response:', levelData)
-      
-      setClassName(classData[0]?.name || 'N/A')
-      setLevelName(levelData[0]?.name || 'N/A')
+      setClassName(classData[0]?.name || 'Not Assigned')
+      setLevelName(levelData[0]?.name || 'Not Assigned')
     } catch (err) {
       console.error('Error loading details:', err)
     }
@@ -88,7 +71,8 @@ export default function IDCard() {
           headers: {
             'apikey': ANON_KEY,
             'Authorization': `Bearer ${ANON_KEY}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
           },
           body: JSON.stringify({ photo_url: dataUrl })
         })
@@ -129,17 +113,17 @@ export default function IDCard() {
   }
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A'
+    if (!dateString) return 'Not provided'
     try {
       return new Date(dateString).toLocaleDateString('en-GB', {
         day: 'numeric', month: 'long', year: 'numeric'
       })
     } catch {
-      return 'N/A'
+      return 'Not provided'
     }
   }
 
-  const getStudentField = (fieldName, fallback = 'N/A') => {
+  const getStudentField = (fieldName, fallback = 'Not provided') => {
     if (!student) return fallback
     const value = student[fieldName]
     return value || fallback
@@ -259,7 +243,7 @@ export default function IDCard() {
                       { label: 'ID', value: student.student_number },
                       { label: 'Class', value: className },
                       { label: 'Level', value: levelName },
-                      { label: 'Gender', value: student.gender ? student.gender.charAt(0).toUpperCase() + student.gender.slice(1) : 'N/A' },
+                      { label: 'Gender', value: student.gender ? student.gender.charAt(0).toUpperCase() + student.gender.slice(1) : 'Not provided' },
                     ].map((item, i) => (
                       <div key={i} style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                         <p style={{ fontSize: '9px', color: '#94a3b8', margin: 0, minWidth: '36px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
@@ -282,8 +266,8 @@ export default function IDCard() {
                 {[
                   { label: 'Date of Birth', value: formatDate(student.date_of_birth) },
                   { label: 'Enrolled', value: formatDate(student.enrolled_at || student.created_at) },
-                  { label: 'Guardian', value: student.guardian_name || 'N/A' },
-                  { label: 'Guardian Tel', value: student.guardian_phone || 'N/A' },
+                  { label: 'Guardian', value: student.guardian_name || 'Not provided' },
+                  { label: 'Guardian Tel', value: student.guardian_phone || 'Not provided' },
                 ].map((item, i) => (
                   <div key={i}>
                     <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0 0 1px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '600' }}>
@@ -386,11 +370,11 @@ export default function IDCard() {
                 { label: 'Student Number', value: student.student_number },
                 { label: 'Class', value: className },
                 { label: 'Level', value: levelName },
-                { label: 'Gender', value: student.gender ? student.gender.charAt(0).toUpperCase() + student.gender.slice(1) : 'N/A' },
+                { label: 'Gender', value: student.gender ? student.gender.charAt(0).toUpperCase() + student.gender.slice(1) : 'Not provided' },
                 { label: 'Date of Birth', value: formatDate(student.date_of_birth) },
                 { label: 'Enrolled', value: formatDate(student.enrolled_at || student.created_at) },
-                { label: 'Guardian', value: student.guardian_name || 'N/A' },
-                { label: 'Guardian Phone', value: student.guardian_phone || 'N/A' },
+                { label: 'Guardian', value: student.guardian_name || 'Not provided' },
+                { label: 'Guardian Phone', value: student.guardian_phone || 'Not provided' },
               ].map((item, i) => (
                 <div key={i} className="flex justify-between items-center py-1 border-b border-blue-100 last:border-0">
                   <span className="text-blue-700 font-medium text-xs uppercase tracking-wide">{item.label}</span>

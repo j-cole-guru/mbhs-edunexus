@@ -531,7 +531,7 @@ const AdminDashboard = () => {
                       </td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-1 rounded text-xs font-semibold ${user.department === 'JSS' ? 'bg-blue-100 text-blue-700' : user.department === 'SSS' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'}`}>
-                          {user.department || 'N/A'}
+                          {user.department || 'Not Assigned'}
                         </span>
                       </td>
                       <td className="px-4 py-3">

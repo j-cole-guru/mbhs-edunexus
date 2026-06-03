@@ -953,19 +953,19 @@ const ManageStudents = () => {
                         student.archive_reason === 'Graduated' ? 'bg-green-100 text-green-700' :
                         'bg-gray-100 text-gray-700'
                       }`}>
-                        {student.archive_reason || 'N/A'}
+                        {student.archive_reason || 'Not provided'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-600">{student.graduation_year || 'N/A'}</td>
+                    <td className="px-4 py-3 text-gray-600">{student.graduation_year || 'Not provided'}</td>
                     <td className="px-4 py-3">
                       {student.suspension_end_date ? (
                         <span className={`text-xs font-medium ${new Date(student.suspension_end_date) <= new Date() ? 'text-green-600' : 'text-red-600'}`}>
                           {new Date(student.suspension_end_date) <= new Date() ? 'Ended' : new Date(student.suspension_end_date).toLocaleDateString()}
                         </span>
-                      ) : 'N/A'}
+                        ) : 'Not provided'}
                     </td>
                     <td className="px-4 py-3 text-gray-500 text-xs">
-                      {student.archived_at ? new Date(student.archived_at).toLocaleDateString() : 'N/A'}
+                      {student.archived_at ? new Date(student.archived_at).toLocaleDateString() : 'Not provided'}
                     </td>
                     <td className="px-4 py-3">
                       <button onClick={() => handleRestoreStudent(student.id)}

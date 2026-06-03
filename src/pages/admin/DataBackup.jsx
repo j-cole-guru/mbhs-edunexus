@@ -1,18 +1,23 @@
 import { useState } from 'react'
 import { Database, Download, RefreshCw } from 'lucide-react'
 import * as XLSX from 'xlsx'
-import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
-
-const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
+import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff } from '../../lib/config'
 
 export default function DataBackup() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState('')
 
+  const getHeaders = () => {
+    const staff = safeParseStaff() || {}
+    const token = staff.access_token || ANON_KEY
+    return { 'apikey': ANON_KEY, 'Authorization': `Bearer ${token}` }
+  }
+
   const downloadBackup = async (table, label) => {
     setLoading(true)
     setSuccess('')
     try {
+      const headers = getHeaders()
       const res = await fetch(`${BASE_URL}/${table}?select=*`, { headers })
       const data = await res.json()
       const ws = XLSX.utils.json_to_sheet(Array.isArray(data) ? data : [])
@@ -31,6 +36,7 @@ export default function DataBackup() {
     setLoading(true)
     setSuccess('')
     try {
+      const headers = getHeaders()
       const tables = ['students','teachers','profiles','classes','levels','terms','results','attendance','timetable']
       const wb = XLSX.utils.book_new()
       for (const table of tables) {

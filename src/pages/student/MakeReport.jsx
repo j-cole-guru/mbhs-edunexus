@@ -32,8 +32,8 @@ export default function MakeReport() {
       ])
       const classData = await classRes.json()
       const levelData = await levelRes.json()
-      setClassName(classData[0]?.name || 'N/A')
-      setLevelName(levelData[0]?.name || 'N/A')
+      setClassName(classData[0]?.name || 'Not Assigned')
+      setLevelName(levelData[0]?.name || 'Not Assigned')
     } catch (err) {
       console.error('Error loading details:', err)
     }

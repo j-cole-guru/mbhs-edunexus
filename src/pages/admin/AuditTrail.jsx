@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import { FileText, RefreshCw } from 'lucide-react'
-import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
-
-const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
+import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff } from '../../lib/config'
 
 export default function AuditTrail() {
   const [logs, setLogs] = useState([])
@@ -13,6 +11,9 @@ export default function AuditTrail() {
   const fetchAudit = async () => {
     setLoading(true)
     try {
+      const staff = safeParseStaff() || {}
+      const token = staff.access_token || ANON_KEY
+      const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${token}` }
       const res = await fetch(
         `${BASE_URL}/audit_trail?select=*&order=created_at.desc&limit=100`,
         { headers }

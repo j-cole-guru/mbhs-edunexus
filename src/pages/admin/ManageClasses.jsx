@@ -272,7 +272,7 @@ const ManageClasses = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500">
-                        {cls.levels?.name || "N/A"}
+                        {cls.levels?.name || "Not Assigned"}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

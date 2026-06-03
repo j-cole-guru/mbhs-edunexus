@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Clock } from 'lucide-react'
-import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff, safeParseStudent} from '../../lib/config'
-
-const getToken = () => {
-  const staff = safeParseStaff() || {}
-  return staff.access_token || ANON_KEY
-}
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStudent} from '../../lib/config'
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 
@@ -24,7 +19,7 @@ const StudentTimetable = () => {
         const student = safeParseStudent() || {}
         if (!student.class_id) { setLoading(false); return }
         const res = await fetch(`${BASE_URL}/timetable?class_id=eq.${student.class_id}&select=*&order=day`, {
-          headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+          headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
         })
         const data = await res.json()
         setTimetable(Array.isArray(data) ? data : [])

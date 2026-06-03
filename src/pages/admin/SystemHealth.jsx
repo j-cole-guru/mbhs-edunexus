@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Activity, CheckCircle, AlertCircle, Clock, Database, Users, Server } from 'lucide-react'
-import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
-
-const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
+import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff } from '../../lib/config'
 
 export default function SystemHealth() {
   const [health, setHealth] = useState({
@@ -25,9 +23,16 @@ export default function SystemHealth() {
 
   useEffect(() => { runHealthCheck() }, [])
 
+  const getHeaders = () => {
+    const staff = safeParseStaff() || {}
+    const token = staff.access_token || ANON_KEY
+    return { 'apikey': ANON_KEY, 'Authorization': `Bearer ${token}` }
+  }
+
   const runHealthCheck = async () => {
     setLoading(true)
     const newHealth = { database: 'checking', auth: 'checking', api: 'checking', storage: 'checking' }
+    const headers = getHeaders()
 
     try {
       const dbRes = await fetch(`${BASE_URL}/students?select=id&limit=1`, { headers })

@@ -75,7 +75,7 @@ const TeacherTimetable = () => {
                   <div className="flex flex-wrap gap-3">
                     {grid[day].map((entry, i) => (
                       <div key={i} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm min-w-[160px]">
-                        <p className="text-sm font-semibold text-gray-900">{entry.subject || 'N/A'}</p>
+                        <p className="text-sm font-semibold text-gray-900">{entry.subject || 'Not Assigned'}</p>
                         <p className="text-xs text-gray-500 mt-1">{entry.start_time} – {entry.end_time}</p>
                       </div>
                     ))}

@@ -558,7 +558,7 @@ const ArchiveStudents = () => {
                       <td className="px-6 py-4">{s.student_number}</td>
                       <td className="px-6 py-4">{s.full_name}</td>
                       <td className="px-6 py-4 text-gray-600">
-                        {s.archive_reason === "Graduated" ? s.graduation_year || "N/A" : "N/A"}
+                        {s.archive_reason === "Graduated" ? s.graduation_year || "Not provided" : "Not provided"}
                       </td>
                       <td className="px-6 py-4">{s.archive_reason}</td>
                       <td className="px-6 py-4 text-gray-600">
@@ -566,9 +566,9 @@ const ArchiveStudents = () => {
                           <span className={`text-xs font-medium ${new Date(s.suspension_end_date) <= new Date() ? 'text-green-600' : 'text-red-600'}`}>
                             {new Date(s.suspension_end_date) <= new Date() ? 'Ended' : new Date(s.suspension_end_date).toLocaleDateString()}
                           </span>
-                        ) : 'N/A'}
+                        ) : 'Not provided'}
                       </td>
-                      <td className="px-6 py-4">{s.archived_at ? new Date(s.archived_at).toLocaleDateString() : 'N/A'}</td>
+                      <td className="px-6 py-4">{s.archived_at ? new Date(s.archived_at).toLocaleDateString() : 'Not provided'}</td>
                       <td className="px-6 py-4">
                         <button
                           onClick={() => handleRestore(s.id)}

@@ -139,11 +139,11 @@ export default function AdminAttendance() {
         const enriched = data.map(record => ({
           ...record,
           student_name: studentMap[record.student_id]?.full_name || 'Unknown',
-          student_number: studentMap[record.student_id]?.student_number || 'N/A'
+          student_number: studentMap[record.student_id]?.student_number || 'Not provided'
         }))
         setRecords(enriched)
       } else {
-        setRecords(data.map(r => ({ ...r, student_name: 'N/A', student_number: 'N/A' })))
+        setRecords(data.map(r => ({ ...r, student_name: 'Unknown', student_number: 'Not provided' })))
       }
     } catch (err) {
       console.error('Error in fetchAttendance:', err)
