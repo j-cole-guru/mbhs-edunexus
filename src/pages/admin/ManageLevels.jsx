@@ -78,7 +78,8 @@ const ManageLevels = () => {
       return;
     }
 
-    if (!newLevelDepartment) {
+    const dept = newLevelDepartment || getAdminDepartment();
+    if (!dept || dept === "both") {
       setError("Department is required");
       return;
     }
@@ -88,13 +89,13 @@ const ManageLevels = () => {
         "Creating level:",
         newLevelName.trim(),
         "Department:",
-        newLevelDepartment,
+        dept,
       );
       const data = await apiFetch("/levels", {
         method: "POST",
         body: JSON.stringify({
           name: newLevelName.trim(),
-          department: newLevelDepartment,
+          department: dept,
         }),
         prefer: "return=representation",
       });
@@ -190,15 +191,25 @@ const ManageLevels = () => {
             placeholder="Enter level name (e.g., JSS1, SS2)"
             className="flex-1 form-input"
           />
-          <select
-            value={newLevelDepartment}
-            onChange={(e) => setNewLevelDepartment(e.target.value)}
-            className="flex-1 form-input"
-          >
-            <option value="">Select Department</option>
-            <option value="JSS">JSS</option>
-            <option value="SSS">SSS</option>
-          </select>
+          {getAdminDepartment() === 'both' ? (
+            <select
+              value={newLevelDepartment}
+              onChange={(e) => setNewLevelDepartment(e.target.value)}
+              className="flex-1 form-input"
+            >
+              <option value="">Select Department</option>
+              <option value="JSS">JSS</option>
+              <option value="SSS">SSS</option>
+            </select>
+          ) : (
+            <select
+              value={getAdminDepartment()}
+              disabled
+              className="flex-1 form-input bg-gray-100 cursor-not-allowed"
+            >
+              <option value={getAdminDepartment()}>{getAdminDepartment()}</option>
+            </select>
+          )}
           <button
             type="submit"
             className="px-6 py-2 btn-primary flex items-center"

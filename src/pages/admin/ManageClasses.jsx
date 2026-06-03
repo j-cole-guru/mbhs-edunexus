@@ -50,10 +50,10 @@ const ManageClasses = () => {
   };
 
   const getDepartmentLevels = async () => {
-    // TEMPORARY: Remove department filter to test if records appear
-    const url = "/levels?select=*&order=name";
+    const dept = getAdminDepartment();
+    const url = dept === "both" ? "/levels?select=*&order=name" : `/levels?select=*&department=eq.${dept}&order=name`;
     const data = await apiFetch(url);
-    console.log("All levels fetched:", data);
+    console.log("Levels fetched:", data);
     return Array.isArray(data) ? data : [];
   };
 
