@@ -399,8 +399,7 @@ const ArchiveStudents = () => {
                   >
                     <option value="">Select Reason</option>
                     <option value="Graduated">Graduated</option>
-                    <option value="Suspended - Misconduct">Suspended - Misconduct</option>
-                    <option value="Suspended - Misbehavior">Suspended - Misbehavior</option>
+                    <option value="Suspended">Suspended - Misbehavior</option>
                     <option value="Expelled">Expelled</option>
                     <option value="Transferred to another school">Transferred to another school</option>
                     <option value="Withdrew from school">Withdrew from school</option>
@@ -408,7 +407,7 @@ const ArchiveStudents = () => {
                   </select>
                 </div>
 
-                {(archiveReason === "Suspended - Misconduct" || archiveReason === "Suspended - Misbehavior") && (
+                {(archiveReason === "Suspended") && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-3">
                     <p className="text-yellow-800 text-sm font-medium flex items-center gap-2">
                       <Clock size={16} /> Suspension Duration
