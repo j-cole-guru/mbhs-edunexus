@@ -407,12 +407,12 @@ export default function Home() {
                   {
                     icon: <Phone size={24} className="text-blue-900" />,
                     title: 'Phone',
-                    lines: ['+232 XX XXX XXXX', 'Mon - Fri · 8AM - 4PM'],
+                    lines: ['+232 33939972', 'Mon - Fri · 8AM - 4PM'],
                   },
                   {
                     icon: <Mail size={24} className="text-blue-900" />,
                     title: 'Portal Support',
-                    lines: ['mbhs-edunexus.vercel.app', 'support@mbhs-edunexus.com'],
+                    lines: ['mbhs-edunexus.vercel.app', 'mbhs-edunexus.vercel.app'],
                   },
                 ].map((item) => (
                   <div key={item.title} className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
