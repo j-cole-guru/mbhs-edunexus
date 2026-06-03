@@ -83,6 +83,7 @@ const ManageStudents = () => {
   const [bulkSuccess, setBulkSuccess] = useState('')
   const [bulkError, setBulkError] = useState('')
   const [showBulkConfirm, setShowBulkConfirm] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
 
   const getAdminDepartment = () => {
     const staff = safeParseStaff() || {};
@@ -581,11 +582,14 @@ const ManageStudents = () => {
     );
   }
 
-  // Filter students by class and level
+  // Filter students by class, level, and search query
   const filteredStudents = students.filter((student) => {
     const classMatch = !filterClass || student.class_id === filterClass;
     const levelMatch = !filterLevel || student.level_id === filterLevel;
-    return classMatch && levelMatch && student.is_active === true;
+    const searchMatch = !searchQuery
+      || student.full_name?.toLowerCase().includes(searchQuery.toLowerCase())
+      || student.student_number?.toLowerCase().includes(searchQuery.toLowerCase());
+    return classMatch && levelMatch && searchMatch;
   });
 
   // Get available classes for selected level
@@ -776,8 +780,24 @@ const ManageStudents = () => {
       {/* Active Students Table */}
       {!showArchived && (
         <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-6 py-4 border-b">
-            <h2 className="font-semibold text-gray-800">Active Students ({students.length})</h2>
+          <div className="px-6 py-4 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h2 className="font-semibold text-gray-800">Active Students ({filteredStudents.length})</h2>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <select value={filterLevel} onChange={e => { setFilterLevel(e.target.value); setFilterClass('') }}
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900">
+                <option value="">All Levels</option>
+                {levels.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+              </select>
+              <select value={filterClass} onChange={e => setFilterClass(e.target.value)}
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+                disabled={!filterLevel}>
+                <option value="">All Classes</option>
+                {availableClasses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+              <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Search by name or ID..."
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 min-w-[200px]" />
+            </div>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm" style={{ minWidth: '700px' }}>
@@ -791,9 +811,9 @@ const ManageStudents = () => {
                 </tr>
               </thead>
               <tbody>
-                {students.length === 0 ? (
+                {filteredStudents.length === 0 ? (
                   <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-500">No active students found.</td></tr>
-                ) : students.map((student, i) => (
+                ) : filteredStudents.map((student, i) => (
                   <tr key={student.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                     <td className="px-4 py-3 text-gray-600">{student.student_number}</td>
                     <td className="px-4 py-3 font-medium text-gray-900">{student.full_name}</td>
