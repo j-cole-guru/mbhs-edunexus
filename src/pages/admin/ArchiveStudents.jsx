@@ -119,8 +119,7 @@ const ArchiveStudents = () => {
   const [showBulkConfirm, setShowBulkConfirm] = useState(false)
 
   useEffect(() => {
-    fetchLevels()
-    fetchClasses()
+    initData()
     fetchArchivedStudents()
   }, [])
 
@@ -129,27 +128,14 @@ const ArchiveStudents = () => {
     return dept === "both" ? "/levels?select=*&order=name" : `/levels?select=*&department=eq.${dept}&order=name`
   }
 
-  const fetchLevels = async () => {
-    try {
-      const data = await apiFetch(getLevelFilter())
-      setLevels(Array.isArray(data) ? data : [])
-    } catch (err) {
-      console.error("Error fetching levels:", err)
-    }
-  }
-
-  const fetchClasses = async () => {
-    try {
-      const levelData = await apiFetch(getLevelFilter())
-      const levelIds = (Array.isArray(levelData) ? levelData : []).map((l) => l.id)
-      if (levelIds.length === 0) {
-        setClasses([])
-        return
-      }
-      const data = await apiFetch(`/classes?select=*&level_id=in.(${levelIds.join(",")})&order=name`)
-      setClasses(Array.isArray(data) ? data : [])
-    } catch (err) {
-      console.error("Error fetching classes:", err)
+  const initData = async () => {
+    const levelData = await apiFetch(getLevelFilter())
+    const parsedLevels = Array.isArray(levelData) ? levelData : []
+    setLevels(parsedLevels)
+    const levelIds = parsedLevels.map((l) => l.id)
+    if (levelIds.length > 0) {
+      const classData = await apiFetch(`/classes?select=*&level_id=in.(${levelIds.join(",")})&order=name`)
+      setClasses(Array.isArray(classData) ? classData : [])
     }
   }
 
