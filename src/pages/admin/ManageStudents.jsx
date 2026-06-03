@@ -763,12 +763,14 @@ const ManageStudents = () => {
         >
           Active Students ({students.length})
         </button>
-        <button
-          onClick={() => setShowArchived(true)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium ${showArchived ? 'bg-blue-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-        >
-          Archived Students ({archivedStudents.length})
-        </button>
+        {getAdminDepartment() === 'both' && (
+          <button
+            onClick={() => setShowArchived(true)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium ${showArchived ? 'bg-blue-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+          >
+            Archived Students ({archivedStudents.length})
+          </button>
+        )}
       </div>
 
       {/* Bulk Archive Section */}
@@ -922,7 +924,7 @@ const ManageStudents = () => {
       )}
 
       {/* Archived Students Table */}
-      {showArchived && (
+      {showArchived && getAdminDepartment() === 'both' && (
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="px-6 py-4 border-b">
             <h2 className="font-semibold text-gray-800">Archived Students ({archivedStudents.length})</h2>
