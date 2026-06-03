@@ -18,6 +18,11 @@ const apiFetch = async (endpoint, options = {}) => {
   console.log(`[${options.method || "GET"}] ${BASE_URL}${endpoint}`);
   console.log("Status:", res.status);
   console.log("Response:", text);
+  if (!res.ok) {
+    let errMsg = `API Error: ${res.status}`;
+    try { const d = JSON.parse(text); errMsg = d.message || d.error || errMsg; } catch {}
+    throw new Error(errMsg);
+  }
   if (!text || text.trim() === "") return null;
   try {
     return JSON.parse(text);
@@ -41,13 +46,11 @@ const ManageLevels = () => {
 
   const getDepartmentLevels = async () => {
     const dept = getAdminDepartment();
-    console.log("Current Admin Dept:", dept); // Debugging
     const url =
       dept === "both"
         ? "/levels?select=*&order=name"
-        : `/levels?select=*&department=ilike.${dept}&order=name`; // Changed to ilike for case-insensitive match
+        : `/levels?select=*&department=eq.${dept}&order=name`;
     const data = await apiFetch(url);
-    console.log("Levels API response:", data); // Debugging
     return data;
   };
 

@@ -25,6 +25,11 @@ const apiFetch = async (endpoint, options = {}) => {
     },
   });
   const text = await res.text();
+  if (!res.ok) {
+    let errMsg = `API Error: ${res.status}`;
+    try { const d = JSON.parse(text); errMsg = d.message || d.error || errMsg; } catch {}
+    throw new Error(errMsg);
+  }
   if (!text || text.trim() === "") return null;
   try {
     return JSON.parse(text);
