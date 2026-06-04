@@ -1,6 +1,7 @@
-﻿import { useState, useEffect } from 'react'
+﻿import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { GraduationCap, Users, BookOpen, Award, ChevronRight, Menu, X, Shield, Clock, BarChart3, Bell, Smartphone, Lock, Star, ArrowRight, CheckCircle, Zap, Image } from 'lucide-react'
+import { supabase } from '../lib/supabaseClient'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -9,6 +10,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('student')
   const [count, setCount] = useState({ students: 0, teachers: 0, years: 0, pass: 0 })
   const [galleryPhotos, setGalleryPhotos] = useState([])
+  const fetchGalleryRef = useRef(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -31,8 +33,22 @@ export default function Home() {
         setGalleryPhotos(Array.isArray(data) ? data : [])
       } catch { setGalleryPhotos([]) }
     }
+    fetchGalleryRef.current = fetchGallery
     fetchGallery()
-    return () => { clearTimeout(timeout); controller.abort() }
+
+    const channel = supabase
+      .channel('gallery_changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'gallery_photos' },
+        () => { fetchGalleryRef.current?.() }
+      )
+      .subscribe()
+
+    return () => {
+      clearTimeout(timeout)
+      controller.abort()
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   useEffect(() => {
