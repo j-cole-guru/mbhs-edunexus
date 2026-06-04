@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { LayoutDashboard, Users, GraduationCap, BookOpen, CalendarDays, Plus, ClipboardList, UserCheck, Clock, Layers, ArrowRight, MessageSquare, Trash2, Lock, Eye, EyeOff } from 'lucide-react'
+import { LayoutDashboard, Users, GraduationCap, BookOpen, CalendarDays, Plus, ClipboardList, UserCheck, Clock, Layers, ArrowRight, MessageSquare, Trash2, Lock, Eye, EyeOff, Image } from 'lucide-react'
 import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from '../../lib/config'
 
 const getToken = () => {
@@ -36,6 +36,8 @@ const AdminDashboard = () => {
   const [allUsers, setAllUsers] = useState([])
   const [usersLoading, setUsersLoading] = useState(false)
   const [occupiedDepartments, setOccupiedDepartments] = useState([])
+  const [galleryPhotos, setGalleryPhotos] = useState([])
+  const [galleryLoading, setGalleryLoading] = useState(true)
 
   // Password change states
   const [showPasswordModal, setShowPasswordModal] = useState(false)
@@ -158,10 +160,37 @@ const AdminDashboard = () => {
     }
   }
 
+  const fetchGalleryPhotos = async () => {
+    setGalleryLoading(true)
+    try {
+      const res = await fetch(
+        `${BASE_URL}/gallery_photos?select=*&order=position.asc,created_at.desc`,
+        { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } }
+      )
+      const text = await res.text()
+      const data = text ? JSON.parse(text) : []
+      setGalleryPhotos(Array.isArray(data) ? data : [])
+    } catch { setGalleryPhotos([]) }
+    finally { setGalleryLoading(false) }
+  }
+
+  const handleDeleteGalleryPhoto = async (photoId, caption) => {
+    if (!window.confirm(`Remove "${caption}" from the home page gallery?`)) return
+    try {
+      await fetch(`${BASE_URL}/gallery_photos?id=eq.${photoId}`, {
+        method: 'DELETE',
+        headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
+      })
+      setAdminSuccess('Photo removed from gallery.')
+      fetchGalleryPhotos()
+    } catch { setAdminError('Failed to delete photo.') }
+  }
+
   useEffect(() => {
     fetchStats()
     fetchAllUsers()
     checkOccupiedDepartments()
+    fetchGalleryPhotos()
 
     // Auto restore suspended students whose time has ended
     const autoRestore = async () => {
@@ -649,6 +678,65 @@ const AdminDashboard = () => {
             <span className="font-medium text-gray-900">Check Attendance</span>
           </button>
         </div>
+      </div>
+
+      {/* Gallery Photos */}
+      <div className="bg-white rounded-lg shadow p-6 mt-8">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-lg font-bold text-gray-900">Gallery Photos</h2>
+            <p className="text-sm text-gray-500">Manage photos displayed on the home page.</p>
+          </div>
+          <a href="/admin/gallery"
+            className="text-sm text-blue-600 hover:text-blue-800 font-medium">
+            Open Full Gallery
+          </a>
+        </div>
+
+        {galleryLoading ? (
+          <div className="flex items-center justify-center p-8">
+            <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : galleryPhotos.length === 0 ? (
+          <div className="text-center py-8 border border-dashed border-gray-200 rounded-lg">
+            <Image size={36} className="text-gray-200 mx-auto mb-2" />
+            <p className="text-gray-500 text-sm font-medium">No photos uploaded yet</p>
+            <a href="/admin/gallery"
+              className="inline-block mt-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
+              Upload photos
+            </a>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {galleryPhotos.map(photo => (
+              <div key={photo.id} className={`relative group rounded-lg overflow-hidden border ${photo.is_active ? 'border-gray-200' : 'border-gray-200 opacity-50'}`}>
+                <div className="aspect-square bg-gray-100">
+                  <img src={photo.photo_url} alt={photo.caption}
+                    className="w-full h-full object-cover" />
+                </div>
+                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center">
+                  <button
+                    onClick={() => handleDeleteGalleryPhoto(photo.id, photo.caption)}
+                    className="opacity-0 group-hover:opacity-100 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+                <div className="p-2">
+                  <p className="text-xs text-gray-700 truncate font-medium">{photo.caption}</p>
+                  <p className="text-xs text-gray-400">
+                    {photo.is_active ? (
+                      <span className="text-green-600">Visible</span>
+                    ) : (
+                      <span className="text-gray-400">Hidden</span>
+                    )}
+                    {' · Pos: '}{photo.position}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Password Change Modal */}
