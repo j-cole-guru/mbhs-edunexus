@@ -2,15 +2,6 @@
 import { useNavigate } from 'react-router-dom'
 import { GraduationCap, Users, BookOpen, Award, ChevronRight, Menu, X, Shield, Clock, BarChart3, Bell, Smartphone, Lock, Star, ArrowRight, CheckCircle, Zap } from 'lucide-react'
 
-const Logo = ({ size = 'w-7 h-7', iconSize = 'w-7 h-7' }) => (
-  <div className={`${iconSize} bg-white rounded-lg flex items-center justify-center`}>
-    <svg viewBox="0 0 28 28" className={size} fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="28" height="28" rx="4" fill="white"/>
-      <text x="14" y="19" textAnchor="middle" fontSize="13" fontWeight="900" fill="#0a0a0a" fontFamily="system-ui">MB</text>
-    </svg>
-  </div>
-)
-
 export default function Home() {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -60,7 +51,9 @@ export default function Home() {
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-[#0a0a0a] bg-opacity-95 border-b border-gray-800' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Logo size="w-7 h-7" iconSize="w-9 h-9" />
+            <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center">
+              <img src="/favicon.png" alt="MBHS" className="w-7 h-7 object-contain" />
+            </div>
             <div>
               <p className="text-white font-black text-sm tracking-wide leading-none">MBHS EduNexus</p>
               <p className="text-gray-500 text-xs mt-0.5 hidden sm:block">Methodist Boys' High School</p>
@@ -214,7 +207,9 @@ export default function Home() {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600 rounded-full opacity-10 blur-3xl -translate-y-1/2 translate-x-1/2" />
                 <div className="relative z-10">
                   <div className="flex items-center gap-3 mb-8">
-                    <Logo size="w-9 h-9" iconSize="w-12 h-12" />
+                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
+                      <img src="/favicon.png" alt="MBHS" className="w-9 h-9 object-contain" />
+                    </div>
                     <div>
                       <p className="text-white font-black text-sm">MBHS EduNexus</p>
                       <p className="text-gray-500 text-xs">School Management System</p>
@@ -381,7 +376,9 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-5">
-                <Logo size="w-8 h-8" iconSize="w-10 h-10" />
+                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
+                  <img src="/favicon.png" alt="MBHS" className="w-8 h-8 object-contain" />
+                </div>
                 <div>
                   <p className="text-white font-black text-sm">MBHS EduNexus</p>
                   <p className="text-gray-600 text-xs">School Management System</p>
