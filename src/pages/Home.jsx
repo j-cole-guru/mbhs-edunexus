@@ -9,6 +9,7 @@ import gallery4 from '../assets/gallery/4.jpg'
 import gallery5 from '../assets/gallery/5.jpg'
 import gallery6 from '../assets/gallery/6.jpg'
 import gallery7 from '../assets/gallery/7.jpg'
+import gallery8 from '../assets/gallery/8.jpg'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -316,7 +317,7 @@ export default function Home() {
               </div>
             </div>
 
-            {[gallery3, gallery4, gallery5, gallery6, gallery7].map((src, i) => (
+            {[gallery3, gallery4, gallery5, gallery6, gallery7, gallery8].map((src, i) => (
               <div key={i} className="md:col-span-4 relative group overflow-hidden rounded-3xl aspect-square bg-gray-900 border border-gray-800">
                 <img src={src} alt="School event" loading="lazy" decoding="async"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
