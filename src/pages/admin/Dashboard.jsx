@@ -163,10 +163,10 @@ const AdminDashboard = () => {
   const fetchGalleryPhotos = async () => {
     setGalleryLoading(true)
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 8000)
+    const timeout = setTimeout(() => controller.abort(), 4000)
     try {
       const res = await fetch(
-        `${BASE_URL}/gallery_photos?select=*&order=position.asc,created_at.desc&limit=20`,
+        `${BASE_URL}/gallery_photos?select=id,photo_url,caption,is_active,position,created_at,uploaded_by&order=position.asc,created_at.desc&limit=20`,
         { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }, signal: controller.signal }
       )
       clearTimeout(timeout)

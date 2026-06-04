@@ -30,10 +30,10 @@ export default function ManageGallery() {
   const fetchPhotos = async () => {
     setLoading(true)
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 10000)
+    const timeout = setTimeout(() => controller.abort(), 6000)
     try {
       const res = await fetch(
-        `${BASE_URL}/gallery_photos?select=*&order=position.asc,created_at.desc&limit=50`,
+        `${BASE_URL}/gallery_photos?select=id,photo_url,caption,is_active,position,created_at,uploaded_by&order=position.asc,created_at.desc&limit=50`,
         { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }, signal: controller.signal }
       )
       clearTimeout(timeout)

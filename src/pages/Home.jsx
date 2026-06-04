@@ -12,11 +12,11 @@ export default function Home() {
 
   useEffect(() => {
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 8000)
+    const timeout = setTimeout(() => controller.abort(), 4000)
     const fetchGallery = async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/gallery_photos?is_active=eq.true&select=*&order=position.asc&limit=5`,
+          `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/gallery_photos?is_active=eq.true&select=id,photo_url,caption&order=position.asc&limit=5`,
           {
             headers: {
               'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
