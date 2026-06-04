@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { Upload, Trash2, Image, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react'
 
+const galleryChannel = new BroadcastChannel('gallery_photos')
+
 const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 const SERVICE_KEY = import.meta.env.VITE_SUPABASE_SERVICE_KEY
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
@@ -114,6 +116,7 @@ export default function ManageGallery() {
         setPreview(null)
         setCaption('')
         if (fileInputRef.current) fileInputRef.current.value = ''
+        galleryChannel.postMessage('updated')
         await fetchPhotos()
       } else {
         setError('Upload failed: ' + text)
@@ -133,6 +136,7 @@ export default function ManageGallery() {
         headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }
       })
       setSuccess('Photo removed successfully.')
+      galleryChannel.postMessage('updated')
       await fetchPhotos()
     } catch (err) {
       setError('Failed to delete photo.')
@@ -150,6 +154,7 @@ export default function ManageGallery() {
         },
         body: JSON.stringify({ is_active: !photo.is_active })
       })
+      galleryChannel.postMessage('updated')
       await fetchPhotos()
     } catch (err) {
       setError('Failed to update photo.')

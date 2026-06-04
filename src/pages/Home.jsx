@@ -41,14 +41,19 @@ export default function Home() {
 
     fetchGallery()
 
-    // Poll every 10s so new uploads appear without refresh
-    const interval = setInterval(fetchGallery, 10000)
+    // Listen for upload/delete/visibility changes across tabs
+    const channel = new BroadcastChannel('gallery_photos')
+    channel.onmessage = fetchGallery
+
+    // Poll every 30s as fallback
+    const interval = setInterval(fetchGallery, 30000)
 
     return () => {
       cancelled = true
       clearTimeout(timeout)
       clearInterval(interval)
       controller.abort()
+      channel.close()
     }
   }, [])
 
