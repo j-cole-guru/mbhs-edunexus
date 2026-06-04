@@ -1,7 +1,6 @@
-﻿import { useState, useEffect, useCallback, useRef } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { GraduationCap, Users, BookOpen, Award, ChevronRight, Menu, X, Shield, Clock, BarChart3, Bell, Smartphone, Lock, Star, ArrowRight, CheckCircle, Zap, Image } from 'lucide-react'
-import { supabase } from '../lib/supabaseClient'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -10,44 +9,46 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('student')
   const [count, setCount] = useState({ students: 0, teachers: 0, years: 0, pass: 0 })
   const [galleryPhotos, setGalleryPhotos] = useState([])
-  const fetchGalleryRef = useRef(null)
 
   useEffect(() => {
+    let cancelled = false
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 4000)
-    const fetchGallery = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/gallery_photos?is_active=eq.true&select=id,photo_url,caption&order=position.asc&limit=5`,
-          {
-            headers: {
-              'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-            },
-            signal: controller.signal
-          }
-        )
+
+    const fetchGallery = () => {
+      fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/gallery_photos?is_active=eq.true&select=id,photo_url,caption&order=position.asc&limit=5`,
+        {
+          headers: {
+            'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+          },
+          signal: controller.signal
+        }
+      )
+      .then(r => r.text())
+      .then(text => {
         clearTimeout(timeout)
-        const text = await res.text()
-        const data = text ? JSON.parse(text) : []
-        setGalleryPhotos(Array.isArray(data) ? data : [])
-      } catch { setGalleryPhotos([]) }
+        if (!cancelled && text) {
+          const parsed = JSON.parse(text)
+          setGalleryPhotos(Array.isArray(parsed) ? parsed : [])
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setGalleryPhotos([])
+      })
     }
-    fetchGalleryRef.current = fetchGallery
+
     fetchGallery()
 
-    const channel = supabase
-      .channel('gallery_changes')
-      .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'gallery_photos' },
-        () => { fetchGalleryRef.current?.() }
-      )
-      .subscribe()
+    // Poll every 10s so new uploads appear without refresh
+    const interval = setInterval(fetchGallery, 10000)
 
     return () => {
+      cancelled = true
       clearTimeout(timeout)
+      clearInterval(interval)
       controller.abort()
-      supabase.removeChannel(channel)
     }
   }, [])
 
