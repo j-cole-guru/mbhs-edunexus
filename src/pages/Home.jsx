@@ -60,7 +60,7 @@ export default function Home() {
             </div>
           </div>
           <div className="hidden md:flex items-center gap-8">
-            {['Home', 'About', 'Features', 'Portal'].map(item => (
+            {['Home', 'About', 'Features', 'System'].map(item => (
               <a key={item} href={`#${item.toLowerCase()}`}
                 className="text-gray-400 text-sm hover:text-white transition-colors font-medium">
                 {item}
@@ -77,7 +77,7 @@ export default function Home() {
         </div>
         {menuOpen && (
           <div className="md:hidden bg-[#0f0f0f] border-t border-gray-800 px-6 py-6 space-y-5">
-            {['Home', 'About', 'Features', 'Portal'].map(item => (
+            {['Home', 'About', 'Features', 'System'].map(item => (
               <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setMenuOpen(false)}
                 className="block text-gray-400 text-sm hover:text-white font-medium">
                 {item}
@@ -85,7 +85,7 @@ export default function Home() {
             ))}
             <button onClick={() => navigate('/login')}
               className="w-full bg-white text-black py-3 rounded-full text-sm font-black">
-              Sign In to Portal
+              Sign In to System
             </button>
           </div>
         )}
@@ -112,7 +112,7 @@ export default function Home() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-white bg-opacity-5 border border-white border-opacity-10 rounded-full px-5 py-2 mb-10">
             <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-            <span className="text-gray-400 text-xs font-medium tracking-[3px] uppercase">Portal Online — Freetown, Sierra Leone</span>
+            <span className="text-gray-400 text-xs font-medium tracking-[3px] uppercase">System Online — Freetown, Sierra Leone</span>
           </div>
 
           {/* Heading */}
@@ -125,14 +125,14 @@ export default function Home() {
           </h1>
 
           <p className="text-gray-400 text-lg md:text-xl mb-12 max-w-xl mx-auto leading-relaxed">
-            The official EduNexus portal — connecting principals, teachers and students of MBHS in one secure digital system.
+            The official EduNexus management system — connecting principals, teachers and students of MBHS in one secure platform.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button onClick={() => navigate('/login')}
               className="group bg-white text-black px-10 py-4 rounded-full text-sm font-black hover:bg-gray-100 transition-all flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(255,255,255,0.1)]">
               <GraduationCap size={18} />
-              Access Portal
+              Access System
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </button>
             <a href="#about"
@@ -228,7 +228,7 @@ export default function Home() {
                   <button onClick={() => navigate('/login')}
                     className="w-full bg-white text-black py-3 rounded-xl text-sm font-black hover:bg-gray-100 transition flex items-center justify-center gap-2">
                     <Zap size={16} />
-                    Open Portal
+                    Open System
                   </button>
                 </div>
               </div>
@@ -279,8 +279,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Portal Access */}
-      <section id="portal" className="py-32 px-6">
+      {/* System Access */}
+      <section id="system" className="py-32 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="relative bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 rounded-3xl p-10 md:p-16 overflow-hidden border border-blue-800">
             <div className="absolute inset-0 opacity-[0.05]"
@@ -294,9 +294,9 @@ export default function Home() {
             <div className="relative z-10">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div>
-                  <p className="text-blue-300 text-xs font-bold uppercase tracking-[4px] mb-6">Secure Portal</p>
+                  <p className="text-blue-300 text-xs font-bold uppercase tracking-[4px] mb-6">Secure System</p>
                   <h2 className="text-4xl md:text-5xl font-black text-white leading-tight mb-6">
-                    Ready to Access<br />Your Portal?
+                    Ready to Access<br />the System?
                   </h2>
                   <p className="text-blue-200 opacity-80 leading-relaxed mb-8">
                     Students login with their full name and PIN. Staff login with their email and password. Access your results, attendance, timetable and more from any device, anywhere.
@@ -385,7 +385,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-gray-600 text-sm leading-relaxed max-w-xs">
-                The official digital management portal of Methodist Boys' High School. Built for our school, by our school.
+                The official digital management system of Methodist Boys' High School. Built for our school, by our school.
               </p>
               <div className="flex items-center gap-2 mt-6 bg-gray-900 rounded-xl px-4 py-3 w-fit border border-gray-800">
                 <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
@@ -399,7 +399,7 @@ export default function Home() {
                   { label: 'Home', href: '#home' },
                   { label: 'About', href: '#about' },
                   { label: 'Features', href: '#features' },
-                  { label: 'Portal', href: '#portal' },
+                  { label: 'System', href: '#system' },
                 ].map(item => (
                   <a key={item.label} href={item.href}
                     className="block text-gray-600 text-sm hover:text-white transition-colors">{item.label}</a>
@@ -407,9 +407,9 @@ export default function Home() {
               </div>
             </div>
             <div>
-              <p className="text-white font-black text-xs uppercase tracking-widest mb-5">Portal Access</p>
+              <p className="text-white font-black text-xs uppercase tracking-widest mb-5">System Access</p>
               <div className="space-y-3">
-                {['Student Login', 'Staff Login', 'JSS Department', 'SSS Department', 'Alumni Portal'].map(item => (
+                {['Student Login', 'Staff Login', 'JSS Department', 'SSS Department', 'Alumni Access'].map(item => (
                   <button key={item} onClick={() => navigate('/login')}
                     className="block text-gray-600 text-sm hover:text-white transition-colors text-left">{item}</button>
                 ))}
