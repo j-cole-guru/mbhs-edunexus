@@ -160,23 +160,26 @@ const AdminDashboard = () => {
     }
   }
 
-  const fetchGalleryPhotos = async () => {
+  const fetchGalleryPhotos = () => {
     setGalleryLoading(true)
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 4000)
-    try {
-      const res = await fetch(
-        `${BASE_URL}/gallery_photos?select=id,photo_url,caption,is_active,position,created_at,uploaded_by&order=position.asc,created_at.desc&limit=20`,
-        { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }, signal: controller.signal }
-      )
-      clearTimeout(timeout)
-      const text = await res.text()
-      const data = text ? JSON.parse(text) : []
-      setGalleryPhotos(Array.isArray(data) ? data : [])
-    } catch (e) {
+    const timer = setTimeout(() => { controller.abort(); setGalleryLoading(false) }, 3000)
+    fetch(
+      `${BASE_URL}/gallery_photos?select=id,photo_url,caption,is_active,position,created_at,uploaded_by&order=position.asc,created_at.desc&limit=20`,
+      { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }, signal: controller.signal }
+    ).then(r => r.text()).then(text => {
+      clearTimeout(timer)
+      if (text) {
+        const parsed = JSON.parse(text)
+        setGalleryPhotos(Array.isArray(parsed) ? parsed : [])
+      } else {
+        setGalleryPhotos([])
+      }
+    }).catch(() => {
       setGalleryPhotos([])
-    }
-    setGalleryLoading(false)
+    }).finally(() => {
+      setGalleryLoading(false)
+    })
   }
 
   const handleDeleteGalleryPhoto = async (photoId, caption) => {
