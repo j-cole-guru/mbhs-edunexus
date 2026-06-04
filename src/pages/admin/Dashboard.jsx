@@ -162,16 +162,21 @@ const AdminDashboard = () => {
 
   const fetchGalleryPhotos = async () => {
     setGalleryLoading(true)
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 8000)
     try {
       const res = await fetch(
         `${BASE_URL}/gallery_photos?select=*&order=position.asc,created_at.desc&limit=20`,
-        { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } }
+        { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }, signal: controller.signal }
       )
+      clearTimeout(timeout)
       const text = await res.text()
       const data = text ? JSON.parse(text) : []
       setGalleryPhotos(Array.isArray(data) ? data : [])
-    } catch { setGalleryPhotos([]) }
-    finally { setGalleryLoading(false) }
+    } catch (e) {
+      setGalleryPhotos([])
+    }
+    setGalleryLoading(false)
   }
 
   const handleDeleteGalleryPhoto = async (photoId, caption) => {

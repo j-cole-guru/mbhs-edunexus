@@ -11,6 +11,8 @@ export default function Home() {
   const [galleryPhotos, setGalleryPhotos] = useState([])
 
   useEffect(() => {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 8000)
     const fetchGallery = async () => {
       try {
         const res = await fetch(
@@ -19,15 +21,18 @@ export default function Home() {
             headers: {
               'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
               'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-            }
+            },
+            signal: controller.signal
           }
         )
+        clearTimeout(timeout)
         const text = await res.text()
         const data = text ? JSON.parse(text) : []
         setGalleryPhotos(Array.isArray(data) ? data : [])
       } catch { setGalleryPhotos([]) }
     }
     fetchGallery()
+    return () => { clearTimeout(timeout); controller.abort() }
   }, [])
 
   useEffect(() => {

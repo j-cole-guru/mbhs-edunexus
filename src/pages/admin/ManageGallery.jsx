@@ -29,16 +29,21 @@ export default function ManageGallery() {
 
   const fetchPhotos = async () => {
     setLoading(true)
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 10000)
     try {
       const res = await fetch(
         `${BASE_URL}/gallery_photos?select=*&order=position.asc,created_at.desc&limit=50`,
-        { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } }
+        { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }, signal: controller.signal }
       )
+      clearTimeout(timeout)
       const text = await res.text()
       const data = text ? JSON.parse(text) : []
       setPhotos(Array.isArray(data) ? data : [])
-    } catch { setPhotos([]) }
-    finally { setLoading(false) }
+    } catch (e) {
+      setPhotos([])
+    }
+    setLoading(false)
   }
 
   const handleFileSelect = (e) => {
