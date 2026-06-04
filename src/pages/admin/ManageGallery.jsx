@@ -54,9 +54,45 @@ export default function ManageGallery() {
     setSelectedFile(file)
     setError('')
     const reader = new FileReader()
-    reader.onload = (e) => setPreview(e.target.result)
+    reader.onload = (e) => {
+      const img = new Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        let w = img.width, h = img.height
+        const max = 1920
+        if (w > max || h > max) {
+          if (w > h) { h = h * max / w; w = max }
+          else { w = w * max / h; h = max }
+        }
+        canvas.width = w; canvas.height = h
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h)
+        setPreview(canvas.toDataURL('image/jpeg', 0.85))
+      }
+      img.src = e.target.result
+    }
     reader.readAsDataURL(file)
   }
+
+  const compressImage = (file) => new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const img = new Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        let w = img.width, h = img.height
+        const max = 1920
+        if (w > max || h > max) {
+          if (w > h) { h = h * max / w; w = max }
+          else { w = w * max / h; h = max }
+        }
+        canvas.width = w; canvas.height = h
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h)
+        resolve(canvas.toDataURL('image/jpeg', 0.82))
+      }
+      img.src = e.target.result
+    }
+    reader.readAsDataURL(file)
+  })
 
   const handleUpload = async () => {
     if (!selectedFile) { setError('Please select an image first.'); return }
@@ -64,44 +100,40 @@ export default function ManageGallery() {
     setError('')
     setSuccess('')
     try {
-      const reader = new FileReader()
-      reader.onload = async (e) => {
-        const base64 = e.target.result
-        const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
+      const base64 = await compressImage(selectedFile)
+      const staff = JSON.parse(localStorage.getItem('mbhs_staff') || '{}')
 
-        const res = await fetch(`${BASE_URL}/gallery_photos`, {
-          method: 'POST',
-          headers: {
-            'apikey': ANON_KEY,
-            'Authorization': `Bearer ${getToken()}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=representation'
-          },
-          body: JSON.stringify({
-            photo_url: base64,
-            caption: caption.trim() || 'MBHS School Photo',
-            position: photos.length,
-            is_active: true,
-            uploaded_by: staff.email || 'admin'
-          })
+      const res = await fetch(`${BASE_URL}/gallery_photos`, {
+        method: 'POST',
+        headers: {
+          'apikey': ANON_KEY,
+          'Authorization': `Bearer ${getToken()}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({
+          photo_url: base64,
+          caption: caption.trim() || 'MBHS School Photo',
+          position: photos.length,
+          is_active: true,
+          uploaded_by: staff.email || 'admin'
         })
+      })
 
-        const text = await res.text()
-        console.log('Upload response:', text)
+      const text = await res.text()
+      console.log('Upload response:', text)
 
-        if (res.ok) {
-          setSuccess('Photo uploaded successfully and is now showing on the home page.')
-          setSelectedFile(null)
-          setPreview(null)
-          setCaption('')
-          if (fileInputRef.current) fileInputRef.current.value = ''
-          await fetchPhotos()
-        } else {
-          setError('Upload failed: ' + text)
-        }
-        setUploading(false)
+      if (res.ok) {
+        setSuccess('Photo uploaded successfully and is now showing on the home page.')
+        setSelectedFile(null)
+        setPreview(null)
+        setCaption('')
+        if (fileInputRef.current) fileInputRef.current.value = ''
+        await fetchPhotos()
+      } else {
+        setError('Upload failed: ' + text)
       }
-      reader.readAsDataURL(selectedFile)
+      setUploading(false)
     } catch (err) {
       setError('Upload failed: ' + err.message)
       setUploading(false)
