@@ -54,22 +54,7 @@ export default function ManageGallery() {
     setSelectedFile(file)
     setError('')
     const reader = new FileReader()
-    reader.onload = (e) => {
-      const img = new Image()
-      img.onload = () => {
-        const canvas = document.createElement('canvas')
-        let w = img.width, h = img.height
-        const max = 1920
-        if (w > max || h > max) {
-          if (w > h) { h = h * max / w; w = max }
-          else { w = w * max / h; h = max }
-        }
-        canvas.width = w; canvas.height = h
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h)
-        setPreview(canvas.toDataURL('image/jpeg', 0.85))
-      }
-      img.src = e.target.result
-    }
+    reader.onload = (e) => setPreview(e.target.result)
     reader.readAsDataURL(file)
   }
 
