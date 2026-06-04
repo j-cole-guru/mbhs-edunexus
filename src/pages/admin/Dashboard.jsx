@@ -164,7 +164,7 @@ const AdminDashboard = () => {
     setGalleryLoading(true)
     try {
       const res = await fetch(
-        `${BASE_URL}/gallery_photos?select=*&order=position.asc,created_at.desc`,
+        `${BASE_URL}/gallery_photos?select=*&order=position.asc,created_at.desc&limit=20`,
         { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } }
       )
       const text = await res.text()
@@ -711,7 +711,7 @@ const AdminDashboard = () => {
             {galleryPhotos.map(photo => (
               <div key={photo.id} className={`relative group rounded-lg overflow-hidden border ${photo.is_active ? 'border-gray-200' : 'border-gray-200 opacity-50'}`}>
                 <div className="aspect-square bg-gray-100">
-                  <img src={photo.photo_url} alt={photo.caption}
+                  <img src={photo.photo_url} alt={photo.caption} loading="lazy" decoding="async"
                     className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center">

@@ -324,7 +324,7 @@ export default function Home() {
                 {/* Large featured - first photo */}
                 {galleryPhotos[0] && (
                   <div className="md:col-span-8 relative group overflow-hidden rounded-3xl aspect-[16/9] bg-gray-900 border border-gray-800">
-                    <img src={galleryPhotos[0].photo_url} alt={galleryPhotos[0].caption}
+                    <img src={galleryPhotos[0].photo_url} alt={galleryPhotos[0].caption} loading="lazy" decoding="async"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
                     <div className="absolute bottom-4 left-4">
@@ -337,7 +337,7 @@ export default function Home() {
                 {/* Second photo */}
                 {galleryPhotos[1] && (
                   <div className="md:col-span-4 relative group overflow-hidden rounded-3xl bg-gray-900 border border-gray-800" style={{ minHeight: '280px' }}>
-                    <img src={galleryPhotos[1].photo_url} alt={galleryPhotos[1].caption}
+                    <img src={galleryPhotos[1].photo_url} alt={galleryPhotos[1].caption} loading="lazy" decoding="async"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
                     <div className="absolute bottom-4 left-4">
@@ -349,7 +349,7 @@ export default function Home() {
                 {/* Photos 3, 4, 5 */}
                 {galleryPhotos.slice(2, 5).map((photo, i) => (
                   <div key={photo.id} className="md:col-span-4 relative group overflow-hidden rounded-3xl aspect-square bg-gray-900 border border-gray-800">
-                    <img src={photo.photo_url} alt={photo.caption}
+                    <img src={photo.photo_url} alt={photo.caption} loading="lazy" decoding="async"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity">

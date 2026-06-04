@@ -31,7 +31,7 @@ export default function ManageGallery() {
     setLoading(true)
     try {
       const res = await fetch(
-        `${BASE_URL}/gallery_photos?select=*&order=position.asc,created_at.desc`,
+        `${BASE_URL}/gallery_photos?select=*&order=position.asc,created_at.desc&limit=50`,
         { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` } }
       )
       const text = await res.text()
@@ -256,7 +256,7 @@ export default function ManageGallery() {
               <div key={photo.id} className={`flex items-center gap-4 p-4 ${!photo.is_active ? 'opacity-50' : ''}`}>
                 {/* Thumbnail */}
                 <div className="w-20 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                  <img src={photo.photo_url} alt={photo.caption}
+                  <img src={photo.photo_url} alt={photo.caption} loading="lazy" decoding="async"
                     className="w-full h-full object-cover" />
                 </div>
 
