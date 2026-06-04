@@ -1,6 +1,14 @@
 ﻿import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { GraduationCap, Users, BookOpen, Award, ChevronRight, Menu, X, Shield, Clock, BarChart3, Bell, Smartphone, Lock, Star, ArrowRight, CheckCircle, Zap, Image } from 'lucide-react'
+import { GraduationCap, Users, BookOpen, Award, ChevronRight, Menu, X, Shield, Clock, BarChart3, Bell, Smartphone, Lock, Star, ArrowRight, CheckCircle, Zap } from 'lucide-react'
+
+import gallery1 from '../assets/gallery/1.jpg'
+import gallery2 from '../assets/gallery/2.jpg'
+import gallery3 from '../assets/gallery/3.jpg'
+import gallery4 from '../assets/gallery/4.jpg'
+import gallery5 from '../assets/gallery/5.jpg'
+import gallery6 from '../assets/gallery/6.jpg'
+import gallery7 from '../assets/gallery/7.jpg'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -8,57 +16,6 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false)
   const [activeTab, setActiveTab] = useState('student')
   const [count, setCount] = useState({ students: 0, teachers: 0, years: 0, pass: 0 })
-  const [galleryPhotos, setGalleryPhotos] = useState([])
-
-  useEffect(() => {
-    let cancelled = false
-    let currentController = null
-
-    const fetchGallery = () => {
-      if (currentController) currentController.abort()
-      const controller = new AbortController()
-      currentController = controller
-      const timeout = setTimeout(() => controller.abort(), 4000)
-
-      fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/gallery_photos?is_active=eq.true&select=id,photo_url,caption&order=position.asc&limit=5`,
-        {
-          headers: {
-            'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-          },
-          signal: controller.signal
-        }
-      )
-      .then(r => r.text())
-      .then(text => {
-        clearTimeout(timeout)
-        if (!cancelled && text) {
-          const parsed = JSON.parse(text)
-          setGalleryPhotos(Array.isArray(parsed) ? parsed : [])
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setGalleryPhotos([])
-      })
-    }
-
-    fetchGallery()
-
-    // Listen for upload/delete/visibility changes across tabs
-    const channel = new BroadcastChannel('gallery_photos')
-    channel.onmessage = fetchGallery
-
-    // Poll every 30s as fallback
-    const interval = setInterval(fetchGallery, 30000)
-
-    return () => {
-      cancelled = true
-      if (currentController) currentController.abort()
-      clearInterval(interval)
-      channel.close()
-    }
-  }, [])
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
@@ -339,56 +296,36 @@ export default function Home() {
             <p className="text-gray-500 max-w-xl mx-auto text-lg">A glimpse into life at Methodist Boys' High School.</p>
           </div>
 
-          {/* Gallery Grid */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-            {galleryPhotos.length === 0 ? (
-              <div className="md:col-span-12 text-center py-20 border border-gray-800 rounded-3xl">
-                <div className="w-16 h-16 border-2 border-gray-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Image size={28} className="text-gray-700" />
-                </div>
-                <p className="text-gray-600 font-bold">Photos Coming Soon</p>
-                <p className="text-gray-700 text-sm mt-2">School photos will appear here once uploaded by the administrator.</p>
+            <div className="md:col-span-8 relative group overflow-hidden rounded-3xl aspect-[16/9] bg-gray-900 border border-gray-800">
+              <img src={gallery1} alt="School event" loading="lazy" decoding="async"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-4">
+                <p className="text-white font-bold text-sm">Methodist Boys' High School</p>
+                <p className="text-gray-400 text-xs">Methodist Boys' High School</p>
               </div>
-            ) : (
-              <>
-                {/* Large featured - first photo */}
-                {galleryPhotos[0] && (
-                  <div className="md:col-span-8 relative group overflow-hidden rounded-3xl aspect-[16/9] bg-gray-900 border border-gray-800">
-                    <img src={galleryPhotos[0].photo_url} alt={galleryPhotos[0].caption} loading="lazy" decoding="async"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-                    <div className="absolute bottom-4 left-4">
-                      <p className="text-white font-bold text-sm">{galleryPhotos[0].caption}</p>
-                      <p className="text-gray-400 text-xs">Methodist Boys' High School</p>
-                    </div>
-                  </div>
-                )}
+            </div>
 
-                {/* Second photo */}
-                {galleryPhotos[1] && (
-                  <div className="md:col-span-4 relative group overflow-hidden rounded-3xl bg-gray-900 border border-gray-800" style={{ minHeight: '280px' }}>
-                    <img src={galleryPhotos[1].photo_url} alt={galleryPhotos[1].caption} loading="lazy" decoding="async"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-                    <div className="absolute bottom-4 left-4">
-                      <p className="text-white font-bold text-sm">{galleryPhotos[1].caption}</p>
-                    </div>
-                  </div>
-                )}
+            <div className="md:col-span-4 relative group overflow-hidden rounded-3xl bg-gray-900 border border-gray-800" style={{ minHeight: '280px' }}>
+              <img src={gallery2} alt="School event" loading="lazy" decoding="async"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-4">
+                <p className="text-white font-bold text-sm">Methodist Boys' High School</p>
+              </div>
+            </div>
 
-                {/* Photos 3, 4, 5 */}
-                {galleryPhotos.slice(2, 5).map((photo, i) => (
-                  <div key={photo.id} className="md:col-span-4 relative group overflow-hidden rounded-3xl aspect-square bg-gray-900 border border-gray-800">
-                    <img src={photo.photo_url} alt={photo.caption} loading="lazy" decoding="async"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <p className="text-white font-bold text-sm">{photo.caption}</p>
-                    </div>
-                  </div>
-                ))}
-              </>
-            )}
+            {[gallery3, gallery4, gallery5, gallery6, gallery7].map((src, i) => (
+              <div key={i} className="md:col-span-4 relative group overflow-hidden rounded-3xl aspect-square bg-gray-900 border border-gray-800">
+                <img src={src} alt="School event" loading="lazy" decoding="async"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <p className="text-white font-bold text-sm">Methodist Boys' High School</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
