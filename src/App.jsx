@@ -30,6 +30,7 @@ import AuditTrail from "./pages/admin/AuditTrail";
 import ManageAdmins from "./pages/admin/ManageAdmins";
 import DataBackup from "./pages/admin/DataBackup";
 import StudentReports from "./pages/admin/StudentReports";
+import ManageGallery from "./pages/admin/ManageGallery";
 
 // Teacher Pages
 import TeacherDashboard from "./pages/teacher/Dashboard";
@@ -229,6 +230,16 @@ function App() {
                 <ProtectedRoute role="admin">
                   <Layout role="admin">
                     <StudentReports />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/gallery"
+              element={
+                <ProtectedRoute role="admin">
+                  <Layout role="admin">
+                    <ManageGallery />
                   </Layout>
                 </ProtectedRoute>
               }

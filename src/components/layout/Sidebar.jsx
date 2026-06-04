@@ -22,6 +22,7 @@ import {
   MessageSquare,
   Archive,
   CreditCard,
+  Image,
 } from "lucide-react";
 import logo from "../../assets/logo.png";
 import { safeParseStaff, safeParseStudent } from "../../lib/config"
@@ -56,6 +57,7 @@ const Sidebar = ({ onClose }) => {
         { path: "/admin/audit", label: "Audit Trail", icon: FileText },
         { path: "/admin/admins", label: "Manage Admins", icon: UserCog },
         { path: "/admin/backup", label: "Data Backup", icon: Database },
+        { path: "/admin/gallery", label: "Gallery Photos", icon: Image },
       ];
 
       const deptAdminLinks = [

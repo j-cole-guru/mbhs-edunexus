@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { GraduationCap, Users, BookOpen, Award, ChevronRight, Menu, X, Shield, Clock, BarChart3, Bell, Smartphone, Lock, Star, ArrowRight, CheckCircle, Zap } from 'lucide-react'
+import { GraduationCap, Users, BookOpen, Award, ChevronRight, Menu, X, Shield, Clock, BarChart3, Bell, Smartphone, Lock, Star, ArrowRight, CheckCircle, Zap, Image } from 'lucide-react'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -8,6 +8,27 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false)
   const [activeTab, setActiveTab] = useState('student')
   const [count, setCount] = useState({ students: 0, teachers: 0, years: 0, pass: 0 })
+  const [galleryPhotos, setGalleryPhotos] = useState([])
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/gallery_photos?is_active=eq.true&select=*&order=position.asc&limit=5`,
+          {
+            headers: {
+              'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+            }
+          }
+        )
+        const text = await res.text()
+        const data = text ? JSON.parse(text) : []
+        setGalleryPhotos(Array.isArray(data) ? data : [])
+      } catch { setGalleryPhotos([]) }
+    }
+    fetchGallery()
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
@@ -60,7 +81,7 @@ export default function Home() {
             </div>
           </div>
           <div className="hidden md:flex items-center gap-8">
-            {['Home', 'About', 'Features', 'System'].map(item => (
+            {['Home', 'About', 'Features', 'Gallery', 'System'].map(item => (
               <a key={item} href={`#${item.toLowerCase()}`}
                 className="text-gray-400 text-sm hover:text-white transition-colors font-medium">
                 {item}
@@ -77,7 +98,7 @@ export default function Home() {
         </div>
         {menuOpen && (
           <div className="md:hidden bg-[#0f0f0f] border-t border-gray-800 px-6 py-6 space-y-5">
-            {['Home', 'About', 'Features', 'System'].map(item => (
+            {['Home', 'About', 'Features', 'Gallery', 'System'].map(item => (
               <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setMenuOpen(false)}
                 className="block text-gray-400 text-sm hover:text-white font-medium">
                 {item}
@@ -279,6 +300,69 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Gallery */}
+      <section id="gallery" className="py-32 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-blue-400 text-xs font-bold uppercase tracking-[4px] mb-4">School Gallery</p>
+            <h2 className="text-4xl md:text-6xl font-black text-white mb-6">Our School in Pictures</h2>
+            <p className="text-gray-500 max-w-xl mx-auto text-lg">A glimpse into life at Methodist Boys' High School.</p>
+          </div>
+
+          {/* Gallery Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            {galleryPhotos.length === 0 ? (
+              <div className="md:col-span-12 text-center py-20 border border-gray-800 rounded-3xl">
+                <div className="w-16 h-16 border-2 border-gray-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Image size={28} className="text-gray-700" />
+                </div>
+                <p className="text-gray-600 font-bold">Photos Coming Soon</p>
+                <p className="text-gray-700 text-sm mt-2">School photos will appear here once uploaded by the administrator.</p>
+              </div>
+            ) : (
+              <>
+                {/* Large featured - first photo */}
+                {galleryPhotos[0] && (
+                  <div className="md:col-span-8 relative group overflow-hidden rounded-3xl aspect-[16/9] bg-gray-900 border border-gray-800">
+                    <img src={galleryPhotos[0].photo_url} alt={galleryPhotos[0].caption}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4">
+                      <p className="text-white font-bold text-sm">{galleryPhotos[0].caption}</p>
+                      <p className="text-gray-400 text-xs">Methodist Boys' High School</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Second photo */}
+                {galleryPhotos[1] && (
+                  <div className="md:col-span-4 relative group overflow-hidden rounded-3xl bg-gray-900 border border-gray-800" style={{ minHeight: '280px' }}>
+                    <img src={galleryPhotos[1].photo_url} alt={galleryPhotos[1].caption}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4">
+                      <p className="text-white font-bold text-sm">{galleryPhotos[1].caption}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Photos 3, 4, 5 */}
+                {galleryPhotos.slice(2, 5).map((photo, i) => (
+                  <div key={photo.id} className="md:col-span-4 relative group overflow-hidden rounded-3xl aspect-square bg-gray-900 border border-gray-800">
+                    <img src={photo.photo_url} alt={photo.caption}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <p className="text-white font-bold text-sm">{photo.caption}</p>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* System Access */}
       <section id="system" className="py-32 px-6">
         <div className="max-w-6xl mx-auto">
@@ -399,6 +483,7 @@ export default function Home() {
                   { label: 'Home', href: '#home' },
                   { label: 'About', href: '#about' },
                   { label: 'Features', href: '#features' },
+                  { label: 'Gallery', href: '#gallery' },
                   { label: 'System', href: '#system' },
                 ].map(item => (
                   <a key={item.label} href={item.href}
