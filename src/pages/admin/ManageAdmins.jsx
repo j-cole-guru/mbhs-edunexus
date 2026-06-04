@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserCog, Trash2, Plus, CheckCircle, AlertCircle } from "lucide-react";
 import {
@@ -53,6 +54,14 @@ export default function ManageAdmins() {
       return Array.isArray(data) ? data : [];
     },
   });
+
+  const occupiedDepartments = [
+    ...new Set(
+      admins
+        .map((a) => a.department)
+        .filter((d) => d === "JSS" || d === "SSS"),
+    ),
+  ];
 
   const handleCreateAdmin = async () => {
     if (!adminName || !adminEmail || !adminPassword || !adminDepartment) {
@@ -229,7 +238,7 @@ export default function ManageAdmins() {
             All Administrators ({admins.length})
           </h2>
         </div>
-        {loading ? (
+        {isLoading ? (
           <div className="flex items-center justify-center p-8">
             <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
           </div>
