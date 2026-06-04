@@ -12,10 +12,14 @@ export default function Home() {
 
   useEffect(() => {
     let cancelled = false
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 4000)
+    let currentController = null
 
     const fetchGallery = () => {
+      if (currentController) currentController.abort()
+      const controller = new AbortController()
+      currentController = controller
+      const timeout = setTimeout(() => controller.abort(), 4000)
+
       fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/gallery_photos?is_active=eq.true&select=id,photo_url,caption&order=position.asc&limit=5`,
         {
@@ -50,9 +54,8 @@ export default function Home() {
 
     return () => {
       cancelled = true
-      clearTimeout(timeout)
+      if (currentController) currentController.abort()
       clearInterval(interval)
-      controller.abort()
       channel.close()
     }
   }, [])
