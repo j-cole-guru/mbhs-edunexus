@@ -161,23 +161,27 @@ const AdminDashboard = () => {
   }
 
   const fetchGalleryPhotos = () => {
+    console.log('[gallery] fetch started')
     setGalleryLoading(true)
     const controller = new AbortController()
-    const timer = setTimeout(() => { controller.abort(); setGalleryLoading(false) }, 3000)
+    const timer = setTimeout(() => { console.log('[gallery] timeout - aborting'); controller.abort(); setGalleryLoading(false) }, 3000)
     fetch(
       `${BASE_URL}/gallery_photos?select=id,photo_url,caption,is_active,position,created_at,uploaded_by&order=position.asc,created_at.desc&limit=20`,
       { headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${getToken()}` }, signal: controller.signal }
-    ).then(r => r.text()).then(text => {
+    ).then(r => { console.log('[gallery] status:', r.status); return r.text() }).then(text => {
       clearTimeout(timer)
+      console.log('[gallery] response text length:', text?.length)
       if (text) {
         const parsed = JSON.parse(text)
         setGalleryPhotos(Array.isArray(parsed) ? parsed : [])
       } else {
         setGalleryPhotos([])
       }
-    }).catch(() => {
+    }).catch(e => {
+      console.log('[gallery] error:', e?.message || e)
       setGalleryPhotos([])
     }).finally(() => {
+      console.log('[gallery] fetch done')
       setGalleryLoading(false)
     })
   }
