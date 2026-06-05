@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { CheckCircle, XCircle, Clock, AlertCircle, Users, Calendar, ArrowRight } from 'lucide-react'
-import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from '../../lib/config'
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff, logAudit} from '../../lib/config'
 
 const getToken = () => {
   const staff = safeParseStaff() || {}
@@ -119,6 +119,7 @@ const TeacherAttendance = () => {
       }
 
       setSuccess('Attendance submitted successfully!')
+      await logAudit('Mark Attendance', `Marked attendance for class on ${selectedDate}`)
     } catch (err) {
       console.error(err)
       setError('An error occurred while saving. Please try again.')

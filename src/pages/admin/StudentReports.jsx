@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { MessageSquare, CheckCircle, Eye, RefreshCw } from 'lucide-react'
-import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from '../../lib/config'
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff, logAudit} from '../../lib/config'
 
 const getToken = () => {
   const staff = safeParseStaff() || {}
@@ -57,6 +57,7 @@ export default function StudentReports() {
       headers,
       body: JSON.stringify({ status: 'read' })
     })
+    await logAudit('Mark Report Read', `Report ${reportId} marked as read`)
     fetchReports()
   }
 
@@ -67,6 +68,7 @@ export default function StudentReports() {
       headers,
       body: JSON.stringify({ status: 'resolved' })
     })
+    await logAudit('Mark Report Resolved', `Report ${reportId} marked as resolved`)
     setSelectedReport(null)
     fetchReports()
   }

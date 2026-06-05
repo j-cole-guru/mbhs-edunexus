@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { LayoutDashboard, Users, GraduationCap, BookOpen, CalendarDays, Plus, ClipboardList, UserCheck, Clock, Layers, ArrowRight, MessageSquare, Trash2, Lock, Eye, EyeOff, Image } from 'lucide-react'
-import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from '../../lib/config'
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff, logAudit} from '../../lib/config'
 
 const getToken = () => {
   const staff = safeParseStaff() || {}
@@ -100,6 +100,7 @@ const AdminDashboard = () => {
       })
 
       setAdminSuccess('User deleted successfully.')
+      await logAudit('Delete User', `Deleted user ID: ${userId}`)
       fetchAllUsers()
       checkOccupiedDepartments()
     } catch (err) {
@@ -147,6 +148,7 @@ const AdminDashboard = () => {
       }
 
       setPasswordSuccess('Password changed successfully!')
+      await logAudit('Change Password', 'Changed password for user')
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
@@ -344,6 +346,7 @@ const AdminDashboard = () => {
       }
 
       setAdminSuccess(`${adminDepartment} Admin created successfully. Email: ${adminEmail}`)
+      await logAudit('Create Admin', `Created admin ${adminEmail}`)
       setAdminName('')
       setAdminEmail('')
       setAdminPassword('')

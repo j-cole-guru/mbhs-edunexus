@@ -10,7 +10,7 @@ import {
   RefreshCw,
   Copy,
 } from "lucide-react";
-import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from "../../lib/config";
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff, logAudit} from "../../lib/config";
 import { generatePin } from "../../lib/pinGenerator";
 
 const getAuth = () => {
@@ -204,6 +204,7 @@ const ManageStudents = () => {
       // Refresh from server to ensure consistency
       await fetchStudents();
       await fetchArchivedStudents();
+      await logAudit('Archive Student', `Archived student ${archiveModalStudent.full_name} - ${archiveReason}`);
     } catch (err) {
       alert('Archive failed: ' + err.message);
       // Revert UI on failure
@@ -241,6 +242,7 @@ const ManageStudents = () => {
       // Refresh from server to ensure consistency
       await fetchStudents()
       await fetchArchivedStudents()
+      await logAudit('Restore Student', `Restored student ID: ${studentId}`)
     } catch (err) {
       alert('Restore failed: ' + err.message);
       // Revert UI on failure
@@ -407,6 +409,7 @@ const ManageStudents = () => {
       setSuccess(
         `Student created successfully! Name: ${formData.full_name}`,
       );
+      await logAudit('Create Student', `Created student ${formData.full_name}`);
       
       // Refresh list to sync with server
       await fetchStudents();
@@ -443,6 +446,7 @@ const ManageStudents = () => {
       });
       console.log("Student deleted successfully");
       setSuccess("Student deleted successfully");
+      await logAudit('Delete Student', `Deleted student ID: ${id}`);
       // Confirm deletion with fresh fetch in case of discrepancy
       await fetchStudents();
     } catch (error) {
@@ -498,6 +502,7 @@ const ManageStudents = () => {
         setGeneratedPin(newPin);
         setShowPinModal(true);
         setSuccess(`PIN reset successfully for ${student.full_name}`);
+        await logAudit('Reset PIN', `Reset PIN for ${student.full_name}`);
         await fetchStudents();
       } else {
         setError("Failed to reset PIN");
@@ -560,6 +565,7 @@ const ManageStudents = () => {
         throw new Error(text || 'Bulk archive request failed')
       }
       setBulkSuccess(`${bulkStudents.length} students archived successfully as Class of ${bulkGraduationYear}.`)
+      await logAudit('Bulk Archive', `Archived ${bulkStudents.length} students as Class of ${bulkGraduationYear}`)
       setBulkStudents([])
       setBulkClassId('')
       setBulkLevelId('')

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Plus, Trash2, BookOpen, CheckCircle, AlertCircle } from "lucide-react";
-import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from "../../lib/config";
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff, logAudit} from "../../lib/config";
 
 const getAuth = () => {
   const staff = safeParseStaff() || {};
@@ -120,6 +120,7 @@ const ManageClasses = () => {
       console.log("Class created successfully:", data);
       setFormData({ name: "", level_id: "" });
       setSuccess("Class created successfully");
+      await logAudit('Create Class', `Created class ${formData.name}`);
       // Refresh the list
       await fetchClasses();
     } catch (error) {
@@ -152,6 +153,7 @@ const ManageClasses = () => {
       });
       console.log("Class deleted successfully");
       setSuccess("Class deleted successfully");
+      await logAudit('Delete Class', `Deleted class ID: ${id}`);
       // Refresh the list
       await fetchClasses();
     } catch (error) {

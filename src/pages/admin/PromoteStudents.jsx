@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Users, ArrowRight } from 'lucide-react'
-import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from '../../lib/config'
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff, logAudit} from '../../lib/config'
 
 const getToken = () => {
   const staff = safeParseStaff() || {}
@@ -95,6 +95,7 @@ export default function PromoteStudents() {
         })
       }
       setSuccess(`${students.length} student(s) promoted successfully.`)
+      await logAudit('Promote Students', `Promoted ${students.length} students`)
       setStudents([])
       setFromClassId('')
       setToClassId('')

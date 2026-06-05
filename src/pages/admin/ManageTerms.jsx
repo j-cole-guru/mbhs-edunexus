@@ -7,7 +7,7 @@ import {
   CheckCircle,
   AlertCircle,
 } from "lucide-react";
-import { ANON_KEY, BASE_URL, getToken } from "../../lib/config";
+import { ANON_KEY, BASE_URL, getToken, logAudit } from "../../lib/config";
 
 const safeFetch = async (url, options = {}) => {
   const token = getToken();
@@ -118,6 +118,7 @@ const ManageTerms = () => {
       console.log("Term creation result:", result); // Add this for debugging
       if (result) {
         setSuccess("Term created successfully.");
+        await logAudit('Create Term', `Created term ${formData.name}`);
         setFormData({
           name: "",
           year: new Date().getFullYear(),
@@ -158,6 +159,8 @@ const ManageTerms = () => {
       );
 
       setSuccess("Current term updated successfully");
+      const name = terms.find(t => t.id === id)?.name || '';
+      await logAudit('Set Current Term', `Set ${name} as current term`);
     } catch (error) {
       console.error("Error setting current term:", error);
       setError("Failed to update current term");
@@ -176,6 +179,7 @@ const ManageTerms = () => {
       });
       console.log("Term deleted successfully");
       setSuccess("Term deleted successfully");
+      await logAudit('Delete Term', `Deleted term ID: ${id}`);
       // Refresh the list
       await fetchTerms();
     } catch (error) {

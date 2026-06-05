@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import * as XLSX from 'xlsx'
 import { Upload, CheckCircle, AlertCircle } from 'lucide-react'
-import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from '../../lib/config'
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff, logAudit} from '../../lib/config'
 
 const getToken = () => {
   const staff = safeParseStaff() || {}
@@ -211,6 +211,7 @@ const AdminResults = () => {
         saved++
       }
       setSuccess(`Results uploaded! ${saved} saved${skipped ? `, ${skipped} skipped (student not found)` : ''}.`)
+      await logAudit('Upload Results', `Uploaded ${parsedData.length} results for ${selectedTerm} ${selectedAssessmentType}`)
       setParsedData([])
       setSelectedAssessmentType('')
     } catch (err) {

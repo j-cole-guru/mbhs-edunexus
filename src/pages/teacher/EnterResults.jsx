@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { CheckCircle, AlertCircle } from 'lucide-react'
-import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from '../../lib/config'
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff, logAudit} from '../../lib/config'
 
 const getToken = () => {
   const staff = safeParseStaff() || {}
@@ -110,6 +110,7 @@ const TeacherResults = () => {
         body: JSON.stringify(toInsert)
       })
       setSuccess('Results saved successfully')
+      await logAudit('Enter Results', `Entered results for students in term/class`)
     } catch (err) {
       console.error('Error saving results:', err)
       setError('Failed to save results')

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import mammoth from 'mammoth'
 import { Upload, CheckCircle, AlertCircle, Clock, FileText, Trash2 } from 'lucide-react'
-import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from '../../lib/config'
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff, logAudit} from '../../lib/config'
 
 const getToken = () => {
   const staff = safeParseStaff() || {}
@@ -153,6 +153,7 @@ const AdminTimetable = () => {
         })
       }
       setSuccess(`Timetable saved! ${parsedData.length} entries uploaded.`)
+      await logAudit('Upload Timetable', `Saved timetable for class ID: ${selectedClass}`)
       setParsedData([])
       await fetchExistingTimetable(selectedClass)
     } catch (err) { console.error(err); setError('Failed to save timetable.') }
@@ -175,6 +176,7 @@ const AdminTimetable = () => {
       })
       if (!res.ok) throw new Error('Failed to delete')
       setSuccess('Timetable deleted successfully.')
+      await logAudit('Delete Timetable', `Deleted timetable for class ID: ${selectedClass}`)
       await fetchExistingTimetable(selectedClass)
     } catch (err) {
       console.error(err)

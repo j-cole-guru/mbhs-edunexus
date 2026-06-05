@@ -8,6 +8,7 @@ import {
   AUTH_URL,
   SUPABASE_URL,
   getToken,
+  logAudit,
 } from "../../lib/config";
 
 const safeFetch = async (url, options = {}) => {
@@ -105,6 +106,7 @@ export default function ManageAdmins() {
       });
 
       setAdminSuccess(`${adminDepartment} Admin created successfully.`);
+      await logAudit('Create Admin', `Created admin ${adminEmail}`);
       setAdminName("");
       setAdminEmail("");
       setAdminPassword("");
@@ -129,6 +131,7 @@ export default function ManageAdmins() {
         },
       });
       setAdminSuccess("Admin deleted.");
+      await logAudit('Delete Admin', `Deleted admin ID: ${adminId}`);
       queryClient.invalidateQueries({ queryKey: ["admins"] });
     } catch {
       setAdminError("Failed to delete.");

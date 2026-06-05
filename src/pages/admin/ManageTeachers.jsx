@@ -7,7 +7,7 @@ import {
   AlertCircle,
   ArrowRight,
 } from "lucide-react";
-import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff} from "../../lib/config";
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff, logAudit} from "../../lib/config";
 
 const getToken = () => {
   const staff = safeParseStaff() || {};
@@ -301,6 +301,7 @@ const ManageTeachers = () => {
       }
 
       setSuccess("Teacher created successfully");
+      await logAudit('Create Teacher', `Created teacher ${formData.full_name}`);
       setFormData({
         full_name: "",
         email: "",
@@ -350,6 +351,7 @@ const ManageTeachers = () => {
       }
 
       setSuccess('Teacher deleted successfully.')
+      await logAudit('Delete Teacher', `Deleted teacher ID: ${teacher.id}`)
       await fetchTeachers()
     } catch (err) {
       setError('Failed to delete teacher: ' + err.message)

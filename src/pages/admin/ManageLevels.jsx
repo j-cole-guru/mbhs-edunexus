@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Trash2, Layers, CheckCircle, AlertCircle } from "lucide-react";
-import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, getToken, safeParseStaff} from "../../lib/config";
+import {ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, getToken, safeParseStaff, logAudit} from "../../lib/config";
 
 const apiFetch = async (endpoint, options = {}) => {
   const token = getToken();
@@ -106,6 +106,7 @@ const ManageLevels = () => {
       setNewLevelName("");
       setNewLevelDepartment("");
       setSuccess("Level created successfully");
+      await logAudit('Create Level', `Created level ${newLevelName}`);
       // Refresh the list
       await fetchLevels();
     } catch (error) {
@@ -143,6 +144,7 @@ const ManageLevels = () => {
       });
       console.log("Level deleted successfully");
       setSuccess("Level deleted successfully");
+      await logAudit('Delete Level', `Deleted level ID: ${id}`);
       // Refresh the list
       await fetchLevels();
     } catch (error) {

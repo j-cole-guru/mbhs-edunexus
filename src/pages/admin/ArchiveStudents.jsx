@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { Archive, Users, CheckCircle, AlertCircle, Search, Clock } from "lucide-react"
-import {ANON_KEY, SUPABASE_URL, safeParseStaff} from "../../lib/config"
+import {ANON_KEY, SUPABASE_URL, safeParseStaff, logAudit} from "../../lib/config"
 
 const getAuth = () => {
   const staffData = localStorage.getItem("mbhs_staff")
@@ -227,6 +227,7 @@ const ArchiveStudents = () => {
       setSuccess(
         `${selectedStudentIds.length} student(s) archived successfully${isSuspension ? `. Account will be automatically restored on ${new Date(suspensionEndDate).toLocaleDateString()}.` : ""}`,
       )
+      await logAudit('Archive Students', `Archived ${selectedStudentIds.length} students - ${archiveReason}`)
       setStudents((prev) => prev.filter((s) => !selectedStudentIds.includes(s.id)))
       setSelectedStudentIds([])
       setSuspensionDuration("")
@@ -252,6 +253,7 @@ const ArchiveStudents = () => {
         }),
       })
       setSuccess("Student restored successfully")
+      await logAudit('Restore Student', `Restored student ID: ${studentId}`)
       fetchArchivedStudents()
     } catch (err) {
       console.error("Restore error:", err)
@@ -296,6 +298,7 @@ const ArchiveStudents = () => {
         prefer: 'return=minimal'
       })
       setBulkSuccess(`${bulkStudents.length} students archived successfully as Class of ${bulkGraduationYear}.`)
+      await logAudit('Bulk Archive', `Archived ${bulkStudents.length} students as Class of ${bulkGraduationYear}`)
       setBulkStudents([])
       setBulkClassId('')
       setBulkLevelId('')

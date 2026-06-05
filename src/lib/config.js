@@ -62,3 +62,28 @@ export const safeParseStaff = () => {
   } catch { return null }
 }
 
+export const logAudit = async (action, details) => {
+  try {
+    const staff = safeParseStaff()
+    if (!staff) return
+    await fetch(`${BASE_URL}/audit_trail`, {
+      method: 'POST',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${staff.access_token || ANON_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        admin_email: staff.email || 'unknown',
+        admin_department: staff.department || 'both',
+        action,
+        details,
+        created_at: new Date().toISOString()
+      })
+    })
+  } catch (err) {
+    console.error('Audit log failed:', err)
+  }
+}
+
