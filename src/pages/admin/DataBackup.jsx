@@ -66,46 +66,46 @@ export default function DataBackup() {
   ]
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Data Backup</h1>
+    <div className="bg-[#0a0a0a] min-h-screen p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+      <h1 className="page-title mb-6">Data Backup</h1>
 
-      <div className="bg-black text-white rounded-lg p-6 mb-6 flex items-center justify-between">
+      <div className="bg-[#111111] rounded-2xl border border-gray-800 p-6 mb-6 flex items-center justify-between">
         <div>
           <p className="text-gray-400 text-sm uppercase tracking-wide">Full System Backup</p>
-          <p className="text-lg font-semibold mt-1">Download all data in one Excel file</p>
+          <p className="text-lg font-semibold text-white mt-1">Download all data in one Excel file</p>
           <p className="text-gray-400 text-sm mt-1">Includes students, teachers, results, attendance and more</p>
         </div>
         <button onClick={downloadFullBackup} disabled={loading}
-          className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-lg text-sm font-bold hover:bg-gray-100 disabled:opacity-50">
+          className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-xl text-sm font-bold hover:bg-gray-100 transition disabled:opacity-50">
           <Download size={16} />
           Download Full Backup
         </button>
       </div>
 
-      {success && <p className="text-green-600 text-sm mb-4 font-medium">{success}</p>}
+      {success && <p className="text-emerald-400 text-sm mb-4 font-medium">{success}</p>}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {backupItems.map(item => (
-          <div key={item.table} className="bg-white rounded-lg shadow p-4 flex flex-col items-start justify-between gap-4">
-            <div className="flex items-center gap-2 text-gray-700">
+          <div key={item.table} className="bg-[#111111] rounded-2xl border border-gray-800 p-4 flex flex-col items-start justify-between gap-4">
+            <div className="flex items-center gap-2 text-gray-400">
               <Database size={18} />
-              <span className="font-medium">{item.label}</span>
+              <span className="font-medium text-white">{item.label}</span>
             </div>
             <button
               onClick={() => downloadBackup(item.table, item.label)}
               disabled={loading}
-              className="flex items-center gap-1 text-blue-900 text-sm font-medium hover:underline disabled:opacity-50">
+              className="flex items-center gap-1 text-blue-400 text-sm font-medium hover:underline disabled:opacity-50">
               <Download size={14} /> Download
             </button>
           </div>
         ))}
       </div>
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-        <p className="text-xs text-gray-400">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
+        <p className="text-xs text-gray-500">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-gray-500 mt-1">
           Developed by Alie Amadu Sesay
         </p>
       </footer>

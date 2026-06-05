@@ -75,63 +75,63 @@ export default function StudentReports() {
 
   const StatusBadge = ({ status }) => {
     const styles = {
-      unread: 'bg-yellow-100 text-yellow-700',
-      read: 'bg-blue-100 text-blue-700',
-      resolved: 'bg-green-100 text-green-700'
+      unread: 'bg-yellow-950 text-yellow-400',
+      read: 'bg-blue-950 text-blue-400',
+      resolved: 'bg-emerald-950 text-emerald-400'
     }
     return (
-      <span className={`px-2 py-1 rounded text-xs font-semibold capitalize ${styles[status]}`}>
+      <span className={`px-2 py-1 rounded-xl text-xs font-semibold capitalize ${styles[status]}`}>
         {status}
       </span>
     )
   }
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+    <div className="bg-[#0a0a0a] min-h-screen p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Student Reports</h1>
-          <p className="text-gray-500 text-sm mt-1">Reports and complaints submitted by students</p>
+          <h1 className="page-title">Student Reports</h1>
+          <p className="text-gray-400 text-sm mt-1">Reports and complaints submitted by students</p>
         </div>
         <button onClick={fetchReports}
-          className="flex items-center gap-2 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800">
+          className="btn-primary flex items-center gap-2">
           <RefreshCw size={16} /> Refresh
         </button>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-lg shadow p-5 border-l-4 border-yellow-500">
-          <p className="text-xs uppercase tracking-wide text-gray-500">Unread</p>
-          <p className="text-3xl font-bold text-gray-900">{reports.filter(r => r.status === 'unread').length}</p>
+        <div className="stat-card border-l-4 border-yellow-500">
+          <p className="text-xs uppercase tracking-wide text-gray-400">Unread</p>
+          <p className="text-3xl font-bold text-white">{reports.filter(r => r.status === 'unread').length}</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-5 border-l-4 border-blue-500">
-          <p className="text-xs uppercase tracking-wide text-gray-500">Read</p>
-          <p className="text-3xl font-bold text-gray-900">{reports.filter(r => r.status === 'read').length}</p>
+        <div className="stat-card border-l-4 border-blue-500">
+          <p className="text-xs uppercase tracking-wide text-gray-400">Read</p>
+          <p className="text-3xl font-bold text-white">{reports.filter(r => r.status === 'read').length}</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-5 border-l-4 border-green-500">
-          <p className="text-xs uppercase tracking-wide text-gray-500">Resolved</p>
-          <p className="text-3xl font-bold text-gray-900">{reports.filter(r => r.status === 'resolved').length}</p>
+        <div className="stat-card border-l-4 border-emerald-500">
+          <p className="text-xs uppercase tracking-wide text-gray-400">Resolved</p>
+          <p className="text-3xl font-bold text-white">{reports.filter(r => r.status === 'resolved').length}</p>
         </div>
       </div>
 
       {/* Alert for unread reports */}
       {unreadCount > 0 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 flex items-center gap-3">
-          <MessageSquare size={20} className="text-yellow-600" />
-          <p className="text-yellow-800 font-medium">You have {unreadCount} unread report{unreadCount > 1 ? 's' : ''} from students.</p>
+        <div className="bg-yellow-950/50 border border-yellow-800 rounded-xl p-4 mb-6 flex items-center gap-3">
+          <MessageSquare size={20} className="text-yellow-400" />
+          <p className="text-yellow-300 font-medium">You have {unreadCount} unread report{unreadCount > 1 ? 's' : ''} from students.</p>
         </div>
       )}
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-4 mb-4 flex flex-wrap gap-3 items-center">
+      <div className="bg-[#111111] rounded-2xl border border-gray-800 p-4 mb-4 flex flex-wrap gap-3 items-center">
         <select value={filterLevel} onChange={e => setFilterLevel(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900">
+          className="form-select">
           <option value="">All Levels</option>
           {levels.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
         </select>
         <select value={filterClass} onChange={e => setFilterClass(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900">
+          className="form-select">
           <option value="">All Classes</option>
           {classes.filter(c => !filterLevel || c.level_id === filterLevel).map(c => (
             <option key={c.id} value={c.id}>{c.name}</option>
@@ -140,13 +140,13 @@ export default function StudentReports() {
         <div className="flex gap-2">
           {['all', 'unread', 'read', 'resolved'].map(f => (
             <button key={f} onClick={() => setFilter(f)}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition ${filter === f ? 'bg-blue-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+              className={`px-3 py-1 rounded-xl text-xs font-medium transition ${filter === f ? 'bg-white text-black' : 'bg-gray-900 text-gray-400 hover:bg-gray-800'}`}>
               {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
             </button>
           ))}
         </div>
         <button onClick={fetchReports}
-          className="bg-black text-white px-4 py-2 rounded-lg text-xs font-medium">
+          className="bg-gray-900 text-gray-300 px-4 py-2 rounded-xl text-xs font-medium hover:bg-gray-800 transition">
           Apply Filters
         </button>
       </div>
@@ -154,29 +154,29 @@ export default function StudentReports() {
       {/* Reports List and Detail View */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Reports List */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-[#111111] rounded-2xl border border-gray-800 overflow-hidden">
           {loading ? (
             <div className="flex items-center justify-center p-8">
-              <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
             </div>
           ) : reports.length === 0 ? (
             <div className="p-8 text-center text-gray-500">No reports found.</div>
           ) : (
-            <div className="divide-y">
+            <div className="divide-y divide-gray-800">
               {reports.map(report => (
                 <div
                   key={report.id}
                   onClick={() => { setSelectedReport(report); if (report.status === 'unread') markAsRead(report.id) }}
-                  className={`px-4 py-4 cursor-pointer hover:bg-gray-50 transition ${selectedReport?.id === report.id ? 'bg-blue-50 border-l-4 border-blue-900' : ''}`}
+                  className={`px-4 py-4 cursor-pointer hover:bg-gray-900 transition ${selectedReport?.id === report.id ? 'bg-gray-900 border-l-4 border-white' : ''}`}
                 >
                   <div className="flex items-start justify-between mb-1">
-                    <p className={`text-sm font-semibold ${report.status === 'unread' ? 'text-gray-900' : 'text-gray-600'}`}>
+                    <p className={`text-sm font-semibold ${report.status === 'unread' ? 'text-white' : 'text-gray-400'}`}>
                       {report.subject}
                     </p>
                     <StatusBadge status={report.status} />
                   </div>
                   <p className="text-xs text-gray-500">{report.student_name} — {report.class_name} ({report.level_name})</p>
-                  <p className="text-xs text-gray-400 mt-1">{new Date(report.created_at).toLocaleString()}</p>
+                  <p className="text-xs text-gray-500 mt-1">{new Date(report.created_at).toLocaleString()}</p>
                 </div>
               ))}
             </div>
@@ -184,32 +184,32 @@ export default function StudentReports() {
         </div>
 
         {/* Report Detail */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-[#111111] rounded-2xl border border-gray-800 p-6">
           {selectedReport ? (
             <>
-              <div className="mb-4 pb-4 border-b">
+              <div className="mb-4 pb-4 border-b border-gray-800">
                 <div className="flex items-start justify-between mb-2">
-                  <h2 className="text-lg font-bold text-gray-900">{selectedReport.subject}</h2>
+                  <h2 className="text-lg font-bold text-white">{selectedReport.subject}</h2>
                   <StatusBadge status={selectedReport.status} />
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
-                  <div><span className="font-medium">Student:</span> {selectedReport.student_name}</div>
-                  <div><span className="font-medium">Number:</span> {selectedReport.student_number}</div>
-                  <div><span className="font-medium">Class:</span> {selectedReport.class_name}</div>
-                  <div><span className="font-medium">Level:</span> {selectedReport.level_name}</div>
-                  <div className="col-span-2"><span className="font-medium">Submitted:</span> {new Date(selectedReport.created_at).toLocaleString()}</div>
+                <div className="grid grid-cols-2 gap-2 text-sm text-gray-400">
+                  <div><span className="font-medium text-gray-300">Student:</span> {selectedReport.student_name}</div>
+                  <div><span className="font-medium text-gray-300">Number:</span> {selectedReport.student_number}</div>
+                  <div><span className="font-medium text-gray-300">Class:</span> {selectedReport.class_name}</div>
+                  <div><span className="font-medium text-gray-300">Level:</span> {selectedReport.level_name}</div>
+                  <div className="col-span-2"><span className="font-medium text-gray-300">Submitted:</span> {new Date(selectedReport.created_at).toLocaleString()}</div>
                 </div>
               </div>
               <div className="mb-6">
-                <p className="text-sm font-medium text-gray-600 mb-2">Message:</p>
-                <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-800 leading-relaxed">
+                <p className="text-sm font-medium text-gray-400 mb-2">Message:</p>
+                <div className="bg-[#0a0a0a] rounded-xl p-4 text-sm text-gray-300 leading-relaxed">
                   {selectedReport.message}
                 </div>
               </div>
               {selectedReport.status !== 'resolved' && (
                 <button
                   onClick={() => markAsResolved(selectedReport.id)}
-                  className="flex items-center gap-2 bg-green-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-green-700"
+                  className="flex items-center gap-2 bg-emerald-600 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-emerald-700 transition"
                 >
                   <CheckCircle size={16} />
                   Mark as Resolved
@@ -217,7 +217,7 @@ export default function StudentReports() {
               )}
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full text-gray-400 py-12">
+            <div className="flex flex-col items-center justify-center h-full text-gray-500 py-12">
               <MessageSquare size={48} className="mb-3 opacity-30" />
               <p className="text-sm">Select a report to view details</p>
             </div>
@@ -225,11 +225,11 @@ export default function StudentReports() {
         </div>
       </div>
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-        <p className="text-xs text-gray-400">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
+        <p className="text-xs text-gray-500">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-gray-500 mt-1">
           Developed by Alie Amadu Sesay
         </p>
       </footer>

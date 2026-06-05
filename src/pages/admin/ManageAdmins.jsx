@@ -136,29 +136,29 @@ export default function ManageAdmins() {
   };
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
+    <div className="bg-[#0a0a0a] min-h-screen p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+      <h1 className="page-title mb-6">
         Manage Administrators
       </h1>
 
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+      <div className="bg-[#111111] rounded-2xl border border-gray-800 p-6 mb-6">
+        <h2 className="section-title mb-4">
           Create Department Admin
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-sm font-medium text-gray-400 mb-1">
               Full Name
             </label>
             <input
               value={adminName}
               onChange={(e) => setAdminName(e.target.value)}
               placeholder="Enter full name"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className="w-full form-input"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-sm font-medium text-gray-400 mb-1">
               Email
             </label>
             <input
@@ -166,11 +166,11 @@ export default function ManageAdmins() {
               value={adminEmail}
               onChange={(e) => setAdminEmail(e.target.value)}
               placeholder="Enter email"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className="w-full form-input"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-sm font-medium text-gray-400 mb-1">
               Password
             </label>
             <input
@@ -178,25 +178,22 @@ export default function ManageAdmins() {
               value={adminPassword}
               onChange={(e) => setAdminPassword(e.target.value)}
               placeholder="Enter password"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className="w-full form-input"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-sm font-medium text-gray-400 mb-1">
               Department
             </label>
             <select
               value={adminDepartment}
               onChange={(e) => setAdminDepartment(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className="w-full form-select"
             >
               <option value="">Select Department</option>
               <option
                 value="JSS"
                 disabled={occupiedDepartments.includes("JSS")}
-                className={
-                  occupiedDepartments.includes("JSS") ? "text-gray-400" : ""
-                }
               >
                 JSS{" "}
                 {occupiedDepartments.includes("JSS")
@@ -206,9 +203,6 @@ export default function ManageAdmins() {
               <option
                 value="SSS"
                 disabled={occupiedDepartments.includes("SSS")}
-                className={
-                  occupiedDepartments.includes("SSS") ? "text-gray-400" : ""
-                }
               >
                 SSS{" "}
                 {occupiedDepartments.includes("SSS")
@@ -220,46 +214,46 @@ export default function ManageAdmins() {
         </div>
         <button
           onClick={handleCreateAdmin}
-          className="flex items-center gap-2 bg-black text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800"
+          className="flex items-center gap-2 btn-primary"
         >
           <Plus size={16} /> Create Admin
         </button>
         {adminSuccess && (
-          <p className="text-green-600 text-sm mt-3">{adminSuccess}</p>
+          <p className="text-emerald-400 text-sm mt-3">{adminSuccess}</p>
         )}
         {adminError && (
-          <p className="text-red-600 text-sm mt-3">{adminError}</p>
+          <p className="text-red-400 text-sm mt-3">{adminError}</p>
         )}
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="px-6 py-4 border-b">
-          <h2 className="font-semibold text-gray-800">
+      <div className="bg-[#111111] rounded-2xl border border-gray-800 overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-800">
+          <h2 className="section-title">
             All Administrators ({admins.length})
           </h2>
         </div>
         {isLoading ? (
           <div className="flex items-center justify-center p-8">
-            <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="w-full overflow-x-auto rounded-lg shadow">
+          <div className="w-full overflow-x-auto">
             <table className="w-full text-sm" style={{ minWidth: '700px' }}>
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-gray-900 border-b border-gray-800">
               <tr>
-                <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">
+                <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-400">
                   Full Name
                 </th>
-                <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">
+                <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-400">
                   Email
                 </th>
-                <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">
+                <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-400">
                   Department
                 </th>
-                <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">
+                <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-400">
                   Created
                 </th>
-                <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">
+                <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-400">
                   Actions
                 </th>
               </tr>
@@ -268,15 +262,15 @@ export default function ManageAdmins() {
               {admins.map((admin, i) => (
                 <tr
                   key={admin.id}
-                  className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                  className={i % 2 === 0 ? "" : "bg-gray-900"}
                 >
-                  <td className="px-4 py-3 font-medium text-gray-900">
+                  <td className="px-4 py-3 font-medium text-white">
                     {admin.full_name}
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{admin.email}</td>
+                  <td className="px-4 py-3 text-gray-400">{admin.email}</td>
                   <td className="px-4 py-3">
                     <span
-                      className={`px-2 py-1 rounded text-xs font-semibold ${admin.department === "JSS" ? "bg-blue-100 text-blue-700" : admin.department === "SSS" ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-700"}`}
+                      className={`px-2 py-1 rounded-xl text-xs font-semibold ${admin.department === "JSS" ? "bg-blue-950 text-blue-400" : admin.department === "SSS" ? "bg-purple-950 text-purple-400" : "bg-gray-900 text-gray-400"}`}
                     >
                       {admin.department || "System"}
                     </span>
@@ -288,7 +282,7 @@ export default function ManageAdmins() {
                     {admin.department !== "both" && (
                       <button
                         onClick={() => handleDeleteAdmin(admin.id, admin.email)}
-                        className="flex items-center gap-1 text-red-600 hover:text-red-800 text-xs font-medium"
+                        className="flex items-center gap-1 text-red-400 hover:text-red-300 text-xs font-medium transition"
                       >
                         <Trash2 size={14} /> Delete
                       </button>
@@ -302,12 +296,12 @@ export default function ManageAdmins() {
         )}
       </div>
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-        <p className="text-xs text-gray-400">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
+        <p className="text-xs text-gray-500">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown,
           Sierra Leone.
         </p>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-gray-500 mt-1">
           Developed by Alie Amadu Sesay
         </p>
       </footer>

@@ -312,15 +312,15 @@ const ArchiveStudents = () => {
   const availableClasses = classes.filter((cls) => cls.level_id === filterLevel)
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+    <div className="bg-[#0a0a0a] min-h-screen p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-3">
-          <div className="p-2 bg-blue-900 text-white rounded-lg">
-            <Archive className="h-5 w-5" />
+          <div className="p-2 bg-[#111111] border border-gray-800 rounded-2xl">
+            <Archive className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Archive Students</h1>
-            <p className="text-sm text-gray-500">Archive individual students or bulk archive JSS3 / SSS3 classes.</p>
+            <h1 className="page-title">Archive Students</h1>
+            <p className="text-sm text-gray-400">Archive individual students or bulk archive JSS3 / SSS3 classes.</p>
           </div>
         </div>
       </div>
@@ -328,13 +328,13 @@ const ArchiveStudents = () => {
       <div className="flex gap-2 mb-6">
         <button
           onClick={() => setShowArchived(false)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium ${!showArchived ? "bg-blue-900 text-white" : "bg-gray-100 text-gray-600"}`}
+          className={`px-4 py-2 rounded-xl text-sm font-medium transition ${!showArchived ? "bg-white text-black" : "bg-gray-900 text-gray-400"}`}
         >
           Archive Students
         </button>
         <button
           onClick={() => setShowArchived(true)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium ${showArchived ? "bg-blue-900 text-white" : "bg-gray-100 text-gray-600"}`}
+          className={`px-4 py-2 rounded-xl text-sm font-medium transition ${showArchived ? "bg-white text-black" : "bg-gray-900 text-gray-400"}`}
         >
           View Archived ({archivedStudents.length})
         </button>
@@ -343,28 +343,28 @@ const ArchiveStudents = () => {
       {!showArchived ? (
         <>
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 flex items-center gap-3 text-red-700">
+            <div className="mb-6 p-4 bg-red-950/50 border-l-4 border-red-500 flex items-center gap-3 text-red-400">
               <AlertCircle className="h-5 w-5" />
               <p className="text-sm font-medium">{error}</p>
             </div>
           )}
 
           {success && (
-            <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 flex items-center gap-3 text-green-700">
+            <div className="mb-6 p-4 bg-emerald-950/50 border-l-4 border-emerald-500 flex items-center gap-3 text-emerald-400">
               <CheckCircle className="h-5 w-5" />
               <p className="text-sm font-medium">{success}</p>
             </div>
           )}
 
           {/* Bulk Class Archive */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-1">Bulk Class Archive</h2>
-            <p className="text-sm text-gray-500 mb-4">For graduating classes (JSS3 and SSS3) — archive the entire class at once.</p>
+          <div className="bg-[#111111] rounded-2xl border border-gray-800 p-6 mb-6">
+            <h2 className="text-lg font-bold text-white mb-1">Bulk Class Archive</h2>
+            <p className="text-sm text-gray-400 mb-4">For graduating classes (JSS3 and SSS3) — archive the entire class at once.</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">Level (JSS3 or SSS3)</label>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Level (JSS3 or SSS3)</label>
                 <select value={bulkLevelId} onChange={e => { setBulkLevelId(e.target.value); setBulkClassId(''); setBulkStudents([]) }}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900">
+                  className="w-full form-select">
                   <option value="">Select Level</option>
                   {levels.filter(l => l.name?.toUpperCase().includes('3')).map(l => (
                     <option key={l.id} value={l.id}>{l.name}</option>
@@ -372,9 +372,9 @@ const ArchiveStudents = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">Class</label>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Class</label>
                 <select value={bulkClassId} onChange={e => { setBulkClassId(e.target.value); setBulkStudents([]) }}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900">
+                  className="w-full form-select">
                   <option value="">Select Class</option>
                   {classes.filter(c => c.level_id === bulkLevelId).map(c => (
                     <option key={c.id} value={c.id}>{c.name}</option>
@@ -382,41 +382,41 @@ const ArchiveStudents = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">Graduation Year</label>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Graduation Year</label>
                 <input type="text" value={bulkGraduationYear} onChange={e => setBulkGraduationYear(e.target.value)}
                   placeholder="e.g. 2026"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900" />
+                  className="w-full form-input" />
               </div>
             </div>
             <button onClick={fetchBulkPreview}
-              className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 mb-4">
+              className="flex items-center gap-2 bg-gray-900 text-gray-300 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition mb-4">
               <Users size={16} /> Preview Students
             </button>
-            {bulkError && <p className="text-red-600 text-sm mb-3">{bulkError}</p>}
-            {bulkSuccess && <p className="text-green-600 text-sm mb-3">{bulkSuccess}</p>}
+            {bulkError && <p className="text-red-400 text-sm mb-3">{bulkError}</p>}
+            {bulkSuccess && <p className="text-emerald-400 text-sm mb-3">{bulkSuccess}</p>}
             {bulkStudents.length > 0 && (
               <div className="mb-4">
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3 flex items-center gap-2">
-                  <AlertCircle size={16} className="text-yellow-600" />
-                  <p className="text-yellow-800 text-sm font-medium">
+                <div className="bg-yellow-950/50 border border-yellow-800 rounded-xl p-3 mb-3 flex items-center gap-2">
+                  <AlertCircle size={16} className="text-yellow-400" />
+                  <p className="text-yellow-300 text-sm font-medium">
                     {bulkStudents.length} students will be archived as Class of {bulkGraduationYear}.
                   </p>
                 </div>
-                <div className="overflow-x-auto rounded-lg border border-gray-200">
+                <div className="overflow-x-auto rounded-xl border border-gray-800">
                   <table className="w-full text-sm" style={{ minWidth: '400px' }}>
-                    <thead className="bg-gray-50">
+                    <thead className="bg-gray-900">
                       <tr>
-                        <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Student Number</th>
-                        <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
-                        <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Gender</th>
+                        <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-400">Student Number</th>
+                        <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-400">Full Name</th>
+                        <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-400">Gender</th>
                       </tr>
                     </thead>
                     <tbody>
                       {bulkStudents.map((s, i) => (
-                        <tr key={s.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                          <td className="px-4 py-2 text-gray-600">{s.student_number}</td>
-                          <td className="px-4 py-2 font-medium text-gray-900">{s.full_name}</td>
-                          <td className="px-4 py-2 text-gray-600 capitalize">{s.gender}</td>
+                        <tr key={s.id} className={i % 2 === 0 ? '' : 'bg-gray-900'}>
+                          <td className="px-4 py-2 text-gray-400">{s.student_number}</td>
+                          <td className="px-4 py-2 font-medium text-white">{s.full_name}</td>
+                          <td className="px-4 py-2 text-gray-400 capitalize">{s.gender}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -424,22 +424,22 @@ const ArchiveStudents = () => {
                 </div>
                 {!showBulkConfirm ? (
                   <button onClick={() => setShowBulkConfirm(true)}
-                    className="mt-4 flex items-center gap-2 bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-red-700">
+                    className="mt-4 flex items-center gap-2 bg-red-950 border border-red-800 text-red-400 px-6 py-2 rounded-xl text-sm font-medium hover:bg-red-900 transition">
                     <Archive size={16} /> Archive Entire Class
                   </button>
                 ) : (
-                  <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
-                    <p className="text-red-800 font-semibold text-sm mb-3">
+                  <div className="mt-4 bg-red-950/50 border border-red-800 rounded-xl p-4">
+                    <p className="text-red-300 font-semibold text-sm mb-3">
                       Are you absolutely sure? This will archive all {bulkStudents.length} students. They will no longer appear as active.
                     </p>
                     <div className="flex gap-3">
                       <button onClick={handleBulkArchive} disabled={bulkLoading}
-                        className="flex items-center gap-2 bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50">
-                        {bulkLoading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <Archive size={16} />}
+                        className="flex items-center gap-2 bg-red-950 border border-red-800 text-red-400 px-6 py-2 rounded-xl text-sm font-medium hover:bg-red-900 transition disabled:opacity-50">
+                        {bulkLoading ? <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></div> : <Archive size={16} />}
                         Yes Archive All
                       </button>
                       <button onClick={() => setShowBulkConfirm(false)}
-                        className="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">
+                        className="bg-gray-900 text-gray-300 px-6 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition">
                         Cancel
                       </button>
                     </div>
@@ -450,15 +450,15 @@ const ArchiveStudents = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <Search className="h-5 w-5 text-gray-400" />
+            <div className="lg:col-span-2 bg-[#111111] rounded-2xl border border-gray-800 p-6">
+              <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                <Search className="h-5 w-5 text-gray-500" />
                 Select Students
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Level</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Level</label>
                   <select
                     value={filterLevel}
                     onChange={(e) => {
@@ -467,7 +467,7 @@ const ArchiveStudents = () => {
                       setStudents([])
                       setSelectedStudentIds([])
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+                    className="w-full form-select"
                   >
                     <option value="">Select Level</option>
                     {levels.map((level) => (
@@ -478,7 +478,7 @@ const ArchiveStudents = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Class</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Class</label>
                   <select
                     value={filterClass}
                     onChange={(e) => {
@@ -486,7 +486,7 @@ const ArchiveStudents = () => {
                       setStudents([])
                       setSelectedStudentIds([])
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+                    className="w-full form-select"
                     disabled={!filterLevel}
                   >
                     <option value="">Select Class</option>
@@ -502,28 +502,28 @@ const ArchiveStudents = () => {
               <button
                 onClick={fetchStudents}
                 disabled={!filterClass || fetching}
-                className="w-full bg-gray-900 text-white py-2 rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full bg-gray-900 text-white py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {fetching ? "Fetching..." : "Show Students"}
               </button>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <Archive className="h-5 w-5 text-gray-400" />
+            <div className="bg-[#111111] rounded-2xl border border-gray-800 p-6">
+              <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                <Archive className="h-5 w-5 text-gray-500" />
                 Archive Details
               </h2>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Graduation Year</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Graduation Year</label>
                   <input
                     type="text"
                     value={graduationYear}
                     onChange={(e) => setGraduationYear(e.target.value)}
                     placeholder="e.g. 2026"
                     disabled={archiveReason !== "Graduated"}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="w-full form-input disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                   {archiveReason !== "Graduated" && (
                     <p className="mt-2 text-xs text-gray-500">
@@ -533,7 +533,7 @@ const ArchiveStudents = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Reason</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Reason</label>
                   <select
                     value={archiveReason}
                     onChange={(e) => {
@@ -541,7 +541,7 @@ const ArchiveStudents = () => {
                       setSuspensionDuration("")
                       setSuspensionEndDate("")
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+                    className="w-full form-select"
                   >
                     <option value="">Select Reason</option>
                     <option value="Graduated">Graduated</option>
@@ -554,8 +554,8 @@ const ArchiveStudents = () => {
                 </div>
 
                 {(archiveReason === "Suspended") && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-3">
-                    <p className="text-yellow-800 text-sm font-medium flex items-center gap-2">
+                  <div className="bg-yellow-950/50 border border-yellow-800 rounded-xl p-4 space-y-3">
+                    <p className="text-yellow-300 text-sm font-medium flex items-center gap-2">
                       <Clock size={16} /> Suspension Duration
                     </p>
                     <select
@@ -568,7 +568,7 @@ const ArchiveStudents = () => {
                           setSuspensionEndDate("")
                         }
                       }}
-                      className="w-full border border-yellow-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                      className="w-full bg-[#111111] border border-yellow-800 rounded-xl px-3 py-2 text-sm text-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-600"
                     >
                       <option value="">Select Duration</option>
                       <option value="3_days">3 Days</option>
@@ -580,21 +580,21 @@ const ArchiveStudents = () => {
 
                     {suspensionDuration === "custom" && (
                       <div>
-                        <label className="block text-xs text-gray-600 mb-1">Select End Date</label>
+                        <label className="block text-xs text-gray-500 mb-1">Select End Date</label>
                         <input
                           type="date"
                           value={suspensionEndDate}
                           onChange={(e) => setSuspensionEndDate(e.target.value)}
                           min={new Date().toISOString().split("T")[0]}
-                          className="w-full border border-yellow-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                          className="w-full bg-[#111111] border border-yellow-800 rounded-xl px-3 py-2 text-sm text-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-600"
                         />
                       </div>
                     )}
 
                     {suspensionEndDate && (
-                      <div className="bg-white rounded-lg p-3 border border-yellow-200">
+                      <div className="bg-[#0a0a0a] rounded-xl p-3 border border-yellow-800">
                         <p className="text-xs text-gray-500">Suspension ends on:</p>
-                        <p className="font-bold text-gray-900">
+                        <p className="font-bold text-white">
                           {new Date(suspensionEndDate).toLocaleDateString("en-GB", {
                             weekday: "long",
                             year: "numeric",
@@ -602,7 +602,7 @@ const ArchiveStudents = () => {
                             day: "numeric",
                           })}
                         </p>
-                        <p className="text-xs text-green-600 mt-1">
+                        <p className="text-xs text-emerald-400 mt-1">
                           Account will be automatically restored on this date.
                         </p>
                       </div>
@@ -610,17 +610,17 @@ const ArchiveStudents = () => {
                   </div>
                 )}
 
-                <div className="pt-4 border-t border-gray-100">
+                <div className="pt-4 border-t border-gray-800">
                   <p className="text-xs text-gray-500 mb-4">
-                    Selected: <span className="font-bold text-gray-900">{selectedStudentIds.length} students</span>
+                    Selected: <span className="font-bold text-white">{selectedStudentIds.length} students</span>
                   </p>
                   <button
                     onClick={handleArchive}
                     disabled={selectedStudentIds.length === 0 || loading}
-                    className="w-full bg-blue-900 text-white py-3 rounded-lg font-bold hover:bg-blue-800 disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full btn-primary flex items-center justify-center gap-2"
                   >
                     {loading ? (
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     ) : (
                       <>
                         <Archive className="h-5 w-5" />
@@ -634,39 +634,39 @@ const ArchiveStudents = () => {
           </div>
 
           {students.length > 0 && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-                <h3 className="font-semibold text-gray-900">Students in Class</h3>
+            <div className="bg-[#111111] rounded-2xl border border-gray-800 overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-800 flex justify-between items-center bg-gray-900">
+                <h3 className="font-semibold text-white">Students in Class</h3>
                 <div className="flex gap-2">
-                  <button onClick={selectAllStudents} className="text-xs font-medium text-blue-900 hover:underline">Select All</button>
-                  <span className="text-gray-300">|</span>
+                  <button onClick={selectAllStudents} className="text-xs font-medium text-blue-400 hover:underline">Select All</button>
+                  <span className="text-gray-600">|</span>
                   <button onClick={deselectAllStudents} className="text-xs font-medium text-gray-500 hover:underline">Deselect All</button>
                 </div>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm" style={{ minWidth: '500px' }}>
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-900">
                     <tr>
-                      <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Select</th>
-                      <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Student Number</th>
-                      <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
-                      <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Gender</th>
+                      <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-400">Select</th>
+                      <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-400">Student Number</th>
+                      <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-400">Full Name</th>
+                      <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-400">Gender</th>
                     </tr>
                   </thead>
                   <tbody>
                     {students.map((student, index) => (
-                      <tr key={student.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <tr key={student.id} className={index % 2 === 0 ? '' : 'bg-gray-900'}>
                         <td className="px-4 py-2">
                           <input
                             type="checkbox"
                             checked={selectedStudentIds.includes(student.id)}
                             onChange={() => toggleStudentSelection(student.id)}
-                            className="rounded border-gray-300 text-blue-900 focus:ring-blue-900 w-5 h-5 cursor-pointer"
+                            className="rounded border-gray-600 text-blue-400 focus:ring-blue-500 w-5 h-5 cursor-pointer bg-[#0a0a0a]"
                           />
                         </td>
-                        <td className="px-4 py-2 text-gray-600">{student.student_number}</td>
-                        <td className="px-4 py-2 font-medium text-gray-900">{student.full_name}</td>
-                        <td className="px-4 py-2 text-gray-600 capitalize">{student.gender}</td>
+                        <td className="px-4 py-2 text-gray-400">{student.student_number}</td>
+                        <td className="px-4 py-2 font-medium text-white">{student.full_name}</td>
+                        <td className="px-4 py-2 text-gray-400 capitalize">{student.gender}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -676,10 +676,10 @@ const ArchiveStudents = () => {
           )}
         </>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-[#111111] rounded-2xl border border-gray-800 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm" style={{ minWidth: '700px' }}>
-              <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
+              <thead className="bg-gray-900 text-gray-400 uppercase text-xs">
                 <tr>
                   <th className="px-6 py-3 text-left font-medium">Student No.</th>
                   <th className="px-6 py-3 text-left font-medium">Full Name</th>
@@ -690,7 +690,7 @@ const ArchiveStudents = () => {
                   <th className="px-6 py-3 text-left font-medium">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-800">
                 {archivedStudents.length === 0 ? (
                   <tr>
                     <td colSpan="7" className="px-6 py-8 text-center text-gray-500">
@@ -700,24 +700,24 @@ const ArchiveStudents = () => {
                 ) : (
                   archivedStudents.map((s) => (
                     <tr key={s.id}>
-                      <td className="px-6 py-4">{s.student_number}</td>
-                      <td className="px-6 py-4">{s.full_name}</td>
-                      <td className="px-6 py-4 text-gray-600">
+                      <td className="px-6 py-4 text-gray-300">{s.student_number}</td>
+                      <td className="px-6 py-4 text-white">{s.full_name}</td>
+                      <td className="px-6 py-4 text-gray-400">
                         {s.archive_reason === "Graduated" ? s.graduation_year || "Not provided" : "Not provided"}
                       </td>
-                      <td className="px-6 py-4">{s.archive_reason}</td>
-                      <td className="px-6 py-4 text-gray-600">
+                      <td className="px-6 py-4 text-gray-300">{s.archive_reason}</td>
+                      <td className="px-6 py-4 text-gray-400">
                         {s.suspension_end_date ? (
-                          <span className={`text-xs font-medium ${new Date(s.suspension_end_date) <= new Date() ? 'text-green-600' : 'text-red-600'}`}>
+                          <span className={`text-xs font-medium ${new Date(s.suspension_end_date) <= new Date() ? 'text-emerald-400' : 'text-red-400'}`}>
                             {new Date(s.suspension_end_date) <= new Date() ? 'Ended' : new Date(s.suspension_end_date).toLocaleDateString()}
                           </span>
                         ) : 'Not provided'}
                       </td>
-                      <td className="px-6 py-4">{s.archived_at ? new Date(s.archived_at).toLocaleDateString() : 'Not provided'}</td>
+                      <td className="px-6 py-4 text-gray-300">{s.archived_at ? new Date(s.archived_at).toLocaleDateString() : 'Not provided'}</td>
                       <td className="px-6 py-4">
                         <button
                           onClick={() => handleRestore(s.id)}
-                          className="text-green-600 hover:text-green-800 text-xs font-medium"
+                          className="text-emerald-400 hover:text-emerald-300 text-xs font-medium transition"
                         >
                           Restore
                         </button>
@@ -730,11 +730,11 @@ const ArchiveStudents = () => {
           </div>
         </div>
       )}
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-        <p className="text-xs text-gray-400">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
+        <p className="text-xs text-gray-500">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-gray-500 mt-1">
           Developed by Alie Amadu Sesay
         </p>
       </footer>

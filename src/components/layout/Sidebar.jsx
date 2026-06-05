@@ -22,6 +22,7 @@ import {
   MessageSquare,
   Archive,
   CreditCard,
+  User,
 } from "lucide-react";
 import logo from "../../assets/logo.png";
 import { safeParseStaff, safeParseStudent } from "../../lib/config"
@@ -147,57 +148,67 @@ const Sidebar = ({ onClose }) => {
 
   const navLinks = getNavLinks();
 
+  const userInitial = currentProfile?.full_name?.charAt(0)?.toUpperCase() || student?.full_name?.charAt(0)?.toUpperCase() || 'U';
+  const userName = currentProfile?.full_name || student?.full_name || 'User';
+  const userRole = currentProfile?.role || 'student';
+
   return (
-    <div className="flex flex-col h-full bg-black text-white">
+    <div className="flex flex-col h-full bg-[#0f0f0f] text-white border-r border-gray-900">
       {/* Logo Section */}
-      <div className="p-6 border-b border-gray-800 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <img src={logo} alt="MBHS Logo" className="h-10 w-auto" />
+      <div className="p-5 border-b border-gray-800 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <img src={logo} alt="MBHS Logo" className="h-9 w-auto" />
           <div>
-            <h1 className="text-lg font-bold">MBHS</h1>
-            <p className="text-xs text-gray-400">EduNexus</p>
+            <h1 className="text-base font-black text-white tracking-tight">MBHS</h1>
+            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em]">EduNexus</p>
           </div>
         </div>
-
-        {/* Close Button (Mobile Only) */}
-        <button
-          onClick={onClose}
-          className="lg:hidden p-1 text-gray-400 hover:text-white transition-colors"
-        >
-          <X className="h-6 w-6" />
+        <button onClick={onClose} className="lg:hidden p-1.5 text-gray-500 hover:text-white rounded-lg hover:bg-gray-900 transition">
+          <X className="h-5 w-5" />
         </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 overflow-y-auto custom-scrollbar">
-        <ul className="space-y-2">
+      <nav className="flex-1 px-3 py-4 overflow-y-auto custom-scrollbar">
+        <ul className="space-y-1">
           {navLinks.map((link) => (
             <li key={link.path}>
               <NavLink
                 to={link.path}
-                onClick={onClose} // Close sidebar on link click (mobile)
+                onClick={onClose}
                 className={({ isActive }) =>
-                  `nav-link ${
-                    isActive ? "nav-link-active" : "nav-link-inactive"
+                  `flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                    isActive
+                      ? "bg-white text-black shadow-lg"
+                      : "text-gray-400 hover:text-white hover:bg-gray-900"
                   }`
                 }
               >
                 <link.icon className="h-5 w-5 shrink-0" />
-                <span className="font-medium">{link.label}</span>
+                <span>{link.label}</span>
               </NavLink>
             </li>
           ))}
         </ul>
       </nav>
 
-      {/* Logout Button */}
+      {/* User Card + Logout */}
       <div className="p-4 border-t border-gray-800">
+        <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-gray-900 mb-3">
+          <div className="w-9 h-9 rounded-full bg-gray-700 flex items-center justify-center shrink-0">
+            <span className="text-white text-sm font-black">{userInitial}</span>
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold text-white truncate">{userName}</p>
+            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{userRole}</p>
+          </div>
+        </div>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-lg"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-900 hover:bg-gray-800 rounded-xl text-sm font-bold text-gray-400 hover:text-white transition-all border border-gray-800"
         >
-          <LogOut className="h-5 w-5" />
-          <span className="font-medium">Logout</span>
+          <LogOut className="h-4 w-4" />
+          <span>Logout</span>
         </button>
       </div>
     </div>

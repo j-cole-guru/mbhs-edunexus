@@ -80,34 +80,34 @@ export default function SystemHealth() {
 
   const StatusBadge = ({ status }) => {
     if (status === 'checking') return (
-      <span className="flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
-        <div className="w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+      <span className="flex items-center gap-1 px-3 py-1 bg-gray-900 text-gray-400 rounded-full text-xs font-medium">
+        <div className="w-3 h-3 border-2 border-gray-500 border-t-transparent rounded-full animate-spin"></div>
         Checking
       </span>
     )
     if (status === 'healthy') return (
-      <span className="flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+      <span className="flex items-center gap-1 px-3 py-1 bg-emerald-950 text-emerald-400 rounded-full text-xs font-medium">
         <CheckCircle size={12} /> Operational
       </span>
     )
     return (
-      <span className="flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">
+      <span className="flex items-center gap-1 px-3 py-1 bg-red-950 text-red-400 rounded-full text-xs font-medium">
         <AlertCircle size={12} /> Error
       </span>
     )
   }
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+    <div className="bg-[#0a0a0a] min-h-screen p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">System Health</h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <h1 className="page-title">System Health</h1>
+          <p className="text-gray-400 text-sm mt-1">
             {lastChecked ? `Last checked at ${lastChecked}` : 'Running health check...'}
           </p>
         </div>
         <button onClick={runHealthCheck}
-          className="flex items-center gap-2 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800">
+          className="btn-primary flex items-center gap-2">
           <Activity size={16} />
           Run Check
         </button>
@@ -121,8 +121,8 @@ export default function SystemHealth() {
           { label: 'REST API', key: 'api', icon: <Server size={20} /> },
           { label: 'Storage', key: 'storage', icon: <Database size={20} /> },
         ].map(service => (
-          <div key={service.key} className="bg-white rounded-lg shadow p-4">
-            <div className="flex items-center gap-2 text-gray-600 mb-3">
+          <div key={service.key} className="bg-[#111111] rounded-2xl border border-gray-800 p-4">
+            <div className="flex items-center gap-2 text-gray-400 mb-3">
               {service.icon}
               <span className="font-medium text-sm">{service.label}</span>
             </div>
@@ -132,11 +132,11 @@ export default function SystemHealth() {
       </div>
 
       {/* Uptime */}
-      <div className="bg-black text-white rounded-lg p-6 mb-6">
+      <div className="bg-[#111111] rounded-2xl border border-gray-800 p-6 mb-6">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-gray-400 text-sm uppercase tracking-wide">System Uptime</p>
-            <p className="text-4xl font-bold mt-1">{uptime}</p>
+            <p className="text-4xl font-bold text-white mt-1">{uptime}</p>
             <p className="text-gray-400 text-sm mt-1">MBHS EduNexus is running normally</p>
           </div>
           <Activity size={48} className="text-blue-400" />
@@ -144,8 +144,8 @@ export default function SystemHealth() {
       </div>
 
       {/* Database Records */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 className="text-lg font-bold text-gray-900 mb-4">Database Records</h2>
+      <div className="bg-[#111111] rounded-2xl border border-gray-800 p-6 mb-6">
+        <h2 className="section-title mb-4">Database Records</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {[
             { label: 'Total Students', value: stats.totalStudents },
@@ -155,19 +155,19 @@ export default function SystemHealth() {
             { label: 'Attendance Records', value: stats.totalAttendance },
             { label: 'Admin Accounts', value: stats.totalAdmins },
           ].map(item => (
-            <div key={item.label} className="border border-gray-200 rounded-lg p-4">
-              <p className="text-xs uppercase tracking-wide text-gray-500">{item.label}</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{item.value}</p>
+            <div key={item.label} className="bg-[#0a0a0a] rounded-xl p-4 border border-gray-800">
+              <p className="text-xs uppercase tracking-wide text-gray-400">{item.label}</p>
+              <p className="text-2xl font-bold text-white mt-1">{item.value}</p>
             </div>
           ))}
         </div>
       </div>
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-        <p className="text-xs text-gray-400">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
+        <p className="text-xs text-gray-500">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-gray-500 mt-1">
           Developed by Alie Amadu Sesay
         </p>
       </footer>

@@ -360,112 +360,112 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
       </div>
     )
   }
 
   if (department === 'both') {
     return (
-      <div className="p-6">
+      <div className="bg-[#0a0a0a] min-h-screen p-6">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">System Monitor</h1>
-          <p className="text-gray-500 mt-1">Methodist Boys' High School — EduNexus System Overview</p>
+          <h1 className="text-2xl font-black text-white">System Monitor</h1>
+          <p className="text-gray-400 mt-1">Methodist Boys' High School — EduNexus System Overview</p>
         </div>
 
         {/* Overall Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-black text-white rounded-lg p-5">
+          <div className="bg-[#111111] border border-gray-800 rounded-2xl p-5">
             <p className="text-xs uppercase tracking-wide text-gray-400">Total Students</p>
-            <p className="text-3xl font-bold mt-1">{stats.jssStudents.length + stats.sssStudents.length}</p>
+            <p className="text-3xl font-bold mt-1 text-white">{stats.jssStudents.length + stats.sssStudents.length}</p>
           </div>
-          <div className="bg-blue-900 text-white rounded-lg p-5">
-            <p className="text-xs uppercase tracking-wide text-blue-300">Total Teachers</p>
-            <p className="text-3xl font-bold mt-1">{stats.jssTeachers.length + stats.sssTeachers.length}</p>
+          <div className="bg-[#111111] border border-gray-800 rounded-2xl p-5">
+            <p className="text-xs uppercase tracking-wide text-gray-400">Total Teachers</p>
+            <p className="text-3xl font-bold mt-1 text-white">{stats.jssTeachers.length + stats.sssTeachers.length}</p>
           </div>
-          <div className="bg-white border border-gray-200 rounded-lg p-5">
-            <p className="text-xs uppercase tracking-wide text-gray-500">Total Classes</p>
-            <p className="text-3xl font-bold mt-1 text-gray-900">{stats.allClasses.length}</p>
+          <div className="bg-[#111111] border border-gray-800 rounded-2xl p-5">
+            <p className="text-xs uppercase tracking-wide text-gray-400">Total Classes</p>
+            <p className="text-3xl font-bold mt-1 text-white">{stats.allClasses.length}</p>
           </div>
-          <div className="bg-white border border-gray-200 rounded-lg p-5">
-            <p className="text-xs uppercase tracking-wide text-gray-500">Current Term</p>
-            <p className="text-lg font-bold mt-1 text-gray-900">{stats.currentTerm[0] ? `${stats.currentTerm[0].name} ${stats.currentTerm[0].year}` : 'Not Set'}</p>
+          <div className="bg-[#111111] border border-gray-800 rounded-2xl p-5">
+            <p className="text-xs uppercase tracking-wide text-gray-400">Current Term</p>
+            <p className="text-lg font-bold mt-1 text-white">{stats.currentTerm[0] ? `${stats.currentTerm[0].name} ${stats.currentTerm[0].year}` : 'Not Set'}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-5 border-l-4 border-yellow-500">
-            <p className="text-xs uppercase tracking-wide text-gray-500">Unread Reports</p>
-            <p className="text-3xl font-bold text-gray-900">{unreadReports}</p>
-            <p className="text-xs text-yellow-600 mt-1">Student reports pending review</p>
+          <div className="bg-[#111111] rounded-2xl p-5 border-l-4 border-yellow-500">
+            <p className="text-xs uppercase tracking-wide text-gray-400">Unread Reports</p>
+            <p className="text-3xl font-bold text-white">{unreadReports}</p>
+            <p className="text-xs text-yellow-400 mt-1">Student reports pending review</p>
           </div>
         </div>
 
         {/* Department Breakdown */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">JSS Department</h2>
+          <div className="bg-[#111111] border border-gray-800 rounded-2xl p-6">
+            <h2 className="text-lg font-black text-white mb-4 border-b border-gray-800 pb-2">JSS Department</h2>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Students</span>
-                <span className="font-bold text-gray-900">{stats.jssStudents.length}</span>
+                <span className="text-gray-400">Students</span>
+                <span className="font-bold text-white">{stats.jssStudents.length}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Teachers</span>
-                <span className="font-bold text-gray-900">{stats.jssTeachers.length}</span>
+                <span className="text-gray-400">Teachers</span>
+                <span className="font-bold text-white">{stats.jssTeachers.length}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Levels</span>
-                <span className="font-bold text-gray-900">{stats.jssLevels.length}</span>
+                <span className="text-gray-400">Levels</span>
+                <span className="font-bold text-white">{stats.jssLevels.length}</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">SSS Department</h2>
+          <div className="bg-[#111111] border border-gray-800 rounded-2xl p-6">
+            <h2 className="text-lg font-black text-white mb-4 border-b border-gray-800 pb-2">SSS Department</h2>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Students</span>
-                <span className="font-bold text-gray-900">{stats.sssStudents.length}</span>
+                <span className="text-gray-400">Students</span>
+                <span className="font-bold text-white">{stats.sssStudents.length}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Teachers</span>
-                <span className="font-bold text-gray-900">{stats.sssTeachers.length}</span>
+                <span className="text-gray-400">Teachers</span>
+                <span className="font-bold text-white">{stats.sssTeachers.length}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Levels</span>
-                <span className="font-bold text-gray-900">{stats.sssLevels.length}</span>
+                <span className="text-gray-400">Levels</span>
+                <span className="font-bold text-white">{stats.sssLevels.length}</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Create Department Admin Section */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-2">Department Administrators</h2>
-          <p className="text-sm text-gray-500 mb-4">Create admin accounts for JSS and SSS departments.</p>
+        <div className="bg-[#111111] border border-gray-800 rounded-2xl p-6">
+          <h2 className="text-lg font-black text-white mb-2">Department Administrators</h2>
+          <p className="text-sm text-gray-400 mb-4">Create admin accounts for JSS and SSS departments.</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Full Name</label>
+              <label className="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
               <input type="text" value={adminName} onChange={e => setAdminName(e.target.value)}
                 placeholder="Enter full name"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900" />
+                className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
               <input type="email" value={adminEmail} onChange={e => setAdminEmail(e.target.value)}
                 placeholder="Enter email"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900" />
+                className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Password</label>
+              <label className="block text-sm font-medium text-gray-400 mb-1">Password</label>
               <input type="password" value={adminPassword} onChange={e => setAdminPassword(e.target.value)}
                 placeholder="Enter password"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900" />
+                className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Department</label>
+              <label className="block text-sm font-medium text-gray-400 mb-1">Department</label>
               <select
                 value={adminDepartment}
                 onChange={e => setAdminDepartment(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+                className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
               >
                 <option value="">Select Department</option>
                 <option
@@ -486,31 +486,31 @@ const AdminDashboard = () => {
             </div>
           </div>
           <button onClick={handleCreateAdmin}
-            className="bg-black text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800">
+            className="bg-white text-black font-black px-6 py-3 rounded-full hover:bg-gray-200">
             Create Department Admin
           </button>
-          {adminSuccess && <p className="text-green-600 text-sm mt-3">{adminSuccess}</p>}
-          {adminError && <p className="text-red-600 text-sm mt-3">{adminError}</p>}
+          {adminSuccess && <p className="bg-emerald-950/30 border border-emerald-800 rounded-xl text-emerald-400 text-sm mt-3 px-4 py-2">{adminSuccess}</p>}
+          {adminError && <p className="bg-red-950/30 border border-red-800 rounded-xl text-red-400 text-sm mt-3 px-4 py-2">{adminError}</p>}
         </div>
 
-        <div className="bg-white rounded-lg shadow overflow-hidden mt-6">
-          <div className="px-6 py-4 border-b flex items-center justify-between">
-            <h2 className="font-bold text-gray-900">System Users ({allUsers.length})</h2>
+        <div className="bg-[#111111] border border-gray-800 rounded-2xl overflow-hidden mt-6">
+          <div className="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
+            <h2 className="font-bold text-white">System Users ({allUsers.length})</h2>
             <button onClick={fetchAllUsers}
-              className="text-xs text-blue-900 font-medium hover:underline">
+              className="text-xs text-blue-400 font-medium hover:text-blue-300 underline">
               Refresh
             </button>
           </div>
           {usersLoading ? (
             <div className="flex items-center justify-center p-8">
-              <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
             </div>
           ) : allUsers.length === 0 ? (
             <div className="p-8 text-center text-gray-500">No users found.</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[600px]">
-                <thead className="bg-gray-50 border-b">
+                <thead className="bg-gray-900 border-b border-gray-800">
                   <tr>
                     <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
                     <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Email</th>
@@ -521,16 +521,16 @@ const AdminDashboard = () => {
                 </thead>
                 <tbody>
                   {allUsers.map((user, i) => (
-                    <tr key={user.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-4 py-3 font-medium text-gray-900">{user.full_name}</td>
-                      <td className="px-4 py-3 text-gray-600">{user.email}</td>
+                    <tr key={user.id} className={i % 2 === 0 ? 'bg-[#111111]' : 'bg-[#1a1a1a]'}>
+                      <td className="px-4 py-3 font-medium text-white">{user.full_name}</td>
+                      <td className="px-4 py-3 text-gray-300">{user.email}</td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded text-xs font-semibold capitalize ${user.role === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'}`}>
+                        <span className={`px-2 py-1 rounded text-xs font-semibold capitalize ${user.role === 'admin' ? 'bg-blue-950 text-blue-400' : 'bg-gray-800 text-gray-400'}`}>
                           {user.role}
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded text-xs font-semibold ${user.department === 'JSS' ? 'bg-blue-100 text-blue-700' : user.department === 'SSS' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'}`}>
+                        <span className={`px-2 py-1 rounded text-xs font-semibold ${user.department === 'JSS' ? 'bg-blue-950 text-blue-400' : user.department === 'SSS' ? 'bg-purple-950 text-purple-400' : 'bg-gray-800 text-gray-400'}`}>
                           {user.department || 'Not Assigned'}
                         </span>
                       </td>
@@ -538,7 +538,7 @@ const AdminDashboard = () => {
                         {user.department !== 'both' && (
                           <button
                             onClick={() => handleDeleteUser(user.id, user.email, user.department)}
-                            className="flex items-center gap-1 text-red-600 hover:text-red-800 text-xs font-medium"
+                            className="flex items-center gap-1 text-red-400 hover:text-red-300 text-xs font-medium"
                           >
                             <Trash2 size={14} /> Delete
                           </button>
@@ -552,11 +552,11 @@ const AdminDashboard = () => {
           )}
         </div>
 
-        <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-          <p className="text-xs text-gray-400">
+        <footer className="mt-8 py-4 border-t border-gray-800 text-center">
+          <p className="text-xs text-gray-500">
             © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
           </p>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-gray-500 mt-1">
             Developed by Alie Amadu Sesay
           </p>
         </footer>
@@ -566,15 +566,15 @@ const AdminDashboard = () => {
 
   // Normal Department Dashboard
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+    <div className="bg-[#0a0a0a] min-h-screen p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="page-title">{department} Department Dashboard</h1>
-          <p className="text-gray-600 mt-2">School Management Overview</p>
+          <p className="text-gray-400 mt-2">School Management Overview</p>
         </div>
         <button
           onClick={() => setShowPasswordModal(true)}
-          className="flex items-center gap-2 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800"
+          className="flex items-center gap-2 bg-transparent border border-gray-700 text-gray-300 font-bold px-5 py-2.5 rounded-full hover:bg-gray-800 hover:text-white"
           title="Change your account password"
         >
           <Lock size={16} /> Change Password
@@ -584,109 +584,109 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <button onClick={() => window.location.href = '/admin/students'} className="stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
           <div className="flex items-center">
-            <div className="stat-icon bg-blue-100"><Users className="h-4 w-4 text-blue-600" /></div>
+            <div className="stat-icon bg-blue-950/50"><Users className="h-4 w-4 text-blue-400" /></div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Students</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.students?.length || 0}</p>
+              <p className="text-sm font-medium text-gray-400">Total Students</p>
+              <p className="text-2xl font-bold text-white">{stats.students?.length || 0}</p>
             </div>
           </div>
         </button>
 
         <button onClick={() => window.location.href = '/admin/teachers'} className="stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
           <div className="flex items-center">
-            <div className="stat-icon bg-green-100"><GraduationCap className="h-4 w-4 text-green-600" /></div>
+            <div className="stat-icon bg-emerald-950/50"><GraduationCap className="h-4 w-4 text-emerald-400" /></div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Teachers</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.teachers?.length || 0}</p>
+              <p className="text-sm font-medium text-gray-400">Total Teachers</p>
+              <p className="text-2xl font-bold text-white">{stats.teachers?.length || 0}</p>
             </div>
           </div>
         </button>
 
         <button onClick={() => window.location.href = '/admin/classes'} className="stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
           <div className="flex items-center">
-            <div className="stat-icon bg-purple-100"><BookOpen className="h-4 w-4 text-purple-600" /></div>
+            <div className="stat-icon bg-purple-950/50"><BookOpen className="h-4 w-4 text-purple-400" /></div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Classes</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.classes?.length || 0}</p>
+              <p className="text-sm font-medium text-gray-400">Total Classes</p>
+              <p className="text-2xl font-bold text-white">{stats.classes?.length || 0}</p>
             </div>
           </div>
         </button>
 
         <button onClick={() => window.location.href = '/admin/terms'} className="stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
           <div className="flex items-center">
-            <div className="stat-icon bg-orange-100"><CalendarDays className="h-4 w-4 text-orange-600" /></div>
+            <div className="stat-icon bg-orange-950/50"><CalendarDays className="h-4 w-4 text-orange-400" /></div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Current Term</p>
-              <p className="text-lg font-bold text-gray-900">{stats.currentTerm[0] ? stats.currentTerm[0].name : 'Not Set'}</p>
+              <p className="text-sm font-medium text-gray-400">Current Term</p>
+              <p className="text-lg font-bold text-white">{stats.currentTerm[0] ? stats.currentTerm[0].name : 'Not Set'}</p>
             </div>
           </div>
         </button>
 
         <button onClick={() => window.location.href = '/admin/reports'} className="stat-card hover:shadow-lg transition-shadow cursor-pointer text-left">
           <div className="flex items-center">
-            <div className="stat-icon bg-yellow-100"><MessageSquare className="h-4 w-4 text-yellow-600" /></div>
+            <div className="stat-icon bg-yellow-950/50"><MessageSquare className="h-4 w-4 text-yellow-400" /></div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Unread Reports</p>
-              <p className="text-2xl font-bold text-gray-900">{unreadReports}</p>
+              <p className="text-sm font-medium text-gray-400">Unread Reports</p>
+              <p className="text-2xl font-bold text-white">{unreadReports}</p>
             </div>
           </div>
         </button>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+      <div className="bg-[#111111] p-6 rounded-2xl border border-gray-800">
         <h2 className="section-title mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button onClick={() => window.location.href = '/admin/students'} className="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-left transition-colors">
-            <Plus className="h-6 w-6 mb-2 text-blue-600" />
-            <span className="font-medium text-gray-900">Add New Student</span>
+          <button onClick={() => window.location.href = '/admin/students'} className="p-4 bg-blue-950/30 hover:bg-blue-900/50 rounded-xl text-left transition-colors">
+            <Plus className="h-6 w-6 mb-2 text-blue-400" />
+            <span className="font-medium text-gray-300">Add New Student</span>
           </button>
-          <button onClick={() => window.location.href = '/admin/results'} className="p-4 bg-green-50 hover:bg-green-100 rounded-lg text-left transition-colors">
-            <ClipboardList className="h-6 w-6 mb-2 text-green-600" />
-            <span className="font-medium text-gray-900">Enter Results</span>
+          <button onClick={() => window.location.href = '/admin/results'} className="p-4 bg-emerald-950/30 hover:bg-emerald-900/50 rounded-xl text-left transition-colors">
+            <ClipboardList className="h-6 w-6 mb-2 text-emerald-400" />
+            <span className="font-medium text-gray-300">Enter Results</span>
           </button>
-          <button onClick={() => window.location.href = '/admin/attendance'} className="p-4 bg-purple-50 hover:bg-purple-100 rounded-lg text-left transition-colors">
-            <UserCheck className="h-6 w-6 mb-2 text-purple-600" />
-            <span className="font-medium text-gray-900">Check Attendance</span>
+          <button onClick={() => window.location.href = '/admin/attendance'} className="p-4 bg-purple-950/30 hover:bg-purple-900/50 rounded-xl text-left transition-colors">
+            <UserCheck className="h-6 w-6 mb-2 text-purple-400" />
+            <span className="font-medium text-gray-300">Check Attendance</span>
           </button>
         </div>
       </div>
 
       {/* Password Change Modal */}
       {showPasswordModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#111111] border border-gray-800 rounded-2xl p-6 max-w-md w-full">
+            <h2 className="text-xl font-black text-white mb-4 flex items-center gap-2">
               <Lock size={20} /> Change Password
             </h2>
             
             {passwordError && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-                <p className="text-red-700 text-sm">{passwordError}</p>
+              <div className="bg-red-950 border border-red-800 rounded-xl p-3 mb-4">
+                <p className="text-red-400 text-sm">{passwordError}</p>
               </div>
             )}
 
             {passwordSuccess && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-                <p className="text-green-700 text-sm">{passwordSuccess}</p>
+              <div className="bg-emerald-950 border border-emerald-800 rounded-xl p-3 mb-4">
+                <p className="text-emerald-400 text-sm">{passwordSuccess}</p>
               </div>
             )}
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Current Password</label>
                 <div className="relative">
                   <input
                     type={showCurrentPass ? "text" : "password"}
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     placeholder="Enter current password"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-900"
+                    className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
                     disabled={changingPassword}
                   />
                   <button
                     type="button"
                     onClick={() => setShowCurrentPass(!showCurrentPass)}
-                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-300"
                   >
                     {showCurrentPass ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -694,20 +694,20 @@ const AdminDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                <label className="block text-sm font-medium text-gray-400 mb-2">New Password</label>
                 <div className="relative">
                   <input
                     type={showNewPass ? "text" : "password"}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Enter new password (min. 8 characters)"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-900"
+                    className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
                     disabled={changingPassword}
                   />
                   <button
                     type="button"
                     onClick={() => setShowNewPass(!showNewPass)}
-                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-300"
                   >
                     {showNewPass ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -715,13 +715,13 @@ const AdminDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Confirm New Password</label>
                 <input
                   type={showNewPass ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm new password"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-900"
+                  className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
                   disabled={changingPassword}
                 />
               </div>
@@ -731,7 +731,7 @@ const AdminDashboard = () => {
               <button
                 onClick={handleChangePassword}
                 disabled={changingPassword}
-                className="flex-1 bg-blue-900 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-800 disabled:opacity-50"
+                className="flex-1 bg-white text-black font-black px-6 py-3 rounded-full hover:bg-gray-200 disabled:opacity-50"
               >
                 {changingPassword ? 'Changing...' : 'Change Password'}
               </button>
@@ -745,7 +745,7 @@ const AdminDashboard = () => {
                   setPasswordSuccess('')
                 }}
                 disabled={changingPassword}
-                className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-200"
+                className="flex-1 bg-transparent border border-gray-700 text-gray-300 font-bold px-5 py-2.5 rounded-full hover:bg-gray-800 hover:text-white"
               >
                 Cancel
               </button>

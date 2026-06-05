@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,109 +6,97 @@
 
 @layer base {
   * {
-    @apply border-gray-200;
+    @apply border-gray-800;
   }
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-[#0a0a0a] text-white;
     font-family: 'Inter', sans-serif;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-blue-900 text-white px-4 py-2 rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:ring-offset-2;
+    @apply bg-white text-black font-black px-6 py-3 rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#0a0a0a] transition;
   }
   
   .btn-secondary {
-    @apply bg-gray-200 text-gray-900 px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
+    @apply bg-gray-900 text-gray-300 font-bold px-6 py-3 rounded-full border border-gray-700 hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 focus:ring-offset-[#0a0a0a] transition;
   }
   
   .card {
-    @apply bg-white p-6 rounded-lg shadow-sm border border-gray-200;
+    @apply bg-[#111111] p-6 rounded-2xl shadow-lg border border-gray-800;
   }
   
   .input-field {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900;
+    @apply w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition;
   }
   
   .select-field {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900;
+    @apply w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition;
   }
 
-  /* Typography Classes */
   .page-title {
-    @apply text-2xl font-bold text-gray-900;
+    @apply text-2xl font-black text-white;
   }
 
   .section-title {
-    @apply text-lg font-semibold text-blue-900;
+    @apply text-lg font-black text-white;
   }
 
   .body-text {
-    @apply text-sm text-gray-700;
+    @apply text-sm text-gray-400;
   }
 
   .table-header {
-    @apply text-xs font-medium text-gray-500 uppercase tracking-wider;
+    @apply text-xs font-bold text-gray-500 uppercase tracking-wider;
   }
 
   .form-label {
-    @apply block text-sm font-medium text-gray-700;
+    @apply block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2;
   }
 
   .form-input {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900;
+    @apply w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition;
   }
 
   .form-select {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900;
+    @apply w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
   }
 
   .success-message {
-    @apply bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded;
+    @apply bg-emerald-950 border border-emerald-800 text-emerald-400 px-4 py-3 rounded-xl;
   }
 
   .error-message {
-    @apply bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded;
+    @apply bg-red-950 border border-red-800 text-red-400 px-4 py-3 rounded-xl;
   }
 
   .stat-card {
-    @apply bg-white p-6 rounded-lg shadow-sm border border-gray-200;
+    @apply bg-[#111111] p-6 rounded-2xl border border-gray-800;
   }
 
   .stat-icon {
-    @apply w-8 h-8 rounded-full flex items-center justify-center;
-  }
-
-  .nav-link {
-    @apply flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors;
-  }
-
-  .nav-link-active {
-    @apply bg-blue-900 text-white;
-  }
-
-  .nav-link-inactive {
-    @apply text-gray-300 hover:bg-gray-800 hover:text-white;
+    @apply w-10 h-10 rounded-xl flex items-center justify-center;
   }
 }
 
 /* Custom scrollbar styles */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #111111;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
+  background: #333333;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #555555;
 }
 
 /* Print styles */

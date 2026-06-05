@@ -81,7 +81,7 @@ const TeacherDashboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
       </div>
     )
   }
@@ -144,15 +144,15 @@ const TeacherDashboard = () => {
   }
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden bg-[#0a0a0a]">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="page-title">Teacher Dashboard</h1>
-          <p className="text-gray-600 mt-2">Manage your class and student activities</p>
+          <p className="body-text mt-2">Manage your class and student activities</p>
         </div>
         <button
           onClick={() => setShowPasswordModal(true)}
-          className="flex items-center gap-2 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800"
+          className="btn-primary flex items-center gap-2"
           title="Change your account password"
         >
           <Lock size={16} /> Change Password
@@ -161,32 +161,32 @@ const TeacherDashboard = () => {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <div className="stat-card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-600 text-sm">Class</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{className}</p>
-              <p className="text-gray-500 text-sm mt-2">{levelName}</p>
+              <p className="body-text">Class</p>
+              <p className="text-2xl font-bold text-white mt-1">{className}</p>
+              <p className="text-gray-400 text-sm mt-2">{levelName}</p>
             </div>
             <BookOpen className="h-12 w-12 text-blue-600 opacity-20" />
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <div className="stat-card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-600 text-sm">Total Students</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{students.length}</p>
+              <p className="body-text">Total Students</p>
+              <p className="text-2xl font-bold text-white mt-1">{students.length}</p>
             </div>
             <Users className="h-12 w-12 text-green-600 opacity-20" />
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <div className="stat-card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-600 text-sm">Employee Number</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{teacher.employee_number || 'Not provided'}</p>
+              <p className="body-text">Employee Number</p>
+              <p className="text-2xl font-bold text-white mt-1">{teacher.employee_number || 'Not provided'}</p>
             </div>
             <Clock className="h-12 w-12 text-purple-600 opacity-20" />
           </div>
@@ -194,8 +194,8 @@ const TeacherDashboard = () => {
       </div>
 
       {/* Students Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
+      <div className="bg-[#111111] rounded-2xl border border-gray-800">
+        <div className="px-6 py-4 border-b border-gray-800">
           <h2 className="section-title">Class Students</h2>
         </div>
 
@@ -207,7 +207,7 @@ const TeacherDashboard = () => {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-900">
                 <tr>
                   <th className="table-header">Student Number</th>
                   <th className="table-header">Name</th>
@@ -216,14 +216,14 @@ const TeacherDashboard = () => {
                   <th className="table-header">Guardian</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-800">
                 {students.map((student) => (
-                  <tr key={student.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{student.student_number || 'Not provided'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{student.full_name || 'Unknown'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.gender || 'Not provided'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.date_of_birth || 'Not provided'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.guardian_name || 'Not provided'}</td>
+                  <tr key={student.id} className="hover:bg-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{student.student_number || 'Not provided'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{student.full_name || 'Unknown'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{student.gender || 'Not provided'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{student.date_of_birth || 'Not provided'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{student.guardian_name || 'Not provided'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -234,40 +234,40 @@ const TeacherDashboard = () => {
 
       {/* Password Change Modal */}
       {showPasswordModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-[#111111] rounded-2xl p-6 max-w-md w-full">
+            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
               <Lock size={20} /> Change Password
             </h2>
             
             {passwordError && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-                <p className="text-red-700 text-sm">{passwordError}</p>
+              <div className="error-message">
+                <p className="text-sm">{passwordError}</p>
               </div>
             )}
 
             {passwordSuccess && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-                <p className="text-green-700 text-sm">{passwordSuccess}</p>
+              <div className="success-message">
+                <p className="text-sm">{passwordSuccess}</p>
               </div>
             )}
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                <label className="form-label">Current Password</label>
                 <div className="relative">
                   <input
                     type={showCurrentPass ? "text" : "password"}
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     placeholder="Enter current password"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-900"
+                    className="form-input"
                     disabled={changingPassword}
                   />
                   <button
                     type="button"
                     onClick={() => setShowCurrentPass(!showCurrentPass)}
-                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-400"
                   >
                     {showCurrentPass ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -275,20 +275,20 @@ const TeacherDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                <label className="form-label">New Password</label>
                 <div className="relative">
                   <input
                     type={showNewPass ? "text" : "password"}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Enter new password (min. 8 characters)"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-900"
+                    className="form-input"
                     disabled={changingPassword}
                   />
                   <button
                     type="button"
                     onClick={() => setShowNewPass(!showNewPass)}
-                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-400"
                   >
                     {showNewPass ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -296,13 +296,13 @@ const TeacherDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                <label className="form-label">Confirm New Password</label>
                 <input
                   type={showNewPass ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm new password"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-900"
+                  className="form-input"
                   disabled={changingPassword}
                 />
               </div>
@@ -312,7 +312,7 @@ const TeacherDashboard = () => {
               <button
                 onClick={handleChangePassword}
                 disabled={changingPassword}
-                className="flex-1 bg-blue-900 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-800 disabled:opacity-50"
+                className="flex-1 btn-primary"
               >
                 {changingPassword ? 'Changing...' : 'Change Password'}
               </button>
@@ -326,7 +326,7 @@ const TeacherDashboard = () => {
                   setPasswordSuccess('')
                 }}
                 disabled={changingPassword}
-                className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-200"
+                className="flex-1 btn-secondary"
               >
                 Cancel
               </button>
@@ -335,7 +335,7 @@ const TeacherDashboard = () => {
         </div>
       )}
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
         <p className="text-xs text-gray-400">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>

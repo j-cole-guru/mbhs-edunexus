@@ -117,42 +117,42 @@ const TeacherResults = () => {
   }
 
   const gradeColor = (grade) => {
-    if (grade === 'A1') return 'bg-green-100 text-green-800'
-    if (grade === 'B2' || grade === 'B3') return 'bg-blue-100 text-blue-800'
-    if (grade === 'C4' || grade === 'C5' || grade === 'C6') return 'bg-yellow-100 text-yellow-800'
-    if (grade === 'D7' || grade === 'E8') return 'bg-orange-100 text-orange-800'
-    if (grade === 'F9') return 'bg-red-100 text-red-800'
-    return 'bg-gray-100 text-gray-800'
+    if (grade === 'A1') return 'bg-emerald-950 text-emerald-400'
+    if (grade === 'B2' || grade === 'B3') return 'bg-blue-950 text-blue-400'
+    if (grade === 'C4' || grade === 'C5' || grade === 'C6') return 'bg-yellow-950 text-yellow-400'
+    if (grade === 'D7' || grade === 'E8') return 'bg-orange-950 text-orange-400'
+    if (grade === 'F9') return 'bg-red-950 text-red-400'
+    return 'bg-gray-800 text-gray-300'
   }
 
   if (loading) return (
     <div className="flex items-center justify-center p-8">
-      <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+      <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
     </div>
   )
   if (!teacher) return (<div className="text-center text-gray-500 py-8"><p>Teacher profile not found</p></div>)
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden bg-[#0a0a0a]">
       <div className="mb-8">
         <h1 className="page-title">Enter Results</h1>
-        <p className="text-gray-600 mt-2">Enter examination results for your class</p>
+        <p className="body-text mt-2">Enter examination results for your class</p>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8">
+      <div className="card mb-8">
         <h2 className="section-title mb-4">Select Term and Subject</h2>
         {error && (<div className="mb-4 flex items-center error-message"><AlertCircle className="h-4 w-4 mr-2" />{error}</div>)}
         {success && (<div className="mb-4 flex items-center success-message"><CheckCircle className="h-4 w-4 mr-2" />{success}</div>)}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Term</label>
+            <label className="form-label">Term</label>
             <select value={formData.term_id} onChange={(e) => setFormData({ ...formData, term_id: e.target.value })} className="w-full form-select">
               <option value="">Select term</option>
               {terms.map(t => (<option key={t.id} value={t.id}>{t.name} - {t.year}</option>))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+            <label className="form-label">Subject</label>
             <select value={formData.subject_id} onChange={(e) => setFormData({ ...formData, subject_id: e.target.value })} className="w-full form-select">
               <option value="">Select subject</option>
               {subjects.map(s => (<option key={s.id} value={s.id}>{s.name}</option>))}
@@ -162,16 +162,16 @@ const TeacherResults = () => {
       </div>
 
       {results.length > 0 ? (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <div className="bg-[#111111] rounded-2xl border border-gray-800">
+          <div className="px-6 py-4 border-b border-gray-800 flex justify-between items-center">
             <h2 className="section-title">Enter Scores</h2>
-            <button onClick={handleSaveResults} disabled={saving} className="px-6 py-2 btn-primary flex items-center">
+            <button onClick={handleSaveResults} disabled={saving} className="btn-primary flex items-center">
               <CheckCircle className="h-4 w-4 mr-2" />{saving ? 'Saving...' : 'Save Results'}
             </button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-900">
                 <tr>
                   <th className="table-header">Student Number</th>
                   <th className="table-header">Name</th>
@@ -179,13 +179,13 @@ const TeacherResults = () => {
                   <th className="table-header">Grade</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-800">
                 {results.map(r => (
-                  <tr key={r.student_id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{r.student_number || 'Not provided'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{r.full_name || 'Unknown'}</td>
+                  <tr key={r.student_id} className="hover:bg-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{r.student_number || 'Not provided'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{r.full_name || 'Unknown'}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <input type="number" min="0" max="100" value={r.score} onChange={(e) => handleScoreChange(r.student_id, e.target.value)} className="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900" placeholder="0" />
+                      <input type="number" min="0" max="100" value={r.score} onChange={(e) => handleScoreChange(r.student_id, e.target.value)} className="w-20 form-input" placeholder="0" />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${gradeColor(r.grade)}`}>{r.grade || '-'}</span>
@@ -197,9 +197,9 @@ const TeacherResults = () => {
           </div>
         </div>
       ) : (
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 text-center text-gray-500"><p>No students found in your class</p></div>
+        <div className="card text-center text-gray-400"><p>No students found in your class</p></div>
       )}
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
         <p className="text-xs text-gray-400">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>

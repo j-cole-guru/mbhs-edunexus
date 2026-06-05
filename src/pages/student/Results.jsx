@@ -17,10 +17,10 @@ const getGrade = (score) => {
 }
 
 const getGradeClass = (grade) => {
-  if (grade === 'A1') return 'bg-green-100 text-green-700'
-  if (grade === 'B2' || grade === 'B3') return 'bg-blue-100 text-blue-700'
-  if (grade === 'C4' || grade === 'C5' || grade === 'C6') return 'bg-yellow-100 text-yellow-700'
-  return 'bg-red-100 text-red-700'
+  if (grade === 'A1') return 'bg-green-900/30 text-green-400'
+  if (grade === 'B2' || grade === 'B3') return 'bg-blue-900/30 text-blue-400'
+  if (grade === 'C4' || grade === 'C5' || grade === 'C6') return 'bg-yellow-900/30 text-yellow-400'
+  return 'bg-red-900/30 text-red-400'
 }
 
 const calcGPA = (records) => {
@@ -88,18 +88,18 @@ export default function StudentResults() {
 
   if (loading) return (
     <div className="flex items-center justify-center p-8">
-      <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+      <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
     </div>
   )
 
   const grouped = groupResults(results, terms)
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Academic Results</h1>
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden min-h-screen bg-[#0a0a0a]">
+      <h1 className="text-2xl font-black text-white mb-6">Academic Results</h1>
 
       {Object.keys(grouped).length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
+        <div className="bg-[#111111] rounded-2xl p-8 text-center text-gray-400">
           No results available.
         </div>
       ) : (
@@ -107,10 +107,10 @@ export default function StudentResults() {
           {Object.entries(grouped).map(([termName, assessments]) => {
             const isTermExpanded = expandedTerms[termName]
             return (
-              <div key={termName} className="bg-white rounded-lg shadow mb-4 overflow-hidden">
+              <div key={termName} className="bg-[#111111] rounded-2xl mb-4 overflow-hidden border border-gray-800">
                 <button
                   onClick={() => toggleTerm(termName)}
-                  className="w-full flex items-center justify-between px-6 py-4 bg-blue-900 text-white font-semibold text-left"
+                  className="w-full flex items-center justify-between px-6 py-4 bg-gray-900 text-white font-black text-left border-b border-gray-800"
                 >
                   <span>{termName}</span>
                   {isTermExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
@@ -123,10 +123,10 @@ export default function StudentResults() {
                       const gpa = calcGPA(records)
                       const isAssessmentExpanded = expandedAssessments[key]
                       return (
-                        <div key={key} className="border border-gray-200 rounded-lg overflow-hidden">
+                        <div key={key} className="border border-gray-800 rounded-2xl overflow-hidden">
                           <button
                             onClick={() => toggleAssessment(key)}
-                            className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 text-gray-800 font-medium text-left"
+                            className="w-full flex items-center justify-between px-4 py-3 bg-gray-900 text-gray-300 font-medium text-left"
                           >
                             <span>{assessmentType}</span>
                             {isAssessmentExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
@@ -134,10 +134,10 @@ export default function StudentResults() {
 
                           {isAssessmentExpanded && (
                             <div className="p-4">
-                              <div className="w-full overflow-x-auto rounded-lg shadow">
+                              <div className="w-full overflow-x-auto rounded-2xl">
                                 <table className="w-full text-sm" style={{ minWidth: '700px' }}>
                                   <thead>
-                                    <tr className="text-left text-gray-500 uppercase text-xs tracking-wide border-b">
+                                    <tr className="text-left text-gray-500 uppercase text-xs tracking-wide border-b border-gray-800">
                                       <th className="pb-2">Subject</th>
                                       <th className="pb-2">Score</th>
                                       <th className="pb-2">Grade</th>
@@ -145,9 +145,9 @@ export default function StudentResults() {
                                   </thead>
                                   <tbody>
                                     {records.map((r, i) => (
-                                      <tr key={i} className="border-b last:border-0">
-                                        <td className="py-2 text-gray-800">{r.subject}</td>
-                                        <td className="py-2 text-gray-800">{r.score}</td>
+                                      <tr key={i} className="border-b border-gray-800 last:border-0">
+                                        <td className="py-2 text-gray-300">{r.subject}</td>
+                                        <td className="py-2 text-gray-300">{r.score}</td>
                                         <td className="py-2">
                                           <span className={'px-2 py-1 rounded text-xs font-semibold ' + getGradeClass(r.grade)}>
                                             {r.grade}
@@ -158,9 +158,9 @@ export default function StudentResults() {
                                   </tbody>
                                 </table>
                               </div>
-                              <div className="mt-3 pt-3 border-t flex items-center justify-between">
-                                <span className="text-sm text-gray-500">Assessment Average</span>
-                                <span className="font-bold text-blue-900">{gpa} — {getGrade(parseFloat(gpa))}</span>
+                              <div className="mt-3 pt-3 border-t border-gray-800 flex items-center justify-between">
+                                <span className="text-sm text-gray-400">Assessment Average</span>
+                                <span className="font-bold text-blue-400">{gpa} — {getGrade(parseFloat(gpa))}</span>
                               </div>
                             </div>
                           )}
@@ -175,7 +175,7 @@ export default function StudentResults() {
         </>
       )}
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
         <p className="text-xs text-gray-400">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>

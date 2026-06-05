@@ -98,7 +98,7 @@ export default function IDCard() {
         scale: 3,
         useCORS: true,
         allowTaint: true,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#111111',
         logging: false
       })
       const link = document.createElement('a')
@@ -131,14 +131,14 @@ export default function IDCard() {
 
   if (!student) return (
     <div className="flex items-center justify-center p-8">
-      <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+      <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
     </div>
   )
 
   return (
-    <div className="p-4 md:p-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Student ID Card</h1>
-      <p className="text-gray-500 text-sm mb-8">Your official MBHS EduNexus student identification card.</p>
+    <div className="p-4 md:p-6 min-h-screen bg-[#0a0a0a]">
+      <h1 className="text-2xl font-black text-white mb-2">Student ID Card</h1>
+      <p className="text-gray-400 text-sm mb-8">Your official MBHS EduNexus student identification card.</p>
 
       <div className="flex flex-col lg:flex-row gap-8 items-start">
 
@@ -149,12 +149,12 @@ export default function IDCard() {
             className="w-full max-w-sm mx-auto lg:mx-0"
             style={{
               width: '340px',
-              background: 'white',
+              background: '#111111',
               borderRadius: '16px',
               overflow: 'hidden',
               boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
               fontFamily: 'Inter, sans-serif',
-              border: '1px solid #e5e7eb'
+              border: '1px solid #374151'
             }}
           >
             {/* Card Header */}
@@ -188,7 +188,7 @@ export default function IDCard() {
             <div style={{ height: '4px', background: 'linear-gradient(90deg, #1E3A8A, #3b82f6, #1E3A8A)' }} />
 
             {/* Card Body */}
-            <div style={{ padding: '20px', background: 'white' }}>
+            <div style={{ padding: '20px', background: '#111111' }}>
               <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
 
                 {/* Photo */}
@@ -199,7 +199,7 @@ export default function IDCard() {
                   overflow: 'hidden',
                   border: '2px solid #1E3A8A',
                   flexShrink: 0,
-                  background: '#f1f5f9',
+                  background: '#1f2937',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
@@ -213,15 +213,15 @@ export default function IDCard() {
                     />
                   ) : (
                     <div style={{ textAlign: 'center', padding: '8px' }}>
-                      <div style={{ width: '36px', height: '36px', background: '#cbd5e1', borderRadius: '50%', margin: '0 auto 4px' }} />
-                      <p style={{ fontSize: '8px', color: '#94a3b8', margin: 0 }}>No Photo</p>
+                      <div style={{ width: '36px', height: '36px', background: '#4b5563', borderRadius: '50%', margin: '0 auto 4px' }} />
+                      <p style={{ fontSize: '8px', color: '#6b7280', margin: 0 }}>No Photo</p>
                     </div>
                   )}
                 </div>
 
                 {/* Student Info */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontWeight: '900', fontSize: '14px', color: '#0f172a', margin: '0 0 4px', lineHeight: '1.3', wordBreak: 'break-word' }}>
+                  <p style={{ fontWeight: '900', fontSize: '14px', color: '#ffffff', margin: '0 0 4px', lineHeight: '1.3', wordBreak: 'break-word' }}>
                     {student.full_name}
                   </p>
                   <div style={{
@@ -246,10 +246,10 @@ export default function IDCard() {
                       { label: 'Gender', value: student.gender ? student.gender.charAt(0).toUpperCase() + student.gender.slice(1) : 'Not provided' },
                     ].map((item, i) => (
                       <div key={i} style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                        <p style={{ fontSize: '9px', color: '#94a3b8', margin: 0, minWidth: '36px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        <p style={{ fontSize: '9px', color: '#9ca3af', margin: 0, minWidth: '36px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                           {item.label}
                         </p>
-                        <p style={{ fontSize: '10px', color: '#1e293b', margin: 0, fontWeight: '600' }}>
+                        <p style={{ fontSize: '10px', color: '#d1d5db', margin: 0, fontWeight: '600' }}>
                           {item.value}
                         </p>
                       </div>
@@ -259,7 +259,7 @@ export default function IDCard() {
               </div>
 
               {/* Divider */}
-              <div style={{ height: '1px', background: '#e2e8f0', margin: '14px 0' }} />
+              <div style={{ height: '1px', background: '#374151', margin: '14px 0' }} />
 
               {/* Additional Info */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
@@ -270,10 +270,10 @@ export default function IDCard() {
                   { label: 'Guardian Tel', value: student.guardian_phone || 'Not provided' },
                 ].map((item, i) => (
                   <div key={i}>
-                    <p style={{ fontSize: '8px', color: '#94a3b8', margin: '0 0 1px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '600' }}>
+                    <p style={{ fontSize: '8px', color: '#9ca3af', margin: '0 0 1px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '600' }}>
                       {item.label}
                     </p>
-                    <p style={{ fontSize: '9px', color: '#1e293b', margin: 0, fontWeight: '600', wordBreak: 'break-word' }}>
+                    <p style={{ fontSize: '9px', color: '#d1d5db', margin: 0, fontWeight: '600', wordBreak: 'break-word' }}>
                       {item.value}
                     </p>
                   </div>
@@ -309,9 +309,9 @@ export default function IDCard() {
         {/* Controls */}
         <div className="w-full lg:flex-1 space-y-4">
           {/* Upload Photo */}
-          <div className="bg-white rounded-xl shadow p-6 border border-gray-100">
-            <h2 className="font-bold text-gray-900 mb-1">Upload Photo</h2>
-            <p className="text-gray-500 text-sm mb-4">Upload a clear passport-sized photo for your ID card. Max 2MB.</p>
+          <div className="bg-[#111111] rounded-2xl border border-gray-800 p-6">
+            <h2 className="font-bold text-white mb-1">Upload Photo</h2>
+            <p className="text-gray-400 text-sm mb-4">Upload a clear passport-sized photo for your ID card. Max 2MB.</p>
 
             <input
               type="file"
@@ -324,7 +324,7 @@ export default function IDCard() {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="flex items-center gap-2 bg-blue-900 text-white px-6 py-3 rounded-lg text-sm font-medium hover:bg-blue-800 disabled:opacity-50 w-full justify-center"
+              className="flex items-center gap-2 bg-white text-black font-black px-6 py-3 rounded-full hover:bg-gray-200 disabled:opacity-50 w-full justify-center"
             >
               {uploading ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -335,22 +335,22 @@ export default function IDCard() {
             </button>
 
             {uploadSuccess && (
-              <div className="flex items-center gap-2 mt-3 text-green-600">
+              <div className="flex items-center gap-2 mt-3 text-emerald-400">
                 <CheckCircle size={16} />
                 <p className="text-sm">{uploadSuccess}</p>
               </div>
             )}
-            {uploadError && <p className="text-red-600 text-sm mt-3">{uploadError}</p>}
+            {uploadError && <p className="text-red-400 text-sm mt-3">{uploadError}</p>}
           </div>
 
           {/* Download Card */}
-          <div className="bg-white rounded-xl shadow p-6 border border-gray-100">
-            <h2 className="font-bold text-gray-900 mb-1">Download ID Card</h2>
-            <p className="text-gray-500 text-sm mb-4">Download your ID card as a high quality PNG image you can print or save.</p>
+          <div className="bg-[#111111] rounded-2xl border border-gray-800 p-6">
+            <h2 className="font-bold text-white mb-1">Download ID Card</h2>
+            <p className="text-gray-400 text-sm mb-4">Download your ID card as a high quality PNG image you can print or save.</p>
             <button
               onClick={handleDownload}
               disabled={downloading}
-              className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50 w-full justify-center"
+              className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-gray-800 disabled:opacity-50 w-full justify-center"
             >
               {downloading ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -362,8 +362,8 @@ export default function IDCard() {
           </div>
 
           {/* Card Info */}
-          <div className="bg-blue-50 border border-blue-100 rounded-xl p-5">
-            <h3 className="font-bold text-blue-900 text-sm mb-3">ID Card Information</h3>
+          <div className="bg-blue-950/30 border border-blue-800 rounded-2xl p-5">
+            <h3 className="font-bold text-blue-400 text-sm mb-3">ID Card Information</h3>
             <div className="space-y-2 text-sm">
               {[
                 { label: 'Full Name', value: student.full_name },
@@ -376,9 +376,9 @@ export default function IDCard() {
                 { label: 'Guardian', value: student.guardian_name || 'Not provided' },
                 { label: 'Guardian Phone', value: student.guardian_phone || 'Not provided' },
               ].map((item, i) => (
-                <div key={i} className="flex justify-between items-center py-1 border-b border-blue-100 last:border-0">
-                  <span className="text-blue-700 font-medium text-xs uppercase tracking-wide">{item.label}</span>
-                  <span className="text-gray-900 font-semibold text-xs text-right">{item.value}</span>
+                <div key={i} className="flex justify-between items-center py-1 border-b border-blue-800 last:border-0">
+                  <span className="text-blue-400 font-medium text-xs uppercase tracking-wide">{item.label}</span>
+                  <span className="text-white font-semibold text-xs text-right">{item.value}</span>
                 </div>
               ))}
             </div>
@@ -386,7 +386,7 @@ export default function IDCard() {
         </div>
       </div>
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
         <p className="text-xs text-gray-400">© 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.</p>
         <p className="text-xs text-gray-400 mt-1">Developed by Alie Amadu Sesay</p>
       </footer>

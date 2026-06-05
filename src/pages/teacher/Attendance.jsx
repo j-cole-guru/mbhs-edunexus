@@ -129,7 +129,7 @@ const TeacherAttendance = () => {
 
   if (loading) return (
     <div className="flex items-center justify-center p-8">
-      <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+      <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
     </div>
   )
 
@@ -142,25 +142,25 @@ const TeacherAttendance = () => {
   )
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto bg-[#0a0a0a]">
       <div className="mb-8">
-        <h1 className="text-3xl font-black text-blue-950 tracking-tight">Mark Attendance</h1>
-        <p className="text-gray-500 mt-1 font-medium">Follow the steps below to record attendance for your class.</p>
+        <h1 className="page-title">Mark Attendance</h1>
+        <p className="body-text mt-1">Follow the steps below to record attendance for your class.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Configuration */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+          <div className="card">
             <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Step 1: Configuration</h2>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Term</label>
+                <label className="form-label">Term</label>
                 <select 
                   value={termId} 
                   onChange={e => setTermId(e.target.value)}
-                  className="w-full bg-gray-50 border-gray-200 rounded-xl focus:ring-blue-900 focus:border-blue-900"
+                  className="form-select"
                 >
                   <option value="">Select Term</option>
                   {terms.map(t => <option key={t.id} value={t.id}>{t.name} {t.year}</option>)}
@@ -168,11 +168,11 @@ const TeacherAttendance = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Month</label>
+                <label className="form-label">Month</label>
                 <select 
                   value={month} 
                   onChange={e => setMonth(e.target.value)}
-                  className="w-full bg-gray-50 border-gray-200 rounded-xl focus:ring-blue-900 focus:border-blue-900"
+                  className="form-select"
                 >
                   <option value="">Select Month</option>
                   {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
@@ -180,11 +180,11 @@ const TeacherAttendance = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Week</label>
+                <label className="form-label">Week</label>
                 <select 
                   value={week} 
                   onChange={e => setWeek(e.target.value)}
-                  className="w-full bg-gray-50 border-gray-200 rounded-xl focus:ring-blue-900 focus:border-blue-900"
+                  className="form-select"
                 >
                   <option value="">Select Week</option>
                   {WEEKS.map(w => <option key={w} value={w}>{w}</option>)}
@@ -192,11 +192,11 @@ const TeacherAttendance = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Day</label>
+                <label className="form-label">Day</label>
                 <select 
                   value={day} 
                   onChange={e => setDay(e.target.value)}
-                  className="w-full bg-gray-50 border-gray-200 rounded-xl focus:ring-blue-900 focus:border-blue-900"
+                  className="form-select"
                 >
                   <option value="">Select Day</option>
                   {DAYS.map(d => <option key={d} value={d}>{d}</option>)}
@@ -204,28 +204,28 @@ const TeacherAttendance = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Calendar Date</label>
+                <label className="form-label">Calendar Date</label>
                 <input 
                   type="date" 
                   value={selectedDate} 
                   onChange={e => setSelectedDate(e.target.value)}
-                  className="w-full bg-gray-50 border-gray-200 rounded-xl focus:ring-blue-900 focus:border-blue-900"
+                  className="form-input"
                 />
               </div>
             </div>
           </div>
 
-          <div className="bg-blue-950 p-6 rounded-3xl text-white shadow-xl">
-            <h3 className="text-lg font-bold mb-2">Ready to Save?</h3>
-            <p className="text-blue-200 text-sm mb-6">Review your selections carefully. Once submitted, these records will appear on student dashboards.</p>
+          <div className="card">
+            <h3 className="text-lg font-bold text-white mb-2">Ready to Save?</h3>
+            <p className="text-gray-400 text-sm mb-6">Review your selections carefully. Once submitted, these records will appear on student dashboards.</p>
             <button 
               onClick={handleSave}
               disabled={saving}
-              className="w-full bg-white text-blue-950 font-black py-4 rounded-2xl hover:bg-blue-50 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full btn-primary flex items-center justify-center gap-2"
             >
               {saving ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-950"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
                   Saving...
                 </>
               ) : (
@@ -241,23 +241,23 @@ const TeacherAttendance = () => {
         {/* Right Column: Student List */}
         <div className="lg:col-span-2 space-y-6">
           {error && (
-            <div className="bg-red-50 border-2 border-red-100 p-4 rounded-2xl flex items-center gap-3 text-red-700 font-bold animate-shake">
+            <div className="error-message flex items-center gap-3 font-bold animate-shake">
               <AlertCircle className="h-5 w-5 shrink-0" />
               {error}
             </div>
           )}
 
           {success && (
-            <div className="bg-green-50 border-2 border-green-100 p-4 rounded-2xl flex items-center gap-3 text-green-700 font-bold">
+            <div className="success-message flex items-center gap-3 font-bold">
               <CheckCircle className="h-5 w-5 shrink-0" />
               {success}
             </div>
           )}
 
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-6 border-b border-gray-50 bg-gray-50/30 flex justify-between items-center">
+          <div className="bg-[#111111] rounded-2xl border border-gray-800 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-800 flex justify-between items-center">
               <div>
-                <h2 className="text-lg font-black text-gray-900">Student List</h2>
+                <h2 className="section-title">Student List</h2>
                 <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">{students.length} Total Students</p>
               </div>
               <div className="flex items-center gap-4 text-xs font-bold">
@@ -273,32 +273,32 @@ const TeacherAttendance = () => {
             </div>
 
             {students.length === 0 ? (
-              <div className="p-20 text-center text-gray-400">
-                <Users className="h-12 w-12 mx-auto mb-4 text-gray-200" />
-                <p className="text-lg font-bold">No students found</p>
-                <p className="text-sm">There are no students assigned to your class.</p>
+              <div className="p-20 text-center text-gray-500">
+                <Users className="h-12 w-12 mx-auto mb-4 text-gray-600" />
+                <p className="text-lg font-bold text-gray-400">No students found</p>
+                <p className="text-sm text-gray-500">There are no students assigned to your class.</p>
               </div>
             ) : (
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-gray-800">
                 {students.map(s => (
                   <label 
                     key={s.id} 
-                    className="flex items-center justify-between p-5 hover:bg-gray-50 cursor-pointer transition-colors"
+                    className="flex items-center justify-between p-5 hover:bg-gray-900 cursor-pointer transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+                      <div className="h-10 w-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-500">
                         <Users className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="font-black text-gray-900">{s.full_name}</p>
-                        <p className="text-xs text-gray-500 font-bold uppercase tracking-tighter">{s.student_number || 'Not provided'}</p>
+                        <p className="font-black text-white">{s.full_name}</p>
+                        <p className="text-xs text-gray-400 font-bold uppercase tracking-tighter">{s.student_number || 'Not provided'}</p>
                       </div>
                     </div>
                     <input 
                       type="checkbox"
                       checked={!!checkedStudents[s.id]}
                       onChange={e => setCheckedStudents(prev => ({ ...prev, [s.id]: e.target.checked }))}
-                      className="h-6 w-6 rounded-lg border-gray-300 text-blue-950 focus:ring-blue-950 transition-all cursor-pointer"
+                      className="h-6 w-6 rounded-xl border-gray-700 text-blue-600 focus:ring-blue-600 bg-gray-900 transition-all cursor-pointer"
                     />
                   </label>
                 ))}
@@ -308,7 +308,7 @@ const TeacherAttendance = () => {
         </div>
       </div>
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
         <p className="text-xs text-gray-400">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>

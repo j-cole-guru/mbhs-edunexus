@@ -31,7 +31,7 @@ const StudentTimetable = () => {
 
   if (loading) return (
     <div className="flex items-center justify-center p-8">
-      <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+      <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
     </div>
   )
 
@@ -43,26 +43,26 @@ const StudentTimetable = () => {
   const todayEntries = grid[todayName] || []
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden min-h-screen bg-[#0a0a0a]">
       <div className="mb-8">
         <h1 className="page-title">My Timetable</h1>
-        <p className="text-gray-600 mt-2">
+        <p className="text-gray-400 mt-2">
           {now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
         </p>
       </div>
 
       {/* Today's classes */}
       {todayEntries.length > 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-          <h2 className="text-base font-semibold text-blue-900 mb-3">Today's Classes — {todayName}</h2>
+        <div className="bg-blue-950/30 border border-blue-800 rounded-2xl p-6 mb-8">
+          <h2 className="text-base font-semibold text-blue-400 mb-3">Today's Classes — {todayName}</h2>
           <div className="flex flex-wrap gap-3">
             {todayEntries.map((entry, i) => {
               const isCurrent = currentTime >= entry.start_time && currentTime < entry.end_time
               return (
-                <div key={i} className={`rounded-lg p-3 min-w-[150px] border ${isCurrent ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-blue-200'}`}>
-                  <p className={`text-sm font-semibold ${isCurrent ? 'text-white' : 'text-gray-900'}`}>{entry.subject}</p>
-                  <p className={`text-xs mt-1 ${isCurrent ? 'text-blue-100' : 'text-gray-500'}`}>{entry.start_time} – {entry.end_time}</p>
-                  {isCurrent && <span className="inline-block mt-1 text-xs bg-white text-blue-700 px-2 py-0.5 rounded-full font-medium">In Progress</span>}
+                <div key={i} className={`rounded-2xl p-3 min-w-[150px] border ${isCurrent ? 'bg-blue-600 border-blue-600 text-white' : 'bg-[#111111] border-gray-800'}`}>
+                  <p className={`text-sm font-semibold ${isCurrent ? 'text-white' : 'text-white'}`}>{entry.subject}</p>
+                  <p className={`text-xs mt-1 ${isCurrent ? 'text-blue-100' : 'text-gray-400'}`}>{entry.start_time} – {entry.end_time}</p>
+                  {isCurrent && <span className="inline-block mt-1 text-xs bg-white text-blue-400 px-2 py-0.5 rounded-full font-medium">In Progress</span>}
                 </div>
               )
             })}
@@ -71,20 +71,20 @@ const StudentTimetable = () => {
       )}
 
       {timetable.length === 0 ? (
-        <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200 text-center text-gray-500">
-          <Clock className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+        <div className="bg-[#111111] p-8 rounded-2xl border border-gray-800 text-center text-gray-400">
+          <Clock className="h-12 w-12 mx-auto text-gray-600 mb-4" />
           <p className="text-lg">No timetable found for your class.</p>
           <p className="text-sm mt-2">Please contact your teacher or administrator.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200">
+        <div className="bg-[#111111] rounded-2xl border border-gray-800">
+          <div className="px-6 py-4 border-b border-gray-800">
             <h2 className="section-title">Weekly Schedule</h2>
           </div>
           <div className="p-6 space-y-6">
             {DAYS.map(day => (
               <div key={day}>
-                <h3 className={`text-sm font-semibold px-3 py-1.5 rounded-md inline-block mb-3 ${day === todayName ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'}`}>
+                <h3 className={`text-sm font-semibold px-3 py-1.5 rounded-md inline-block mb-3 ${day === todayName ? 'bg-blue-600 text-white' : 'bg-gray-900 text-gray-400'}`}>
                   {day}{day === todayName ? ' (Today)' : ''}
                 </h3>
                 {grid[day].length === 0 ? (
@@ -92,9 +92,9 @@ const StudentTimetable = () => {
                 ) : (
                   <div className="flex flex-wrap gap-3">
                     {grid[day].map((entry, i) => (
-                      <div key={i} className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm min-w-[150px]">
-                        <p className="text-sm font-semibold text-gray-900">{entry.subject}</p>
-                        <p className="text-xs text-gray-500 mt-1">{entry.start_time} – {entry.end_time}</p>
+                      <div key={i} className="bg-[#111111] border border-gray-800 rounded-2xl p-3 min-w-[150px]">
+                        <p className="text-sm font-semibold text-white">{entry.subject}</p>
+                        <p className="text-xs text-gray-400 mt-1">{entry.start_time} – {entry.end_time}</p>
                       </div>
                     ))}
                   </div>
@@ -104,7 +104,7 @@ const StudentTimetable = () => {
           </div>
         </div>
       )}
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
         <p className="text-xs text-gray-400">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>

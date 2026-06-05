@@ -37,7 +37,7 @@ const TeacherTimetable = () => {
 
   if (loading) return (
     <div className="flex items-center justify-center p-8">
-      <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+      <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
     </div>
   )
   if (!teacher) return (<div className="text-center text-gray-500 py-8"><p>Teacher profile not found</p></div>)
@@ -48,35 +48,35 @@ const TeacherTimetable = () => {
   })
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden bg-[#0a0a0a]">
       <div className="mb-8">
         <h1 className="page-title">My Timetable</h1>
-        <p className="text-gray-600 mt-2">Your class teaching schedule (read only)</p>
+        <p className="body-text mt-2">Your class teaching schedule (read only)</p>
       </div>
 
       {timetable.length === 0 ? (
-        <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200 text-center text-gray-500">
-          <Clock className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+        <div className="card text-center text-gray-400">
+          <Clock className="h-12 w-12 mx-auto text-gray-500 mb-4" />
           <p className="text-lg">No timetable found for your class.</p>
           <p className="text-sm mt-2">Please contact the administrator to set up the schedule.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200">
+        <div className="bg-[#111111] rounded-2xl border border-gray-800">
+          <div className="px-6 py-4 border-b border-gray-800">
             <h2 className="section-title">Weekly Schedule</h2>
           </div>
           <div className="p-6 space-y-6">
             {DAYS.map(day => (
               <div key={day}>
-                <h3 className="text-sm font-semibold text-blue-900 bg-blue-50 px-3 py-1.5 rounded-md inline-block mb-3">{day}</h3>
+                <h3 className="text-sm font-semibold text-blue-400 bg-gray-900 px-3 py-1.5 rounded-md inline-block mb-3">{day}</h3>
                 {grid[day].length === 0 ? (
-                  <p className="text-sm text-gray-400 ml-1">No classes scheduled</p>
+                  <p className="text-sm text-gray-500 ml-1">No classes scheduled</p>
                 ) : (
                   <div className="flex flex-wrap gap-3">
                     {grid[day].map((entry, i) => (
-                      <div key={i} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm min-w-[160px]">
-                        <p className="text-sm font-semibold text-gray-900">{entry.subject || 'Not Assigned'}</p>
-                        <p className="text-xs text-gray-500 mt-1">{entry.start_time} – {entry.end_time}</p>
+                      <div key={i} className="bg-[#111111] border border-gray-800 rounded-2xl p-4 min-w-[160px]">
+                        <p className="text-sm font-semibold text-white">{entry.subject || 'Not Assigned'}</p>
+                        <p className="text-xs text-gray-400 mt-1">{entry.start_time} – {entry.end_time}</p>
                       </div>
                     ))}
                   </div>
@@ -86,7 +86,7 @@ const TeacherTimetable = () => {
           </div>
         </div>
       )}
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
         <p className="text-xs text-gray-400">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>

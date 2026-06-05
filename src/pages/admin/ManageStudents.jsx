@@ -577,7 +577,7 @@ const ManageStudents = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -598,14 +598,14 @@ const ManageStudents = () => {
     : [];
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+    <div className="bg-[#0a0a0a] min-h-screen p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="mb-8">
         <h1 className="page-title">Student Management</h1>
-        <p className="text-gray-600 mt-2">Create and manage student records</p>
+        <p className="text-gray-400 mt-2">Create and manage student records</p>
       </div>
 
       {/* Create Student Form */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8">
+      <div className="bg-[#111111] p-6 rounded-2xl border border-gray-800 mb-8">
         <h2 className="section-title mb-4">Create New Student</h2>
 
         {error && (
@@ -625,7 +625,7 @@ const ManageStudents = () => {
         <form onSubmit={handleCreateStudent}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Full Name *
               </label>
               <input
@@ -640,7 +640,7 @@ const ManageStudents = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Level *
               </label>
               <select
@@ -664,7 +664,7 @@ const ManageStudents = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Class *
               </label>
               <select
@@ -687,7 +687,7 @@ const ManageStudents = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Date of Birth *
               </label>
               <input
@@ -701,7 +701,7 @@ const ManageStudents = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Gender *
               </label>
               <select
@@ -718,7 +718,7 @@ const ManageStudents = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Guardian Name *
               </label>
               <input
@@ -733,7 +733,7 @@ const ManageStudents = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Guardian Phone *
               </label>
               <input
@@ -751,7 +751,7 @@ const ManageStudents = () => {
 
           <button
             type="submit"
-            className="px-6 py-2 btn-primary flex items-center"
+            className="btn-primary flex items-center"
           >
             <Plus className="h-4 w-4 mr-2" />
             Create Student
@@ -763,14 +763,14 @@ const ManageStudents = () => {
       <div className="flex gap-2 mb-4 flex-wrap">
         <button
           onClick={() => setShowArchived(false)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium ${!showArchived ? 'bg-blue-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+          className={`px-4 py-2 rounded-xl text-sm font-medium ${!showArchived ? 'bg-white text-black font-black' : 'bg-gray-900 text-gray-400 border border-gray-700 hover:bg-gray-800'}`}
         >
           Active Students ({students.length})
         </button>
         {getAdminDepartment() === 'both' && (
           <button
             onClick={() => setShowArchived(true)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium ${showArchived ? 'bg-blue-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+            className={`px-4 py-2 rounded-xl text-sm font-medium ${showArchived ? 'bg-white text-black font-black' : 'bg-gray-900 text-gray-400 border border-gray-700 hover:bg-gray-800'}`}
           >
             Archived Students ({archivedStudents.length})
           </button>
@@ -779,29 +779,29 @@ const ManageStudents = () => {
 
       {/* Active Students Table */}
       {!showArchived && (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-6 py-4 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h2 className="font-semibold text-gray-800">Active Students ({filteredStudents.length})</h2>
+        <div className="bg-[#111111] rounded-2xl border border-gray-800 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h2 className="font-semibold text-white">Active Students ({filteredStudents.length})</h2>
             <div className="flex flex-col sm:flex-row gap-3">
               <select value={filterLevel} onChange={e => { setFilterLevel(e.target.value); setFilterClass('') }}
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900">
+                className="bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600">
                 <option value="">All Levels</option>
                 {levels.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
               </select>
               <select value={filterClass} onChange={e => setFilterClass(e.target.value)}
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+                className="bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
                 disabled={!filterLevel}>
                 <option value="">All Classes</option>
                 {availableClasses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
               <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search by name or ID..."
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 min-w-[200px]" />
+                className="bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 min-w-[200px]" />
             </div>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm" style={{ minWidth: '700px' }}>
-              <thead className="bg-gray-50 border-b">
+              <thead className="bg-gray-900 border-b border-gray-800">
                 <tr>
                   <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Student Number</th>
                   <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
@@ -814,28 +814,28 @@ const ManageStudents = () => {
                 {filteredStudents.length === 0 ? (
                   <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-500">No active students found.</td></tr>
                 ) : filteredStudents.map((student, i) => (
-                  <tr key={student.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="px-4 py-3 text-gray-600">{student.student_number}</td>
-                    <td className="px-4 py-3 font-medium text-gray-900">{student.full_name}</td>
-                    <td className="px-4 py-3 font-mono text-gray-600 bg-gray-100 rounded px-2 py-1">{student.pin}</td>
-                    <td className="px-4 py-3 text-gray-600 capitalize">{student.gender}</td>
+                  <tr key={student.id} className={i % 2 === 0 ? 'bg-[#111111]' : 'bg-[#1a1a1a]'}>
+                    <td className="px-4 py-3 text-gray-300">{student.student_number}</td>
+                    <td className="px-4 py-3 font-medium text-white">{student.full_name}</td>
+                    <td className="px-4 py-3 font-mono text-gray-300 bg-gray-800 rounded px-2 py-1">{student.pin}</td>
+                    <td className="px-4 py-3 text-gray-300 capitalize">{student.gender}</td>
                     <td className="px-4 py-3">
                       <button
                         onClick={() => setArchiveModalStudent(student)}
-                        className="flex items-center gap-1 text-yellow-600 hover:text-yellow-800 text-xs font-medium"
+                        className="flex items-center gap-1 text-yellow-400 hover:text-yellow-300 text-xs font-medium"
                       >
                         <Archive size={14} /> Archive
                       </button>
                       <button
                         onClick={() => handleResetPin(student)}
-                        className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-xs font-medium ml-2"
+                        className="flex items-center gap-1 text-blue-400 hover:text-blue-300 text-xs font-medium ml-2"
                         title="Generate new PIN for this student"
                       >
                         <RefreshCw size={14} /> Reset PIN
                       </button>
                       <button
                         onClick={() => handleDeleteStudent(student.id)}
-                        className="flex items-center gap-1 text-red-600 hover:text-red-800 text-xs font-medium ml-2"
+                        className="flex items-center gap-1 text-red-400 hover:text-red-300 text-xs font-medium ml-2"
                       >
                         <Trash2 size={14} /> Delete
                       </button>
@@ -850,13 +850,13 @@ const ManageStudents = () => {
 
       {/* Archived Students Table */}
       {showArchived && getAdminDepartment() === 'both' && (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-6 py-4 border-b">
-            <h2 className="font-semibold text-gray-800">Archived Students ({archivedStudents.length})</h2>
+        <div className="bg-[#111111] rounded-2xl border border-gray-800 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-800">
+            <h2 className="font-semibold text-white">Archived Students ({archivedStudents.length})</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm" style={{ minWidth: '800px' }}>
-              <thead className="bg-gray-50 border-b">
+              <thead className="bg-gray-900 border-b border-gray-800">
                 <tr>
                   <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Student Number</th>
                   <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
@@ -871,23 +871,23 @@ const ManageStudents = () => {
                 {archivedStudents.length === 0 ? (
                   <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-500">No archived students.</td></tr>
                 ) : archivedStudents.map((student, i) => (
-                  <tr key={student.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="px-4 py-3 text-gray-600">{student.student_number}</td>
-                    <td className="px-4 py-3 font-medium text-gray-900">{student.full_name}</td>
+                  <tr key={student.id} className={i % 2 === 0 ? 'bg-[#111111]' : 'bg-[#1a1a1a]'}>
+                    <td className="px-4 py-3 text-gray-300">{student.student_number}</td>
+                    <td className="px-4 py-3 font-medium text-white">{student.full_name}</td>
                     <td className="px-4 py-3">
                       <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                        student.archive_reason?.includes('Suspend') ? 'bg-yellow-100 text-yellow-700' :
-                        student.archive_reason?.includes('Expel') ? 'bg-red-100 text-red-700' :
-                        student.archive_reason === 'Graduated' ? 'bg-green-100 text-green-700' :
-                        'bg-gray-100 text-gray-700'
+                        student.archive_reason?.includes('Suspend') ? 'bg-yellow-950 text-yellow-400' :
+                        student.archive_reason?.includes('Expel') ? 'bg-red-950 text-red-400' :
+                        student.archive_reason === 'Graduated' ? 'bg-emerald-950 text-emerald-400' :
+                        'bg-gray-800 text-gray-400'
                       }`}>
                         {student.archive_reason || 'Not provided'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-600">{student.graduation_year || 'Not provided'}</td>
+                    <td className="px-4 py-3 text-gray-300">{student.graduation_year || 'Not provided'}</td>
                     <td className="px-4 py-3">
                       {student.suspension_end_date ? (
-                        <span className={`text-xs font-medium ${new Date(student.suspension_end_date) <= new Date() ? 'text-green-600' : 'text-red-600'}`}>
+                        <span className={`text-xs font-medium ${new Date(student.suspension_end_date) <= new Date() ? 'text-emerald-400' : 'text-red-400'}`}>
                           {new Date(student.suspension_end_date) <= new Date() ? 'Ended' : new Date(student.suspension_end_date).toLocaleDateString()}
                         </span>
                         ) : 'Not provided'}
@@ -897,7 +897,7 @@ const ManageStudents = () => {
                     </td>
                     <td className="px-4 py-3">
                       <button onClick={() => handleRestoreStudent(student.id)}
-                        className="flex items-center gap-1 text-green-600 hover:text-green-800 text-xs font-medium">
+                        className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 text-xs font-medium">
                         <RotateCcw size={14} /> Restore
                       </button>
                     </td>
@@ -911,18 +911,18 @@ const ManageStudents = () => {
 
       {/* Archive Modal */}
       {archiveModalStudent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-2">Archive Student</h2>
-            <p className="text-sm text-gray-600 mb-4">
-              Archiving <span className="font-semibold">{archiveModalStudent.full_name}</span>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#111111] border border-gray-800 rounded-2xl shadow-xl w-full max-w-md p-6">
+            <h2 className="text-lg font-black text-white mb-2">Archive Student</h2>
+            <p className="text-sm text-gray-400 mb-4">
+              Archiving <span className="font-semibold text-white">{archiveModalStudent.full_name}</span>
             </p>
             <div className="space-y-4 mb-6">
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">Reason</label>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Reason</label>
                 <select value={archiveReason}
                   onChange={e => { setArchiveReason(e.target.value); setSuspensionDuration(''); setSuspensionEndDate(''); setGraduationYear('') }}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900">
+                  className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600">
                   <option value="">Select Reason</option>
                   <option value="Graduated">Graduated</option>
                   <option value="Suspended">Suspended</option>
@@ -935,16 +935,16 @@ const ManageStudents = () => {
 
               {archiveReason === 'Graduated' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">Graduation Year</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Graduation Year</label>
                   <input type="text" value={graduationYear} onChange={e => setGraduationYear(e.target.value)}
                     placeholder="e.g. 2026"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900" />
+                    className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
                 </div>
               )}
 
               {archiveReason === 'Suspended' && (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-3">
-                  <p className="text-yellow-800 text-sm font-semibold">Suspension Duration</p>
+                <div className="bg-yellow-950/30 border border-yellow-800 rounded-xl p-4 space-y-3">
+                  <p className="text-yellow-400 text-sm font-semibold">Suspension Duration</p>
                   <select value={suspensionDuration}
                     onChange={e => {
                       setSuspensionDuration(e.target.value)
@@ -954,7 +954,7 @@ const ManageStudents = () => {
                         setSuspensionEndDate('')
                       }
                     }}
-                    className="w-full border border-yellow-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                    className="w-full bg-gray-900 border border-yellow-700 rounded-xl px-3 py-2 text-sm text-yellow-200 focus:outline-none focus:ring-1 focus:ring-yellow-600">
                     <option value="">Select Duration</option>
                     <option value="3_days">3 Days</option>
                     <option value="1_week">1 Week</option>
@@ -966,15 +966,15 @@ const ManageStudents = () => {
                     <input type="date" value={suspensionEndDate}
                       onChange={e => setSuspensionEndDate(e.target.value)}
                       min={new Date().toISOString().split('T')[0]}
-                      className="w-full border border-yellow-300 rounded-lg px-3 py-2 text-sm" />
+                      className="w-full bg-gray-900 border border-yellow-700 rounded-xl px-3 py-2 text-sm text-white" />
                   )}
                   {suspensionEndDate && (
-                    <div className="bg-white rounded-lg p-3 border border-yellow-200">
-                      <p className="text-xs text-gray-500">Suspension ends on:</p>
-                      <p className="font-bold text-gray-900 text-sm">
+                    <div className="bg-[#111111] rounded-xl p-3 border border-yellow-800">
+                      <p className="text-xs text-gray-400">Suspension ends on:</p>
+                      <p className="font-bold text-white text-sm">
                         {new Date(suspensionEndDate).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                       </p>
-                      <p className="text-xs text-green-600 mt-1">Account will be automatically restored on this date.</p>
+                      <p className="text-xs text-emerald-400 mt-1">Account will be automatically restored on this date.</p>
                     </div>
                   )}
                 </div>
@@ -982,11 +982,11 @@ const ManageStudents = () => {
             </div>
             <div className="flex gap-3">
               <button onClick={handleArchiveStudent}
-                className="flex-1 bg-blue-900 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-800">
+                className="flex-1 bg-white text-black font-black px-6 py-3 rounded-full hover:bg-gray-200">
                 Confirm Archive
               </button>
               <button onClick={() => { setArchiveModalStudent(null); setArchiveReason(''); setGraduationYear(''); setSuspensionDuration(''); setSuspensionEndDate('') }}
-                className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">
+                className="flex-1 bg-transparent border border-gray-700 text-gray-300 font-bold px-5 py-2.5 rounded-full hover:bg-gray-800 hover:text-white">
                 Cancel
               </button>
             </div>
@@ -996,15 +996,15 @@ const ManageStudents = () => {
 
       {/* PIN Display Modal */}
       {showPinModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Student PIN</h2>
-            <p className="text-gray-600 text-sm mb-6">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#111111] border border-gray-800 rounded-2xl p-6 max-w-md w-full">
+            <h2 className="text-xl font-black text-white mb-4">Student PIN</h2>
+            <p className="text-gray-400 text-sm mb-6">
               A new PIN has been generated. Share this PIN with the student. They can use it to log in.
             </p>
-            <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-6 mb-6 border-2 border-blue-900">
-              <p className="text-sm text-gray-600 mb-2 text-center">PIN:</p>
-              <p className="text-4xl font-bold text-blue-900 text-center tracking-widest">
+            <div className="bg-gradient-to-r from-blue-950 to-blue-900 rounded-2xl p-6 mb-6 border-2 border-blue-700">
+              <p className="text-sm text-blue-300 mb-2 text-center">PIN:</p>
+              <p className="text-4xl font-bold text-white text-center tracking-widest">
                 {generatedPin}
               </p>
             </div>
@@ -1013,13 +1013,13 @@ const ManageStudents = () => {
                 navigator.clipboard.writeText(generatedPin);
                 alert('PIN copied to clipboard!');
               }}
-              className="w-full flex items-center justify-center gap-2 bg-blue-900 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-800 mb-3"
+              className="w-full flex items-center justify-center gap-2 bg-white text-black font-black px-6 py-3 rounded-full hover:bg-gray-200 mb-3"
             >
               <Copy size={16} /> Copy PIN
             </button>
             <button
               onClick={() => setShowPinModal(false)}
-              className="w-full bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-200"
+              className="w-full bg-transparent border border-gray-700 text-gray-300 font-bold px-5 py-2.5 rounded-full hover:bg-gray-800 hover:text-white"
             >
               Done
             </button>
@@ -1027,11 +1027,11 @@ const ManageStudents = () => {
         </div>
       )}
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-        <p className="text-xs text-gray-400">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
+        <p className="text-xs text-gray-500">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-gray-500 mt-1">
           Developed by Alie Amadu Sesay
         </p>
       </footer>

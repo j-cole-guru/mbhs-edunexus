@@ -74,80 +74,80 @@ const StudentAttendance = () => {
 
   if (loading) return (
     <div className="flex items-center justify-center p-8">
-      <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+      <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
     </div>
   )
 
   if (!student) return (
-    <div className="p-8 text-center text-gray-500">
-      <Calendar className="h-12 w-12 mx-auto text-gray-200 mb-4" />
-      <p className="text-xl font-bold text-gray-900">Student profile not found</p>
+    <div className="p-8 text-center text-gray-400">
+      <Calendar className="h-12 w-12 mx-auto text-gray-700 mb-4" />
+      <p className="text-xl font-bold text-white">Student profile not found</p>
     </div>
   )
 
   const tree = buildTree(records, terms)
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden min-h-screen bg-[#0a0a0a]">
       <div className="mb-10">
-        <h1 className="text-3xl font-black text-blue-950 tracking-tight">My Attendance</h1>
-        <p className="text-gray-500 mt-2 font-medium">Explore your academic attendance history by term and week.</p>
+        <h1 className="text-3xl font-black text-white tracking-tight">My Attendance</h1>
+        <p className="text-gray-400 mt-2 font-medium">Explore your academic attendance history by term and week.</p>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+        <div className="bg-[#111111] p-6 rounded-2xl border border-gray-800">
           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Recorded Days</p>
-          <p className="text-2xl font-black text-gray-900">{stats.total}</p>
+          <p className="text-2xl font-black text-white">{stats.total}</p>
         </div>
-        <div className="bg-green-50 p-6 rounded-3xl border border-green-100">
-          <p className="text-[10px] font-bold text-green-700 uppercase tracking-widest mb-1 text-opacity-70">Present</p>
-          <p className="text-2xl font-black text-green-700">{stats.present}</p>
+        <div className="bg-green-950 p-6 rounded-2xl border border-green-800">
+          <p className="text-[10px] font-bold text-green-400 uppercase tracking-widest mb-1">Present</p>
+          <p className="text-2xl font-black text-green-400">{stats.present}</p>
         </div>
-        <div className="bg-red-50 p-6 rounded-3xl border border-red-100">
-          <p className="text-[10px] font-bold text-red-700 uppercase tracking-widest mb-1 text-opacity-70">Absent</p>
-          <p className="text-2xl font-black text-red-700">{stats.absent}</p>
+        <div className="bg-red-950 p-6 rounded-2xl border border-red-800">
+          <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest mb-1">Absent</p>
+          <p className="text-2xl font-black text-red-400">{stats.absent}</p>
         </div>
-        <div className="bg-blue-900 p-6 rounded-3xl text-white shadow-lg shadow-blue-900/20">
-          <p className="text-[10px] font-bold text-blue-100 uppercase tracking-widest mb-1">Attendance Rate</p>
-          <p className="text-2xl font-black">{rate}%</p>
+        <div className="bg-[#111111] p-6 rounded-2xl border border-gray-800">
+          <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1">Attendance Rate</p>
+          <p className="text-2xl font-black text-white">{rate}%</p>
         </div>
       </div>
 
       {records.length === 0 ? (
-        <div className="bg-white p-20 rounded-3xl shadow-sm border border-gray-100 text-center text-gray-400">
-          <Clock className="h-16 w-16 mx-auto mb-6 text-gray-100" />
-          <p className="text-xl font-bold text-gray-900">No attendance records found.</p>
+        <div className="bg-[#111111] p-20 rounded-2xl border border-gray-800 text-center text-gray-400">
+          <Clock className="h-16 w-16 mx-auto mb-6 text-gray-700" />
+          <p className="text-xl font-bold text-white">No attendance records found.</p>
           <p className="mt-2">Check back once your teacher marks attendance for the first time.</p>
         </div>
       ) : (
         <div className="space-y-6">
           {Object.entries(tree).map(([termName, months]) => (
-            <div key={termName} className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+            <div key={termName} className="bg-[#111111] rounded-2xl border border-gray-800 overflow-hidden">
               {/* Term Header */}
               <button 
                 onClick={() => toggleLevel('terms', termName)}
-                className="w-full flex items-center justify-between p-6 hover:bg-gray-50/50 transition-colors"
+                className="w-full flex items-center justify-between p-6 hover:bg-gray-900/50 transition-colors"
               >
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 bg-blue-950 rounded-2xl flex items-center justify-center text-white">
+                  <div className="h-12 w-12 bg-gray-800 rounded-2xl flex items-center justify-center text-blue-400">
                     <Calendar className="h-6 w-6" />
                   </div>
-                  <h2 className="text-lg font-black text-gray-900 text-left">{termName}</h2>
+                  <h2 className="text-lg font-black text-white text-left">{termName}</h2>
                 </div>
                 {expanded.terms[termName] ? <ChevronDown className="h-5 w-5 text-gray-300" /> : <ChevronRight className="h-5 w-5 text-gray-300" />}
               </button>
 
               {expanded.terms[termName] && (
-                <div className="border-t border-gray-50 px-6 pb-6 space-y-4 pt-2">
+                <div className="border-t border-gray-800 px-6 pb-6 space-y-4 pt-2">
                   {Object.entries(months).map(([monthName, weeks]) => (
                     <div key={monthName} className="ml-4">
                       {/* Month Header */}
                       <button 
                         onClick={() => toggleLevel('months', `${termName}-${monthName}`)}
-                        className="w-full flex items-center justify-between py-3 px-4 rounded-2xl hover:bg-gray-50 transition-colors"
+                        className="w-full flex items-center justify-between py-3 px-4 rounded-2xl hover:bg-gray-900 transition-colors"
                       >
-                        <span className="font-bold text-gray-700">{monthName}</span>
+                        <span className="font-bold text-gray-400">{monthName}</span>
                         {expanded.months[`${termName}-${monthName}`] ? <ChevronDown className="h-4 w-4 text-gray-300" /> : <ChevronRight className="h-4 w-4 text-gray-300" />}
                       </button>
 
@@ -158,26 +158,26 @@ const StudentAttendance = () => {
                               {/* Week Header */}
                               <button 
                                 onClick={() => toggleLevel('weeks', `${termName}-${monthName}-${weekName}`)}
-                                className="w-full flex items-center justify-between py-2 px-4 rounded-xl hover:bg-blue-50/50 transition-colors"
+                                className="w-full flex items-center justify-between py-2 px-4 rounded-xl hover:bg-blue-900/30 transition-colors"
                               >
-                                <span className="text-xs font-black text-blue-900 uppercase tracking-widest">{weekName}</span>
-                                {expanded.weeks[`${termName}-${monthName}-${weekName}`] ? <ChevronDown className="h-4 w-4 text-blue-900/30" /> : <ChevronRight className="h-4 w-4 text-blue-900/30" />}
+                                <span className="text-xs font-black text-blue-400 uppercase tracking-widest">{weekName}</span>
+                                {expanded.weeks[`${termName}-${monthName}-${weekName}`] ? <ChevronDown className="h-4 w-4 text-blue-400/30" /> : <ChevronRight className="h-4 w-4 text-blue-400/30" />}
                               </button>
 
                               {expanded.weeks[`${termName}-${monthName}-${weekName}`] && (
                                 <div className="mt-2 grid grid-cols-1 gap-2 pl-4">
                                   {days.map(dayRec => (
-                                    <div key={dayRec.id} className="bg-gray-50 p-4 rounded-2xl flex items-center justify-between border border-transparent hover:border-gray-200 transition-all">
+                                    <div key={dayRec.id} className="bg-gray-900 p-4 rounded-2xl flex items-center justify-between border border-transparent hover:border-gray-700 transition-all">
                                       <div className="flex items-center gap-3">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-950/20"></div>
-                                        <span className="text-sm font-bold text-gray-700">{dayRec.day}</span>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-400/20"></div>
+                                        <span className="text-sm font-bold text-gray-400">{dayRec.day}</span>
                                         <span className="text-[10px] font-bold text-gray-400">({new Date(dayRec.date).toLocaleDateString()})</span>
                                       </div>
                                       <div className="flex items-center gap-2">
-                                        <span className={`text-[10px] font-black uppercase ${dayRec.status === 'present' ? 'text-green-600' : dayRec.status === 'absent' ? 'text-red-500' : 'text-yellow-600'}`}>
+                                        <span className={`text-[10px] font-black uppercase ${dayRec.status === 'present' ? 'text-green-400' : dayRec.status === 'absent' ? 'text-red-400' : 'text-yellow-400'}`}>
                                           {dayRec.status}
                                         </span>
-                                        {dayRec.status === 'present' ? <CheckCircle className="h-4 w-4 text-green-500" /> : dayRec.status === 'absent' ? <XCircle className="h-4 w-4 text-red-500" /> : <Clock className="h-4 w-4 text-yellow-500" />}
+                                        {dayRec.status === 'present' ? <CheckCircle className="h-4 w-4 text-green-400" /> : dayRec.status === 'absent' ? <XCircle className="h-4 w-4 text-red-400" /> : <Clock className="h-4 w-4 text-yellow-400" />}
                                       </div>
                                     </div>
                                   ))}
@@ -196,7 +196,7 @@ const StudentAttendance = () => {
         </div>
       )}
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
         <p className="text-xs text-gray-400">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>

@@ -159,37 +159,37 @@ export default function AdminAttendance() {
 
   const StatusBadge = ({ status }) => {
     if (status === 'present') return (
-      <span className="flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-semibold">
+      <span className="flex items-center gap-1 px-2 py-1 bg-emerald-950 text-emerald-400 rounded-xl text-xs font-semibold">
         <CheckCircle size={12} /> Present
       </span>
     )
     if (status === 'late') return (
-      <span className="flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs font-semibold">
+      <span className="flex items-center gap-1 px-2 py-1 bg-yellow-950 text-yellow-400 rounded-xl text-xs font-semibold">
         <Clock size={12} /> Late
       </span>
     )
     return (
-      <span className="flex items-center gap-1 px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-semibold">
+      <span className="flex items-center gap-1 px-2 py-1 bg-red-950 text-red-400 rounded-xl text-xs font-semibold">
         <XCircle size={12} /> Absent
       </span>
     )
   }
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Attendance Reports</h1>
+    <div className="bg-[#0a0a0a] min-h-screen p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+      <h1 className="text-2xl font-black text-white mb-6">Attendance Reports</h1>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Filter Attendance</h2>
+      <div className="bg-[#111111] rounded-2xl border border-gray-800 p-6 mb-6">
+        <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wide mb-4">Filter Attendance</h2>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Level</label>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Level</label>
             <select
               value={levelId}
               onChange={e => setLevelId(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
             >
               <option value="">Select Level</option>
               {levels.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
@@ -197,11 +197,11 @@ export default function AdminAttendance() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Class</label>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Class</label>
             <select
               value={classId}
               onChange={e => setClassId(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
             >
               <option value="">Select Class</option>
               {filteredClasses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -209,11 +209,11 @@ export default function AdminAttendance() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Term</label>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Term</label>
             <select
               value={termId}
               onChange={e => setTermId(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
             >
               <option value="">Select Term</option>
               {terms.map(t => <option key={t.id} value={t.id}>{t.name} {t.year}</option>)}
@@ -221,11 +221,11 @@ export default function AdminAttendance() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Month</label>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Month</label>
             <select
               value={month}
               onChange={e => setMonth(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
             >
               <option value="">All Months</option>
               {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
@@ -233,11 +233,11 @@ export default function AdminAttendance() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Week</label>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Week</label>
             <select
               value={week}
               onChange={e => setWeek(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
             >
               <option value="">All Weeks</option>
               {['Week 1','Week 2','Week 3','Week 4'].map(w => (
@@ -247,11 +247,11 @@ export default function AdminAttendance() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Day</label>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Day</label>
             <select
               value={day}
               onChange={e => setDay(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
             >
               <option value="">All Days</option>
               {DAYS.map(d => <option key={d} value={d}>{d}</option>)}
@@ -259,19 +259,19 @@ export default function AdminAttendance() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Specific Date</label>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Specific Date</label>
             <input
               type="date"
               value={selectedDate}
               onChange={e => setSelectedDate(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
             />
           </div>
         </div>
 
         <button
           onClick={fetchAttendance}
-          className="flex items-center gap-2 bg-blue-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition"
+          className="flex items-center gap-2 bg-white text-black font-black px-6 py-3 rounded-full hover:bg-gray-200 transition"
         >
           <Search size={16} />
           View Attendance
@@ -281,35 +281,35 @@ export default function AdminAttendance() {
       {/* Summary Cards */}
       {records.length > 0 && (
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">Present</p>
-            <p className="text-2xl font-bold text-gray-900">{totalPresent}</p>
+          <div className="bg-[#111111] rounded-2xl p-4 border-l-4 border-emerald-500">
+            <p className="text-sm text-gray-400 uppercase tracking-wide">Present</p>
+            <p className="text-2xl font-bold text-white">{totalPresent}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">Absent</p>
-            <p className="text-2xl font-bold text-gray-900">{totalAbsent}</p>
+          <div className="bg-[#111111] rounded-2xl p-4 border-l-4 border-red-500">
+            <p className="text-sm text-gray-400 uppercase tracking-wide">Absent</p>
+            <p className="text-2xl font-bold text-white">{totalAbsent}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
-            <p className="text-sm text-gray-500 uppercase tracking-wide">Late</p>
-            <p className="text-2xl font-bold text-gray-900">{totalLate}</p>
+          <div className="bg-[#111111] rounded-2xl p-4 border-l-4 border-yellow-500">
+            <p className="text-sm text-gray-400 uppercase tracking-wide">Late</p>
+            <p className="text-2xl font-bold text-white">{totalLate}</p>
           </div>
         </div>
       )}
 
       {/* Attendance Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-[#111111] rounded-2xl border border-gray-800 overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center p-8">
-            <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
           </div>
         ) : records.length === 0 ? (
           <div className="p-8 text-center text-gray-500">
             Select filters above and click View Attendance to see records.
           </div>
         ) : (
-          <div className="w-full overflow-x-auto rounded-lg shadow">
+          <div className="w-full overflow-x-auto">
             <table className="w-full text-sm" style={{ minWidth: '700px' }}>
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-gray-900 border-b border-gray-800">
               <tr>
                 <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Student Number</th>
                 <th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-gray-500">Student Name</th>
@@ -322,13 +322,13 @@ export default function AdminAttendance() {
             </thead>
             <tbody>
               {records.map((r, i) => (
-                <tr key={i} className="border-b last:border-0 hover:bg-gray-50">
-                  <td className="px-4 py-3 text-gray-600">{r.student_number}</td>
-                  <td className="px-4 py-3 font-medium text-gray-900">{r.student_name}</td>
-                  <td className="px-4 py-3 text-gray-600">{r.month}</td>
-                  <td className="px-4 py-3 text-gray-600">{r.week}</td>
-                  <td className="px-4 py-3 text-gray-600">{r.day}</td>
-                  <td className="px-4 py-3 text-gray-600">{r.date}</td>
+                <tr key={i} className="border-b border-gray-800 last:border-0 hover:bg-gray-900">
+                  <td className="px-4 py-3 text-gray-300">{r.student_number}</td>
+                  <td className="px-4 py-3 font-medium text-white">{r.student_name}</td>
+                  <td className="px-4 py-3 text-gray-300">{r.month}</td>
+                  <td className="px-4 py-3 text-gray-300">{r.week}</td>
+                  <td className="px-4 py-3 text-gray-300">{r.day}</td>
+                  <td className="px-4 py-3 text-gray-300">{r.date}</td>
                   <td className="px-4 py-3"><StatusBadge status={r.status} /></td>
                 </tr>
               ))}
@@ -338,11 +338,11 @@ export default function AdminAttendance() {
         )}
       </div>
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-        <p className="text-xs text-gray-400">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
+        <p className="text-xs text-gray-500">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-gray-500 mt-1">
           Developed by Alie Amadu Sesay
         </p>
       </footer>

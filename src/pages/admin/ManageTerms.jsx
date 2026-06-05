@@ -39,20 +39,20 @@ const getTermStatus = (term) => {
   const endDate = term.end_date ? new Date(term.end_date) : null;
 
   if (term.is_current) {
-    return { label: "Current", color: "bg-green-100 text-green-800" };
+    return { label: "Current", color: "bg-emerald-950 text-emerald-400" };
   }
 
   if (startDate && endDate) {
     if (now < startDate) {
-      return { label: "Upcoming", color: "bg-blue-100 text-blue-800" };
+      return { label: "Upcoming", color: "bg-blue-950 text-blue-400" };
     }
     if (now > endDate) {
-      return { label: "Completed", color: "bg-gray-100 text-gray-800" };
+      return { label: "Completed", color: "bg-gray-800 text-gray-400" };
     }
-    return { label: "In Progress", color: "bg-yellow-100 text-yellow-800" };
+    return { label: "In Progress", color: "bg-yellow-950 text-yellow-400" };
   }
 
-  return { label: "Unknown", color: "bg-gray-100 text-gray-800" };
+  return { label: "Unknown", color: "bg-gray-800 text-gray-400" };
 };
 
 const ManageTerms = () => {
@@ -187,20 +187,20 @@ const ManageTerms = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+    <div className="bg-[#0a0a0a] min-h-screen p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="mb-8">
         <h1 className="page-title">Term Management</h1>
-        <p className="text-gray-600 mt-2">Create and manage academic terms</p>
+        <p className="text-gray-400 mt-2">Create and manage academic terms</p>
       </div>
 
       {/* Create Term Form */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8">
+      <div className="bg-[#111111] p-6 rounded-2xl border border-gray-800 mb-8">
         <h2 className="section-title mb-4">Create New Term</h2>
 
         {error && (
@@ -220,7 +220,7 @@ const ManageTerms = () => {
         <form onSubmit={handleCreateTerm}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Term Name
               </label>
               <input
@@ -234,7 +234,7 @@ const ManageTerms = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Year
               </label>
               <input
@@ -249,7 +249,7 @@ const ManageTerms = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Start Date
               </label>
               <input
@@ -262,7 +262,7 @@ const ManageTerms = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 End Date
               </label>
               <input
@@ -283,18 +283,18 @@ const ManageTerms = () => {
               onChange={(e) =>
                 setFormData({ ...formData, is_current: e.target.checked })
               }
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              className="h-4 w-4 rounded bg-gray-900 border-gray-700 text-blue-600 focus:ring-blue-600 focus:ring-1"
             />
             <label
               htmlFor="is_current"
-              className="ml-2 block text-sm text-gray-700"
+              className="ml-2 block text-sm text-gray-400"
             >
               Set as current term
             </label>
           </div>
           <button
             type="submit"
-            className="px-6 py-2 btn-primary flex items-center"
+            className="btn-primary flex items-center"
           >
             <Plus className="h-4 w-4 mr-2" />
             Create Term
@@ -303,8 +303,8 @@ const ManageTerms = () => {
       </div>
 
       {/* Terms Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
+      <div className="bg-[#111111] rounded-2xl border border-gray-800">
+        <div className="px-6 py-4 border-b border-gray-800">
           <h2 className="section-title">All Terms</h2>
         </div>
 
@@ -313,9 +313,9 @@ const ManageTerms = () => {
             No terms found. Create your first term above.
           </div>
         ) : (
-          <div className="w-full overflow-x-auto rounded-lg shadow">
+          <div className="w-full overflow-x-auto">
             <table className="w-full text-sm" style={{ minWidth: '700px' }}>
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-900">
                 <tr>
                   <th className="table-header">Term Name</th>
                   <th className="table-header">Year</th>
@@ -325,24 +325,24 @@ const ManageTerms = () => {
                   <th className="table-header text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-800">
                 {terms.map((term) => (
-                  <tr key={term.id} className="hover:bg-gray-50">
+                  <tr key={term.id} className="hover:bg-gray-900">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-white">
                         {term.name}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{term.year}</div>
+                      <div className="text-sm text-gray-400">{term.year}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-400">
                         {new Date(term.start_date).toLocaleDateString()}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-400">
                         {new Date(term.end_date).toLocaleDateString()}
                       </div>
                     </td>
@@ -357,14 +357,14 @@ const ManageTerms = () => {
                       {!term.is_current && (
                         <button
                           onClick={() => handleSetCurrent(term.id)}
-                          className="text-blue-600 hover:text-blue-900 mr-4"
+                          className="text-blue-400 hover:text-blue-300 mr-4"
                         >
                           Set Current
                         </button>
                       )}
                       <button
                         onClick={() => handleDeleteTerm(term.id)}
-                        className="text-red-600 hover:text-red-900 flex items-center"
+                        className="text-red-400 hover:text-red-300 flex items-center"
                       >
                         <Trash2 className="h-4 w-4 mr-1" />
                         Delete
@@ -378,11 +378,11 @@ const ManageTerms = () => {
         )}
       </div>
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-        <p className="text-xs text-gray-400">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
+        <p className="text-xs text-gray-500">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-gray-500 mt-1">
           Developed by Alie Amadu Sesay
         </p>
       </footer>

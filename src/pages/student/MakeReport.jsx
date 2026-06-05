@@ -96,12 +96,12 @@ export default function MakeReport() {
 
   const StatusBadge = ({ status }) => {
     const styles = {
-      unread: 'bg-yellow-100 text-yellow-700',
-      read: 'bg-blue-100 text-blue-700',
-      resolved: 'bg-green-100 text-green-700'
+      unread: 'bg-yellow-950 text-yellow-400 border-yellow-800',
+      read: 'bg-blue-950 text-blue-400 border-blue-800',
+      resolved: 'bg-emerald-950 text-emerald-400 border-emerald-800'
     }
     return (
-      <span className={`px-2 py-1 rounded text-xs font-semibold capitalize ${styles[status] || styles.unread}`}>
+      <span className={`px-3 py-1 rounded-xl text-xs font-bold capitalize border ${styles[status] || styles.unread}`}>
         {status}
       </span>
     )
@@ -109,74 +109,74 @@ export default function MakeReport() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Submit a Report</h1>
+      <h1 className="text-2xl font-black text-white mb-2">Submit a Report</h1>
       <p className="text-gray-500 text-sm mb-6">Send a report or complaint directly to your principal.</p>
 
       {/* Student Info */}
       {student && (
-        <div className="bg-white rounded-lg shadow p-4 mb-6 flex items-center gap-6">
+        <div className="bg-[#111111] rounded-2xl border border-gray-800 p-5 mb-6 flex items-center gap-6">
           <div>
-            <p className="text-xs uppercase tracking-wide text-gray-500">Student</p>
-            <p className="font-semibold text-gray-900">{student.full_name}</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Student</p>
+            <p className="font-bold text-white">{student.full_name}</p>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wide text-gray-500">Class</p>
-            <p className="font-semibold text-gray-900">{className}</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Class</p>
+            <p className="font-bold text-white">{className}</p>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wide text-gray-500">Level</p>
-            <p className="font-semibold text-gray-900">{levelName}</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Level</p>
+            <p className="font-bold text-white">{levelName}</p>
           </div>
         </div>
       )}
 
       {/* Report Form */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">New Report</h2>
+      <div className="bg-[#111111] rounded-2xl border border-gray-800 p-6 mb-6">
+        <h2 className="text-lg font-black text-white mb-4">New Report</h2>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-600 mb-1">Subject</label>
+          <label className="form-label">Subject</label>
           <input
             type="text"
             value={subject}
             onChange={e => setSubject(e.target.value)}
             placeholder="Brief subject of your report"
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+            className="form-input"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-600 mb-1">Message</label>
+          <label className="form-label">Message</label>
           <textarea
             value={message}
             onChange={e => setMessage(e.target.value)}
             placeholder="Describe your issue or concern in detail..."
             rows={6}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900 resize-none"
+            className="form-input resize-none"
           />
-          <p className="text-xs text-gray-400 mt-1">{message.length} characters (minimum 20)</p>
+          <p className="text-xs text-gray-500 mt-1">{message.length} characters (minimum 20)</p>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-4">
-            <p className="text-red-600 text-sm">{error}</p>
+          <div className="error-message mb-4">
+            <p className="text-sm">{error}</p>
           </div>
         )}
 
         {success && (
-          <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-3 mb-4 flex items-center gap-2">
-            <CheckCircle size={16} className="text-green-600" />
-            <p className="text-green-700 text-sm">{success}</p>
+          <div className="success-message mb-4 flex items-center gap-2">
+            <CheckCircle size={16} className="text-emerald-400" />
+            <p className="text-sm">{success}</p>
           </div>
         )}
 
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="flex items-center gap-2 bg-blue-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 disabled:opacity-50"
+          className="btn-primary flex items-center gap-2"
         >
           {loading ? (
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
           ) : (
             <Send size={16} />
           )}
@@ -185,33 +185,33 @@ export default function MakeReport() {
       </div>
 
       {/* My Previous Reports */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="px-6 py-4 border-b">
-          <h2 className="font-semibold text-gray-800">My Previous Reports ({myReports.length})</h2>
+      <div className="bg-[#111111] rounded-2xl border border-gray-800 overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-800">
+          <h2 className="font-bold text-white">My Previous Reports ({myReports.length})</h2>
         </div>
         {myReports.length === 0 ? (
           <div className="p-8 text-center text-gray-500">No reports submitted yet.</div>
         ) : (
-          <div className="divide-y">
+          <div className="divide-y divide-gray-800">
             {myReports.map(report => (
-              <div key={report.id} className="px-6 py-4">
+              <div key={report.id} className="px-6 py-4 hover:bg-gray-900">
                 <div className="flex items-start justify-between mb-2">
-                  <p className="font-medium text-gray-900">{report.subject}</p>
+                  <p className="font-bold text-white">{report.subject}</p>
                   <StatusBadge status={report.status} />
                 </div>
-                <p className="text-sm text-gray-600 mb-2">{report.message}</p>
-                <p className="text-xs text-gray-400">{new Date(report.created_at).toLocaleString()}</p>
+                <p className="text-sm text-gray-400 mb-2">{report.message}</p>
+                <p className="text-xs text-gray-500">{new Date(report.created_at).toLocaleString()}</p>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-        <p className="text-xs text-gray-400">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
+        <p className="text-xs text-gray-500">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-gray-500 mt-1">
           Developed by Alie Amadu Sesay
         </p>
       </footer>

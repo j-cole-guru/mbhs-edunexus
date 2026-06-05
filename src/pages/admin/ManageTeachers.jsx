@@ -359,19 +359,19 @@ const ManageTeachers = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+    <div className="bg-[#0a0a0a] min-h-screen p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="mb-8">
         <h1 className="page-title">Teacher Management</h1>
-        <p className="text-gray-600 mt-2">Create and manage teaching staff</p>
+        <p className="text-gray-400 mt-2">Create and manage teaching staff</p>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8">
+      <div className="bg-[#111111] p-6 rounded-2xl border border-gray-800 mb-8">
         <h2 className="section-title mb-4">Create New Teacher</h2>
 
         {error && (
@@ -391,7 +391,7 @@ const ManageTeachers = () => {
         <form onSubmit={handleCreateTeacher}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Full Name *
               </label>
               <input
@@ -406,7 +406,7 @@ const ManageTeachers = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Email *
               </label>
               <input
@@ -421,7 +421,7 @@ const ManageTeachers = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Password *
               </label>
               <input
@@ -436,7 +436,7 @@ const ManageTeachers = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Phone
               </label>
               <input
@@ -450,7 +450,7 @@ const ManageTeachers = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Gender *
               </label>
               <select
@@ -467,7 +467,7 @@ const ManageTeachers = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Level *
               </label>
               <select
@@ -491,7 +491,7 @@ const ManageTeachers = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-400 mb-2">
                 Class *
               </label>
               <select
@@ -517,7 +517,7 @@ const ManageTeachers = () => {
 
           <button
             type="submit"
-            className="px-6 py-2 btn-primary flex items-center"
+            className="btn-primary flex items-center"
           >
             <Plus className="h-4 w-4 mr-2" />
             Create Teacher
@@ -525,20 +525,20 @@ const ManageTeachers = () => {
         </form>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
+      <div className="bg-[#111111] rounded-2xl border border-gray-800">
+        <div className="px-6 py-4 border-b border-gray-800">
           <h2 className="section-title">All Teachers</h2>
         </div>
 
         {teachers.length === 0 ? (
           <div className="px-6 py-8 text-center text-gray-500">
-            <GraduationCap className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+            <GraduationCap className="h-12 w-12 mx-auto text-gray-600 mb-4" />
             <p>No teachers found. Create your first teacher above.</p>
           </div>
         ) : (
-          <div className="w-full overflow-x-auto rounded-lg shadow">
+          <div className="w-full overflow-x-auto">
             <table className="w-full text-sm" style={{ minWidth: '700px' }}>
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-900">
                 <tr>
                   <th className="table-header">Employee Number</th>
                   <th className="table-header">Name</th>
@@ -550,34 +550,34 @@ const ManageTeachers = () => {
                   <th className="table-header text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-800">
                 {teachers.map((teacher) => (
-                  <tr key={teacher.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <tr key={teacher.id} className="hover:bg-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                       {teacher.employee_number}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                       {teacher.full_name}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                       {teacher.email}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                       {teacher.phone || "Not provided"}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                       {teacher.gender || "Not provided"}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                       {teacher.level_name}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                       {teacher.class_name}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() => handleDeleteTeacher(teacher)}
-                        className="flex items-center gap-1 text-red-600 hover:text-red-800 text-xs font-medium"
+                        className="flex items-center gap-1 text-red-400 hover:text-red-300 text-xs font-medium"
                       >
                         <Trash2 size={14} /> Delete
                       </button>
@@ -589,11 +589,11 @@ const ManageTeachers = () => {
           </div>
         )}
       </div>
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-        <p className="text-xs text-gray-400">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
+        <p className="text-xs text-gray-500">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-gray-500 mt-1">
           Developed by Alie Amadu Sesay
         </p>
       </footer>

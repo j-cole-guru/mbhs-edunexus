@@ -108,43 +108,43 @@ export default function PromoteStudents() {
   }
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Student Promotion</h1>
+    <div className="bg-[#0a0a0a] min-h-screen p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+      <h1 className="page-title mb-6">Student Promotion</h1>
 
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <p className="text-sm text-gray-500 mb-6">Select the current class and the class to promote students into. All students in the selected class will be moved.</p>
+      <div className="bg-[#111111] rounded-2xl border border-gray-800 p-6 mb-6">
+        <p className="text-sm text-gray-400 mb-6">Select the current class and the class to promote students into. All students in the selected class will be moved.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <h3 className="font-semibold text-gray-700 mb-3 flex items-center gap-2"><Users size={16} /> From Class</h3>
+            <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><Users size={16} /> From Class</h3>
             <div className="space-y-3">
               <select value={fromLevelId} onChange={e => { setFromLevelId(e.target.value); setFromClassId('') }}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                className="w-full form-select">
                 <option value="">Select Level</option>
                 {levels.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
               </select>
               <select value={fromClassId} onChange={e => setFromClassId(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                className="w-full form-select">
                 <option value="">Select Class</option>
                 {fromClasses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
               <button onClick={previewStudents}
-                className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">
+                className="w-full bg-gray-900 text-gray-300 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-800 transition">
                 Preview Students
               </button>
             </div>
           </div>
 
           <div>
-            <h3 className="font-semibold text-gray-700 mb-3 flex items-center gap-2"><ArrowRight size={16} /> To Class</h3>
+            <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><ArrowRight size={16} /> To Class</h3>
             <div className="space-y-3">
               <select value={toLevelId} onChange={e => { setToLevelId(e.target.value); setToClassId('') }}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                className="w-full form-select">
                 <option value="">Select Level</option>
                 {levels.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
               </select>
               <select value={toClassId} onChange={e => setToClassId(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                className="w-full form-select">
                 <option value="">Select Class</option>
                 {toClasses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
@@ -154,22 +154,22 @@ export default function PromoteStudents() {
 
         {students.length > 0 && (
           <div className="mt-6">
-            <h3 className="font-semibold text-gray-700 mb-3">Students to be Promoted ({students.length})</h3>
-            <div className="w-full overflow-x-auto rounded-lg shadow border border-gray-200">
+            <h3 className="font-semibold text-white mb-3">Students to be Promoted ({students.length})</h3>
+            <div className="w-full overflow-x-auto rounded-xl border border-gray-800">
               <table className="w-full text-sm" style={{ minWidth: '700px' }}>
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-900">
                   <tr>
-                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Student Number</th>
-                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Full Name</th>
-                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-500">Gender</th>
+                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-400">Student Number</th>
+                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-400">Full Name</th>
+                    <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-400">Gender</th>
                   </tr>
                 </thead>
                 <tbody>
                   {students.map((s, i) => (
-                    <tr key={s.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-4 py-2 text-gray-600">{s.student_number}</td>
-                      <td className="px-4 py-2 font-medium text-gray-900">{s.full_name}</td>
-                      <td className="px-4 py-2 text-gray-600 capitalize">{s.gender}</td>
+                    <tr key={s.id} className={i % 2 === 0 ? '' : 'bg-gray-900'}>
+                      <td className="px-4 py-2 text-gray-400">{s.student_number}</td>
+                      <td className="px-4 py-2 font-medium text-white">{s.full_name}</td>
+                      <td className="px-4 py-2 text-gray-400 capitalize">{s.gender}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -178,16 +178,16 @@ export default function PromoteStudents() {
           </div>
         )}
 
-        {error && <p className="text-red-600 text-sm mt-4">{error}</p>}
-        {success && <p className="text-green-600 text-sm mt-4">{success}</p>}
+        {error && <p className="text-red-400 text-sm mt-4">{error}</p>}
+        {success && <p className="text-green-400 text-sm mt-4">{success}</p>}
 
         <button
           onClick={handlePromote}
           disabled={loading || students.length === 0}
-          className="mt-6 bg-blue-900 text-white px-8 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="mt-6 btn-primary flex items-center gap-2"
         >
           {loading ? (
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
           ) : (
             <ArrowRight size={16} />
           )}
@@ -195,11 +195,11 @@ export default function PromoteStudents() {
         </button>
       </div>
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-        <p className="text-xs text-gray-400">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
+        <p className="text-xs text-gray-500">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-gray-500 mt-1">
           Developed by Alie Amadu Sesay
         </p>
       </footer>

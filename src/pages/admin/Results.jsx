@@ -33,12 +33,12 @@ const getAssessmentTypes = (termName) => {
 }
 
 const gradeColor = (grade) => {
-  if (grade === 'A1') return 'bg-green-100 text-green-800'
-  if (grade === 'B2' || grade === 'B3') return 'bg-blue-100 text-blue-800'
-  if (['C4', 'C5', 'C6'].includes(grade)) return 'bg-yellow-100 text-yellow-800'
-  if (grade === 'D7' || grade === 'E8') return 'bg-orange-100 text-orange-800'
-  if (grade === 'F9') return 'bg-red-100 text-red-800'
-  return 'bg-gray-100 text-gray-800'
+  if (grade === 'A1') return 'bg-emerald-950 text-emerald-400'
+  if (grade === 'B2' || grade === 'B3') return 'bg-blue-950 text-blue-400'
+  if (['C4', 'C5', 'C6'].includes(grade)) return 'bg-yellow-950 text-yellow-400'
+  if (grade === 'D7' || grade === 'E8') return 'bg-orange-950 text-orange-400'
+  if (grade === 'F9') return 'bg-red-950 text-red-400'
+  return 'bg-gray-800 text-gray-400'
 }
 
 const AdminResults = () => {
@@ -227,58 +227,58 @@ const AdminResults = () => {
 
   if (loading) return (
     <div className="flex items-center justify-center p-8">
-      <div className="w-8 h-8 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+      <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
     </div>
   )
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-full overflow-x-hidden">
+    <div className="bg-[#0a0a0a] min-h-screen p-4 md:p-6 w-full max-w-full overflow-x-hidden">
       <div className="mb-8">
         <h1 className="page-title">Upload Results</h1>
-        <p className="text-gray-600 mt-2">Upload examination results via Excel file</p>
+        <p className="text-gray-400 mt-2">Upload examination results via Excel file</p>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8">
+      <div className="bg-[#111111] p-6 rounded-2xl border border-gray-800 mb-8">
         <h2 className="section-title mb-4">Select Term, Assessment Type &amp; Upload File</h2>
         {error && <div className="mb-4 flex items-center error-message"><AlertCircle className="h-4 w-4 mr-2" />{error}</div>}
         {success && <div className="mb-4 flex items-center success-message"><CheckCircle className="h-4 w-4 mr-2" />{success}</div>}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Term *</label>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Term *</label>
             <select value={selectedTerm} onChange={e => { setSelectedTerm(e.target.value); setSelectedAssessmentType('') }} className="w-full form-select">
               <option value="">Select term</option>
               {terms.map(t => <option key={t.id} value={t.id}>{t.name} – {t.year}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Assessment Type *</label>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Assessment Type *</label>
             <select value={selectedAssessmentType} onChange={e => setSelectedAssessmentType(e.target.value)} className="w-full form-select" disabled={!selectedTerm}>
               <option value="">Select assessment</option>
               {assessmentTypes.map(type => <option key={type} value={type}>{type}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Level</label>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Level</label>
             <select value={selectedLevel} onChange={e => { setSelectedLevel(e.target.value); setSelectedClass('') }} className="w-full form-select">
               <option value="">All levels</option>
               {levels.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Class</label>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Class</label>
             <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)} className="w-full form-select">
               <option value="">All classes</option>
               {filteredClasses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Excel File *</label>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Excel File *</label>
             <label 
               htmlFor="results-upload"
-              className="flex items-center justify-center px-4 py-2 border-2 border-dashed border-blue-300 rounded-md cursor-pointer transition-colors hover:border-blue-500 bg-blue-50"
+              className="flex items-center justify-center px-4 py-2 border-2 border-dashed border-blue-700 rounded-xl cursor-pointer transition-colors hover:border-blue-500 bg-blue-950/30"
             >
-              <Upload className="h-4 w-4 mr-2 text-blue-600" />
-              <span className="text-sm text-blue-700">Choose File</span>
+              <Upload className="h-4 w-4 mr-2 text-blue-400" />
+              <span className="text-sm text-blue-400">Choose File</span>
             </label>
             <input 
               id="results-upload"
@@ -289,23 +289,23 @@ const AdminResults = () => {
             />
           </div>
         </div>
-        <div className="bg-gray-50 rounded p-3 text-xs text-gray-600">
+        <div className="bg-gray-900 rounded-xl p-3 text-xs text-gray-400">
           <strong>Expected columns:</strong> Student Number | Student Name | Subject | Score &nbsp;&nbsp;
           <em>Example: MBHS-STU-001 | Kendrick Cole | Mathematics | 85</em>
         </div>
       </div>
 
       {parsedData.length > 0 && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <div className="bg-[#111111] rounded-2xl border border-gray-800">
+          <div className="px-6 py-4 border-b border-gray-800 flex justify-between items-center">
             <h2 className="section-title">Preview — {parsedData.length} rows</h2>
-            <button onClick={handleSave} disabled={saving} className="px-6 py-2 btn-primary flex items-center">
+            <button onClick={handleSave} disabled={saving} className="btn-primary flex items-center">
               <CheckCircle className="h-4 w-4 mr-2" />{saving ? 'Saving...' : 'Save Results'}
             </button>
           </div>
-          <div className="w-full overflow-x-auto rounded-lg shadow">
+          <div className="w-full overflow-x-auto">
             <table className="w-full text-sm" style={{ minWidth: '700px' }}>
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-900">
                 <tr>
                   <th className="table-header">Student Number</th>
                   <th className="table-header">Student Name</th>
@@ -314,13 +314,13 @@ const AdminResults = () => {
                   <th className="table-header">Grade</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-800">
                 {parsedData.map((row, i) => (
-                  <tr key={i} className="hover:bg-gray-50">
-                    <td className="px-6 py-3 text-sm text-gray-900">{row['Student Number'] || '—'}</td>
-                    <td className="px-6 py-3 text-sm text-gray-900">{row['Student Name'] || '—'}</td>
-                    <td className="px-6 py-3 text-sm text-gray-900">{row['Subject'] || '—'}</td>
-                    <td className="px-6 py-3 text-sm text-gray-900">{row['Score'] ?? '—'}</td>
+                  <tr key={i} className="hover:bg-gray-900">
+                    <td className="px-6 py-3 text-sm text-gray-300">{row['Student Number'] || '—'}</td>
+                    <td className="px-6 py-3 text-sm text-gray-300">{row['Student Name'] || '—'}</td>
+                    <td className="px-6 py-3 text-sm text-gray-300">{row['Subject'] || '—'}</td>
+                    <td className="px-6 py-3 text-sm text-gray-300">{row['Score'] ?? '—'}</td>
                     <td className="px-6 py-3">
                       <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${gradeColor(row._grade)}`}>{row._grade}</span>
                     </td>
@@ -332,11 +332,11 @@ const AdminResults = () => {
         </div>
       )}
 
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-        <p className="text-xs text-gray-400">
+      <footer className="mt-8 py-4 border-t border-gray-800 text-center">
+        <p className="text-xs text-gray-500">
           © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
         </p>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-gray-500 mt-1">
           Developed by Alie Amadu Sesay
         </p>
       </footer>

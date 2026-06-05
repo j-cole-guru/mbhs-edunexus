@@ -344,244 +344,146 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 p-4 md:p-6 w-full max-w-full overflow-x-hidden">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center">
-          <img
-            className="h-24 w-auto"
-            src={logo}
-            alt="Methodist Boys' High School"
-          />
-        </div>
-        <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-          Methodist Boys' High School
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          EduNexus Portal
-        </p>
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: 'linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)',
+            backgroundSize: '60px 60px'
+          }} />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600 rounded-full opacity-[0.06] blur-[120px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600 rounded-full opacity-[0.06] blur-[120px]" />
       </div>
-
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {/* Tabs */}
-          <div className="flex border-b border-gray-200">
+      <div className="relative z-10 w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-[0_0_40px_rgba(255,255,255,0.1)]">
+            <img src="/favicon.png" alt="MBHS" className="w-12 h-12 object-contain" />
+          </div>
+          <h1 className="text-2xl font-black text-white mb-1">Methodist Boys' High School</h1>
+          <p className="text-gray-500 text-sm tracking-widest uppercase">EduNexus Portal</p>
+        </div>
+        <div className="bg-[#111111] border border-gray-800 rounded-3xl p-8 shadow-2xl">
+          <div className="flex bg-gray-900 rounded-2xl p-1 mb-8 border border-gray-800">
             <button
-              className={`flex-1 py-2 px-4 text-center font-medium flex items-center justify-center ${
-                activeTab === 'student'
-                  ? 'border-b-2 border-blue-900 text-blue-900'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
               onClick={() => setActiveTab('student')}
+              className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'student' ? 'bg-white text-black shadow' : 'text-gray-500 hover:text-gray-300'}`}
             >
-              <Users className="h-4 w-4 mr-2" />
-              Student Login
+              Student
             </button>
             <button
-              className={`flex-1 py-2 px-4 text-center font-medium flex items-center justify-center ${
-                activeTab === 'staff'
-                  ? 'border-b-2 border-blue-900 text-blue-900'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
               onClick={() => setActiveTab('staff')}
+              className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'staff' ? 'bg-white text-black shadow' : 'text-gray-500 hover:text-gray-300'}`}
             >
-              <GraduationCap className="h-4 w-4 mr-2" />
-              Staff Login
+              Staff
             </button>
           </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="mt-4 flex items-center bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
-              <AlertCircle className="h-4 w-4 mr-2" />
-              {error}
-            </div>
-          )}
-
-          {/* Student Login Form */}
           {activeTab === 'student' && (
-            <form className="mt-6 space-y-6" onSubmit={handleStudentLogin}>
+            <div className="space-y-4">
               <div>
-                <label htmlFor="full-name" className="block text-sm font-medium text-gray-700">
-                  Full Name
-                </label>
+                <label className="block text-gray-400 text-xs font-bold uppercase tracking-widest mb-2">Full Name</label>
                 <input
-                  id="full-name"
-                  name="full-name"
                   type="text"
-                  required
                   value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Enter full name"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-900 focus:border-blue-900"
+                  onChange={e => setFullName(e.target.value)}
+                  placeholder="Enter your full name"
+                  className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3.5 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition"
                 />
               </div>
               <div>
-                <label htmlFor="pin" className="block text-sm font-medium text-gray-700">
-                  4-digit PIN
-                </label>
+                <label className="block text-gray-400 text-xs font-bold uppercase tracking-widest mb-2">4-Digit PIN</label>
                 <div className="relative">
                   <input
-                    id="pin"
-                    name="pin"
                     type={showPin ? 'text' : 'password'}
-                    required
-                    maxLength={4}
                     value={pin}
-                    onChange={(e) => setPin(e.target.value)}
-                    placeholder="Enter 4-digit PIN"
-                    className="mt-1 block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-900 focus:border-blue-900"
+                    onChange={e => setPin(e.target.value)}
+                    placeholder="Enter PIN"
+                    maxLength={4}
+                    className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3.5 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition pr-12"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPin(!showPin)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 mt-1"
-                  >
-                    {showPin ? <EyeOff size={18} /> : <Eye size={18} />}
+                  <button type="button" onClick={() => setShowPin(!showPin)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                    {showPin ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
               </div>
-
-              <div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-900 disabled:opacity-50"
-                >
-                  {loading ? (
-                    <div className="flex items-center justify-center">
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                      Authenticating...
-                    </div>
-                  ) : (
-                    'Sign In'
-                  )}
-                </button>
-              </div>
-            </form>
-          )}
-
-          {/* Staff Login Form */}
-          {activeTab === 'staff' && (
-            <form className="mt-6 space-y-6" onSubmit={handleStaffLogin}>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={staffEmail}
-                  onChange={(e) => setStaffEmail(e.target.value)}
-                  placeholder="Enter email address"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-900 focus:border-blue-900"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={staffPassword}
-                    onChange={(e) => setStaffPassword(e.target.value)}
-                    placeholder="Enter password"
-                    className="mt-1 block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-900 focus:border-blue-900"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 mt-1"
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
+              {error && (
+                <div className="bg-red-950 border border-red-800 rounded-xl px-4 py-3 flex items-center gap-2">
+                  <AlertCircle size={16} className="text-red-400 flex-shrink-0" />
+                  <p className="text-red-400 text-sm">{error}</p>
                 </div>
-              </div>
-
-              <div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-900 disabled:opacity-50"
-                >
-                  {loading ? (
-                    <div className="flex items-center justify-center">
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                      Authenticating...
-                    </div>
-                  ) : (
-                    'Sign In'
-                  )}
-                </button>
-              </div>
-            </form>
-          )}
-
-                  </div>
-      </div>
-
-      {showInstall && (
-        <div className="mt-6 rounded-lg border border-blue-100 bg-blue-50 p-4 text-center">
-          <button
-            onClick={handleInstall}
-            className="mb-3 inline-flex items-center rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Install MBHS EduNexus App
-          </button>
-          <p className="text-xs text-blue-700">
-            Install for quick access on your device
-          </p>
-        </div>
-      )}
-
-      {showIOSGuide && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-          <div className="w-full max-w-sm rounded-2xl border border-slate-700 bg-slate-950 p-6 text-white shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Install App</h3>
-              <button onClick={() => setShowIOSGuide(false)} className="rounded-full p-1 text-slate-400 hover:bg-slate-800 hover:text-white">
-                <X className="h-5 w-5" />
+              )}
+              <button
+                onClick={handleStudentLogin}
+                disabled={loading}
+                className="w-full bg-white text-black py-4 rounded-full font-black text-sm hover:bg-gray-100 transition disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+              >
+                {loading ? <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" /> : null}
+                {loading ? 'Signing in...' : 'Sign In'}
               </button>
             </div>
-            <p className="mb-4 text-sm text-slate-300">Install MBHS EduNexus on your device for quick access.</p>
-            <ol className="space-y-3 text-sm text-slate-300">
-              <li className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-700 text-xs font-semibold text-white">1</span>
-                <span>Tap the Share button at the bottom of your browser.</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-700 text-xs font-semibold text-white">2</span>
-                <span>Scroll down and tap <strong>Add to Home Screen</strong>.</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-700 text-xs font-semibold text-white">3</span>
-                <span>Tap <strong>Add</strong> in the top-right corner.</span>
-              </li>
-            </ol>
-            <button
-              onClick={() => setShowIOSGuide(false)}
-              className="mt-6 w-full rounded-full bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-500"
-            >
-              Got it
-            </button>
-          </div>
+          )}
+          {activeTab === 'staff' && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-gray-400 text-xs font-bold uppercase tracking-widest mb-2">Email Address</label>
+                <input
+                  type="email"
+                  value={staffEmail}
+                  onChange={e => setStaffEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3.5 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-400 text-xs font-bold uppercase tracking-widest mb-2">Password</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={staffPassword}
+                    onChange={e => setStaffPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3.5 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition pr-12"
+                  />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+              {error && (
+                <div className="bg-red-950 border border-red-800 rounded-xl px-4 py-3 flex items-center gap-2">
+                  <AlertCircle size={16} className="text-red-400 flex-shrink-0" />
+                  <p className="text-red-400 text-sm">{error}</p>
+                </div>
+              )}
+              <button
+                onClick={handleStaffLogin}
+                disabled={loading}
+                className="w-full bg-white text-black py-4 rounded-full font-black text-sm hover:bg-gray-100 transition disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+              >
+                {loading ? <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" /> : null}
+                {loading ? 'Signing in...' : 'Sign In'}
+              </button>
+            </div>
+          )}
+          {showInstall && (
+            <div className="mt-6 border border-gray-800 rounded-2xl p-4 flex items-center justify-between">
+              <div>
+                <p className="text-white text-xs font-bold">Install App</p>
+                <p className="text-gray-500 text-xs">Quick access from home screen</p>
+              </div>
+              <button onClick={handleInstall}
+                className="bg-white text-black px-4 py-2 rounded-full text-xs font-black hover:bg-gray-200 transition">
+                Install
+              </button>
+            </div>
+          )}
         </div>
-      )}
-      <footer className="mt-8 py-4 border-t border-gray-200 text-center">
-        <p className="text-xs text-gray-400">
-          © 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.
-        </p>
-        <p className="text-xs text-gray-400 mt-1">
-          Developed by Alie Amadu Sesay
-        </p>
-      </footer>
+        <footer className="mt-8 text-center">
+          <p className="text-gray-700 text-xs">© 2026 Methodist Boys' High School. All Rights Reserved. Freetown, Sierra Leone.</p>
+          <p className="text-gray-700 text-xs mt-1">Developed by Alie Amadu Sesay</p>
+        </footer>
+      </div>
     </div>
   )
 }
