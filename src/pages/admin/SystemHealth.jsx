@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Activity, CheckCircle, AlertCircle, Clock, Database, Users, Server, Upload } from 'lucide-react'
+import { Activity, CheckCircle, AlertCircle, Database, Users, Server, Upload } from 'lucide-react'
 import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff } from '../../lib/config'
 
 export default function SystemHealth() {
@@ -19,8 +19,7 @@ export default function SystemHealth() {
     reports: 'checking',
     security_logs: 'checking',
     audit_trail: 'checking',
-    profiles: 'checking',
-    realtime: 'checking'
+    profiles: 'checking'
   })
   const [stats, setStats] = useState({
     totalStudents: 0,
@@ -51,8 +50,7 @@ export default function SystemHealth() {
       database: 'checking', auth: 'checking', api: 'checking', storage: 'checking',
       students: 'checking', teachers: 'checking', classes: 'checking', levels: 'checking',
       terms: 'checking', results: 'checking', attendance: 'checking', timetable: 'checking',
-      reports: 'checking', security_logs: 'checking', audit_trail: 'checking', profiles: 'checking',
-      realtime: 'checking'
+      reports: 'checking', security_logs: 'checking', audit_trail: 'checking', profiles: 'checking'
     }
     const headers = getHeaders()
 
@@ -79,13 +77,6 @@ export default function SystemHealth() {
       })
       newHealth.storage = storageRes.ok ? 'healthy' : 'error'
     } catch { newHealth.storage = 'error' }
-
-    try {
-      const realtimeRes = await fetch(`${SUPABASE_URL}/realtime/v1/health`, {
-        headers: { 'apikey': ANON_KEY }
-      })
-      newHealth.realtime = realtimeRes.status === 200 ? 'healthy' : 'error'
-    } catch { newHealth.realtime = 'error' }
 
     setHealth(newHealth)
 
@@ -192,7 +183,6 @@ export default function SystemHealth() {
           { label: 'Authentication', key: 'auth', icon: <Users size={20} /> },
           { label: 'REST API', key: 'api', icon: <Server size={20} /> },
           { label: 'Storage', key: 'storage', icon: <Upload size={20} /> },
-          { label: 'Realtime', key: 'realtime', icon: <Activity size={20} /> },
         ].map(service => (
           <div key={service.key} className="bg-[#111111] rounded-2xl border border-gray-800 p-4">
             <div className="flex items-center gap-2 text-gray-400 mb-3">
