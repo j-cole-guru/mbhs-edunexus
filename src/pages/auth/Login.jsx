@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
-import { Users, GraduationCap, AlertCircle, Loader2, Eye, EyeOff, Download } from 'lucide-react'
+import { Users, GraduationCap, AlertCircle, Loader2, Eye, EyeOff, Download, X } from 'lucide-react'
 import logo from '../../assets/logo.png'
 import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
 
@@ -19,8 +19,23 @@ const Login = () => {
 
   const [installPrompt, setInstallPrompt] = useState(null)
   const [showInstall, setShowInstall] = useState(false)
+  const [isIOS, setIsIOS] = useState(false)
+  const [showIOSGuide, setShowIOSGuide] = useState(false)
 
   useEffect(() => {
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true
+    if (isStandalone) return
+
+    const isIOSDevice = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone
+    setIsIOS(isIOSDevice)
+
+    if (isIOSDevice) {
+      setShowInstall(true)
+      return
+    }
+
     const handler = (e) => {
       e.preventDefault()
       setInstallPrompt(e)
@@ -31,6 +46,10 @@ const Login = () => {
   }, [])
 
   const handleInstall = async () => {
+    if (isIOS) {
+      setShowIOSGuide(true)
+      return
+    }
     if (!installPrompt) return
     await installPrompt.prompt()
     const result = await installPrompt.userChoice
@@ -519,6 +538,40 @@ const Login = () => {
           <p className="text-xs text-blue-700">
             Install for quick access on your device
           </p>
+        </div>
+      )}
+
+      {showIOSGuide && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-sm rounded-2xl border border-slate-700 bg-slate-950 p-6 text-white shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Install App</h3>
+              <button onClick={() => setShowIOSGuide(false)} className="rounded-full p-1 text-slate-400 hover:bg-slate-800 hover:text-white">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="mb-4 text-sm text-slate-300">Install MBHS EduNexus on your device for quick access.</p>
+            <ol className="space-y-3 text-sm text-slate-300">
+              <li className="flex items-start gap-3">
+                <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-700 text-xs font-semibold text-white">1</span>
+                <span>Tap the Share button at the bottom of your browser.</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-700 text-xs font-semibold text-white">2</span>
+                <span>Scroll down and tap <strong>Add to Home Screen</strong>.</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-700 text-xs font-semibold text-white">3</span>
+                <span>Tap <strong>Add</strong> in the top-right corner.</span>
+              </li>
+            </ol>
+            <button
+              onClick={() => setShowIOSGuide(false)}
+              className="mt-6 w-full rounded-full bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-500"
+            >
+              Got it
+            </button>
+          </div>
         </div>
       )}
       <footer className="mt-8 py-4 border-t border-gray-200 text-center">

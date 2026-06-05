@@ -1,11 +1,26 @@
 import { useState, useEffect } from 'react'
-import { Menu, Download } from 'lucide-react'
+import { Menu, Download, X } from 'lucide-react'
 
 export default function Navbar({ onMenuClick }) {
   const [installPrompt, setInstallPrompt] = useState(null)
   const [showInstall, setShowInstall] = useState(false)
+  const [isIOS, setIsIOS] = useState(false)
+  const [showIOSGuide, setShowIOSGuide] = useState(false)
 
   useEffect(() => {
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true
+    if (isStandalone) return
+
+    const isIOSDevice = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone
+    setIsIOS(isIOSDevice)
+
+    if (isIOSDevice) {
+      setShowInstall(true)
+      return
+    }
+
     const handler = (e) => {
       e.preventDefault()
       window.deferredPwaPrompt = e
@@ -14,24 +29,20 @@ export default function Navbar({ onMenuClick }) {
     }
 
     window.addEventListener('beforeinstallprompt', handler)
-
-    const isStandalone =
-      window.matchMedia('(display-mode: standalone)').matches ||
-      window.navigator.standalone === true
-    if (isStandalone) {
-      setShowInstall(false)
-    }
-
     return () => window.removeEventListener('beforeinstallprompt', handler)
   }, [])
 
   const handleInstall = async () => {
+    if (isIOS) {
+      setShowIOSGuide(true)
+      return
+    }
+
     const promptEvent = installPrompt || window.deferredPwaPrompt
     if (!promptEvent) return
 
     await promptEvent.prompt()
     const result = await promptEvent.userChoice
-    console.log('Install result:', result.outcome)
     if (result.outcome === 'accepted') {
       setShowInstall(false)
       setInstallPrompt(null)
@@ -100,6 +111,40 @@ export default function Navbar({ onMenuClick }) {
           </div>
         </div>
       </div>
+
+      {showIOSGuide && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-sm rounded-2xl border border-slate-700 bg-slate-950 p-6 text-white shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Install App</h3>
+              <button onClick={() => setShowIOSGuide(false)} className="rounded-full p-1 text-slate-400 hover:bg-slate-800 hover:text-white">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="mb-4 text-sm text-slate-300">Install MBHS EduNexus on your device for quick access.</p>
+            <ol className="space-y-3 text-sm text-slate-300">
+              <li className="flex items-start gap-3">
+                <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-700 text-xs font-semibold text-white">1</span>
+                <span>Tap the Share button <span className="inline-block px-1 py-0.5 rounded bg-slate-800 text-xs font-mono">⎙</span> at the bottom of your browser.</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-700 text-xs font-semibold text-white">2</span>
+                <span>Scroll down and tap <strong>Add to Home Screen</strong>.</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-700 text-xs font-semibold text-white">3</span>
+                <span>Tap <strong>Add</strong> in the top-right corner.</span>
+              </li>
+            </ol>
+            <button
+              onClick={() => setShowIOSGuide(false)}
+              className="mt-6 w-full rounded-full bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-500"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
