@@ -820,25 +820,27 @@ const ManageStudents = () => {
                     <td className="px-4 py-3 font-mono text-gray-300 bg-gray-800 rounded px-2 py-1">{student.pin}</td>
                     <td className="px-4 py-3 text-gray-300 capitalize">{student.gender}</td>
                     <td className="px-4 py-3">
-                      <button
-                        onClick={() => setArchiveModalStudent(student)}
-                        className="flex items-center gap-1 text-yellow-400 hover:text-yellow-300 text-xs font-medium"
-                      >
-                        <Archive size={14} /> Archive
-                      </button>
-                      <button
-                        onClick={() => handleResetPin(student)}
-                        className="flex items-center gap-1 text-blue-400 hover:text-blue-300 text-xs font-medium ml-2"
-                        title="Generate new PIN for this student"
-                      >
-                        <RefreshCw size={14} /> Reset PIN
-                      </button>
-                      <button
-                        onClick={() => handleDeleteStudent(student.id)}
-                        className="flex items-center gap-1 text-red-400 hover:text-red-300 text-xs font-medium ml-2"
-                      >
-                        <Trash2 size={14} /> Delete
-                      </button>
+                      <div className="flex flex-wrap gap-3">
+                        <button
+                          onClick={() => setArchiveModalStudent(student)}
+                          className="inline-flex items-center justify-center gap-1.5 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-950/30 text-xs font-bold px-3 py-2 rounded-xl border border-transparent hover:border-yellow-800 transition min-h-[36px] min-w-[80px]"
+                        >
+                          <Archive size={14} /> Archive
+                        </button>
+                        <button
+                          onClick={() => handleResetPin(student)}
+                          className="inline-flex items-center justify-center gap-1.5 text-blue-400 hover:text-blue-300 hover:bg-blue-950/30 text-xs font-bold px-3 py-2 rounded-xl border border-transparent hover:border-blue-800 transition min-h-[36px] min-w-[90px]"
+                          title="Generate new PIN for this student"
+                        >
+                          <RefreshCw size={14} /> Reset PIN
+                        </button>
+                        <button
+                          onClick={() => handleDeleteStudent(student.id)}
+                          className="inline-flex items-center justify-center gap-1.5 text-red-400 hover:text-red-300 hover:bg-red-950/30 text-xs font-bold px-3 py-2 rounded-xl border border-transparent hover:border-red-800 transition min-h-[36px] min-w-[80px]"
+                        >
+                          <Trash2 size={14} /> Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
