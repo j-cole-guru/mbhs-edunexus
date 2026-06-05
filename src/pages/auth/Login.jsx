@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
-import { Users, GraduationCap, AlertCircle, Loader2, Eye, EyeOff, Download, X } from 'lucide-react'
+import { Users, GraduationCap, AlertCircle, Loader2, Eye, EyeOff, Download, X, ArrowLeft } from 'lucide-react'
 import logo from '../../assets/logo.png'
 import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL } from '../../lib/config'
 
@@ -362,6 +362,9 @@ const Login = () => {
           <h1 className="text-2xl font-black text-white mb-1">Methodist Boys' High School</h1>
           <p className="text-gray-500 text-sm tracking-widest uppercase">EduNexus Portal</p>
         </div>
+        <a href="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-white text-xs font-bold uppercase tracking-widest mb-4 transition">
+          <ArrowLeft size={14} /> Back to Home
+        </a>
         <div className="bg-[#111111] border border-gray-800 rounded-3xl p-8 shadow-2xl">
           <div className="flex bg-gray-900 rounded-2xl p-1 mb-8 border border-gray-800">
             <button
