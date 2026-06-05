@@ -102,6 +102,7 @@ const ArchiveStudents = () => {
   const [suspensionDuration, setSuspensionDuration] = useState("")
   const [suspensionEndDate, setSuspensionEndDate] = useState("")
   const [selectedStudentIds, setSelectedStudentIds] = useState([])
+  const [selectedIndividual, setSelectedIndividual] = useState(null)
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(false)
   const [error, setError] = useState("")
@@ -165,6 +166,7 @@ const ArchiveStudents = () => {
       )
       setStudents(Array.isArray(data) ? data : [])
       setSelectedStudentIds([])
+      setSelectedIndividual(null)
       if (!Array.isArray(data) || data.length === 0) {
         setError("No active students found in this class.")
       }
@@ -188,8 +190,8 @@ const ArchiveStudents = () => {
   const deselectAllStudents = () => setSelectedStudentIds([])
 
   const handleArchive = async () => {
-    if (selectedStudentIds.length === 0) {
-      setError("Please select at least one student to archive")
+    if (!selectedIndividual) {
+      setError("Please select a student to archive")
       return
     }
     if (!archiveReason) {
@@ -211,7 +213,6 @@ const ArchiveStudents = () => {
     setSuccess("")
 
     try {
-      const idsString = `(${selectedStudentIds.join(",")})`
       const payload = {
         is_active: false,
         archived_at: new Date().toISOString(),
@@ -219,22 +220,22 @@ const ArchiveStudents = () => {
         graduation_year: archiveReason === "Graduated" ? graduationYear : null,
         suspension_end_date: isSuspension ? suspensionEndDate : null,
       }
-      await apiFetch(`/students?id=in.${idsString}`, {
+      await apiFetch(`/students?id=eq.${selectedIndividual.id}`, {
         method: "PATCH",
         body: JSON.stringify(payload),
       })
 
       setSuccess(
-        `${selectedStudentIds.length} student(s) archived successfully${isSuspension ? `. Account will be automatically restored on ${new Date(suspensionEndDate).toLocaleDateString()}.` : ""}`,
+        `${selectedIndividual.full_name} archived successfully${isSuspension ? `. Account will be automatically restored on ${new Date(suspensionEndDate).toLocaleDateString()}.` : ""}`,
       )
-      setStudents((prev) => prev.filter((s) => !selectedStudentIds.includes(s.id)))
-      setSelectedStudentIds([])
+      setStudents((prev) => prev.filter((s) => s.id !== selectedIndividual.id))
+      setSelectedIndividual(null)
       setSuspensionDuration("")
       setSuspensionEndDate("")
       fetchArchivedStudents()
     } catch (err) {
       console.error("Archive error:", err)
-      setError("Failed to archive students")
+      setError("Failed to archive student")
     } finally {
       setLoading(false)
     }
@@ -611,12 +612,16 @@ const ArchiveStudents = () => {
                 )}
 
                 <div className="pt-4 border-t border-gray-800">
-                  <p className="text-xs text-gray-500 mb-4">
-                    Selected: <span className="font-bold text-white">{selectedStudentIds.length} students</span>
-                  </p>
+                  {selectedIndividual ? (
+                    <p className="text-xs text-gray-500 mb-4">
+                      Archiving: <span className="font-bold text-white">{selectedIndividual.full_name}</span>
+                    </p>
+                  ) : (
+                    <p className="text-xs text-gray-400 mb-4">Click <strong>Archive</strong> on a student below to begin.</p>
+                  )}
                   <button
                     onClick={handleArchive}
-                    disabled={selectedStudentIds.length === 0 || loading}
+                    disabled={!selectedIndividual || loading}
                     className="w-full btn-primary flex items-center justify-center gap-2"
                   >
                     {loading ? (
@@ -624,7 +629,7 @@ const ArchiveStudents = () => {
                     ) : (
                       <>
                         <Archive className="h-5 w-5" />
-                        Archive Selected
+                        Archive This Student
                       </>
                     )}
                   </button>
@@ -635,38 +640,42 @@ const ArchiveStudents = () => {
 
           {students.length > 0 && (
             <div className="bg-[#111111] rounded-2xl border border-gray-800 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-800 flex justify-between items-center bg-gray-900">
-                <h3 className="font-semibold text-white">Students in Class</h3>
-                <div className="flex gap-2">
-                  <button onClick={selectAllStudents} className="text-xs font-medium text-blue-400 hover:underline">Select All</button>
-                  <span className="text-gray-600">|</span>
-                  <button onClick={deselectAllStudents} className="text-xs font-medium text-gray-500 hover:underline">Deselect All</button>
-                </div>
+              <div className="px-6 py-4 border-b border-gray-800 bg-gray-900">
+                <h3 className="font-semibold text-white">Students in Class — click Archive on a student to archive individually</h3>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm" style={{ minWidth: '500px' }}>
+                <table className="w-full text-sm" style={{ minWidth: '600px' }}>
                   <thead className="bg-gray-900">
                     <tr>
-                      <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-400">Select</th>
                       <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-400">Student Number</th>
                       <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-400">Full Name</th>
                       <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-400">Gender</th>
+                      <th className="text-left px-4 py-2 text-xs uppercase tracking-wide text-gray-400">Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {students.map((student, index) => (
                       <tr key={student.id} className={index % 2 === 0 ? '' : 'bg-gray-900'}>
-                        <td className="px-4 py-2">
-                          <input
-                            type="checkbox"
-                            checked={selectedStudentIds.includes(student.id)}
-                            onChange={() => toggleStudentSelection(student.id)}
-                            className="rounded border-gray-600 text-blue-400 focus:ring-blue-500 w-5 h-5 cursor-pointer bg-[#0a0a0a]"
-                          />
-                        </td>
                         <td className="px-4 py-2 text-gray-400">{student.student_number}</td>
                         <td className="px-4 py-2 font-medium text-white">{student.full_name}</td>
                         <td className="px-4 py-2 text-gray-400 capitalize">{student.gender}</td>
+                        <td className="px-4 py-2">
+                          <button
+                            onClick={() => {
+                              setSelectedIndividual(student)
+                              setArchiveReason("Graduated")
+                              setSuspensionDuration("")
+                              setSuspensionEndDate("")
+                            }}
+                            className={`inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border transition min-h-[34px] ${
+                              selectedIndividual?.id === student.id
+                                ? 'bg-white text-black border-white'
+                                : 'bg-red-950/30 text-red-400 border-red-800 hover:bg-red-900/50'
+                            }`}
+                          >
+                            <Archive size={14} /> Archive
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
