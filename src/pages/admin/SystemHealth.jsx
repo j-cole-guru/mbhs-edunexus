@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Activity, CheckCircle, AlertCircle, Database, Users, Server, Upload } from 'lucide-react'
+import { Activity, CheckCircle, AlertCircle, Database, Users, Server } from 'lucide-react'
 import { ANON_KEY, SERVICE_KEY, BASE_URL, AUTH_URL, SUPABASE_URL, safeParseStaff } from '../../lib/config'
 
 export default function SystemHealth() {
   const [health, setHealth] = useState({
     database: 'checking',
     auth: 'checking',
-    storage: 'checking',
     api: 'checking',
     students: 'checking',
     teachers: 'checking',
@@ -47,7 +46,7 @@ export default function SystemHealth() {
   const runHealthCheck = async () => {
     setLoading(true)
     const newHealth = {
-      database: 'checking', auth: 'checking', api: 'checking', storage: 'checking',
+      database: 'checking', auth: 'checking', api: 'checking',
       students: 'checking', teachers: 'checking', classes: 'checking', levels: 'checking',
       terms: 'checking', results: 'checking', attendance: 'checking', timetable: 'checking',
       reports: 'checking', security_logs: 'checking', audit_trail: 'checking', profiles: 'checking'
@@ -70,13 +69,6 @@ export default function SystemHealth() {
       const apiRes = await fetch(`${BASE_URL}/profiles?select=id&limit=1`, { headers })
       newHealth.api = apiRes.ok ? 'healthy' : 'error'
     } catch { newHealth.api = 'error' }
-
-    try {
-      const storageRes = await fetch(`${SUPABASE_URL}/storage/v1/bucket`, {
-        headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
-      })
-      newHealth.storage = storageRes.ok ? 'healthy' : 'error'
-    } catch { newHealth.storage = 'error' }
 
     setHealth(newHealth)
 
@@ -177,12 +169,11 @@ export default function SystemHealth() {
 
       {/* Core Services */}
       <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-3">Core Services</h2>
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-3 md:grid-cols-3 gap-4 mb-6">
         {[
           { label: 'Database', key: 'database', icon: <Database size={20} /> },
           { label: 'Authentication', key: 'auth', icon: <Users size={20} /> },
           { label: 'REST API', key: 'api', icon: <Server size={20} /> },
-          { label: 'Storage', key: 'storage', icon: <Upload size={20} /> },
         ].map(service => (
           <div key={service.key} className="bg-[#111111] rounded-2xl border border-gray-800 p-4">
             <div className="flex items-center gap-2 text-gray-400 mb-3">
