@@ -128,7 +128,7 @@ const AdminDashboard = () => {
 
     setChangingPassword(true)
     try {
-      const res = await fetch(`${AUTH_URL}/user/update`, {
+      const res = await fetch(`${AUTH_URL}/user`, {
         method: 'PUT',
         headers: {
           'apikey': ANON_KEY,
